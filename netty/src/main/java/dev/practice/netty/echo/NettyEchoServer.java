@@ -66,6 +66,7 @@ public class NettyEchoServer {
         }finally {
             parentGroup.shutdownGracefully();
             childGroup.shutdownGracefully();
+            eventExecutorGroup.shutdownGracefully();
         }
     }
 }
