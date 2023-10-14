@@ -40,6 +40,12 @@ public class NettyEchoServer {
                         protected void initChannel(Channel ch) throws Exception {
                             // accept 이벤트가 다 완료되고 나서 여기로 오면.. read event 를 처리하기 위한 Pipeline 에 새로운 핸들러를 넣어줘야한다.
 
+                            /**
+                             * accept 이벤트 완료 되고 나서라고 설명했는데..
+                             * read 이벤트가 발생되면 이 파이프라인을 탄다고 생각해야 한다. (childHandler 이므로)
+                             * 실제로도 아래 핸들러는 read 작업이다.
+                             */
+
                             ch.pipeline().addLast(eventExecutorGroup, new LoggingHandler(LogLevel.INFO)); // info 이상 레벨을 로깅해줌
                             ch.pipeline().addLast(
                                     new StringEncoder(), // outbound 상속, String 데이터를 bytebuf 로 변환
