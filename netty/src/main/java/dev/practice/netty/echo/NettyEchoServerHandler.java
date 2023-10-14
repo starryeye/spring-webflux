@@ -1,4 +1,4 @@
-package dev.practice.netty;
+package dev.practice.netty.echo;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

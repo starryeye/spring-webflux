@@ -1,4 +1,4 @@
-package dev.practice.netty;
+package dev.practice.netty.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
