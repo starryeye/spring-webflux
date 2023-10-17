@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
 
+    implementation 'io.projectreactor:reactor-core:3.5.11'
+
     compileOnly 'org.projectlombok:lombok:1.18.30'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     testImplementation 'org.slf4j:slf4j-simple:2.0.9'
