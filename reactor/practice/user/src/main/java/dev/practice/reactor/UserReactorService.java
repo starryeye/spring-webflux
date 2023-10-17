@@ -59,7 +59,7 @@ public class UserReactorService {
                 .map(articleEntity -> new Article(articleEntity.getId(), articleEntity.getTitle(), articleEntity.getContent()))
                 .collectList();
 
-        
+        // countByUserId 에서 리턴한 Mono<Long> 의 값(Long) 을 그대로 사용하므로 추가 연산하지 않는다.
         Mono<Long> followCountMono = followRepository.countByUserId(userEntity.getId());
 
         // allOf 를 사용하여 파라미터로 전달된 CompletableFuture 들의 모든 작업이 종료 시점을 알 수 있도록 한다.
