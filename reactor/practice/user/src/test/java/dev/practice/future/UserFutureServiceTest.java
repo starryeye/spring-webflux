@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserFutureServiceTest {
     UserFutureService userFutureService;
