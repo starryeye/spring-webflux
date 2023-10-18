@@ -13,12 +13,11 @@ import dev.practice.reactor.repository.UserReactorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,12 +37,11 @@ public class UserReactorService {
         return userRepository.findById(id)
                 // findById 에서 값이 없는 Mono.empty 라면 flatMap 포함 이후의 연산자는 동작하지 않는다.
                 // 즉 아래의 flatMap 에서 userEntity 는 not null 이다.
-                .flatMap(userEntity -> Mono.fromFuture(this.getUser(userEntity)))
-                .map(Optional::get);
+                .flatMap(this::getUser);
     }
 
     @SneakyThrows
-    private CompletableFuture<Optional<User>> getUser(UserEntity userEntity) {
+    private Mono<User> getUser(UserEntity userEntity) {
 
 
         // map 연산자에 도달한 Mono 는 값이 있음이 보장된다. 값이 없다면 map 포함 이후의 연산자가 동작하지 않음
@@ -56,39 +54,34 @@ public class UserReactorService {
         // collectList 로 findAllByUserId 에서 onComplete 이벤트가 발생하기 전까지 모든 element 를 내부 리스트에 적재하다가..
         // onComplete 이벤트가 발생하면 리스트를 하나의 값으로 한 Mono 를 onComplete 시킨다.
         Mono<List<Article>> articlesMono = articleRepository.findAllByUserId(userEntity.getId())
+                .skip(5) // 최초 5개 스킵
+                .take(2) // 최초 두개만 취한다 -> 위와 합쳐서 6, 7 번째를 취함
                 .map(articleEntity -> new Article(articleEntity.getId(), articleEntity.getTitle(), articleEntity.getContent()))
                 .collectList();
 
         // countByUserId 에서 리턴한 Mono<Long> 의 값(Long) 을 그대로 사용하므로 추가 연산하지 않는다.
         Mono<Long> followCountMono = followRepository.countByUserId(userEntity.getId());
 
-        // allOf 를 사용하여 파라미터로 전달된 CompletableFuture 들의 모든 작업이 종료 시점을 알 수 있도록 한다.
-        return CompletableFuture.allOf(imageFuture, articlesFuture, followCountFuture)
-                .thenApplyAsync(v -> { // 모든 작업이 종료 되면 아래 작업을 수행한다. (*Async 를 사용)
-                    try {
-                        var image = imageFuture.get();
-                        var articles = articlesFuture.get();
-                        var followCount = followCountFuture.get();
+        return Flux.mergeSequential(imageMono, articlesMono, followCountMono) // 여러 publisher 를 합친다.(순차적 흐름 + 여러 publisher 를 동시에 subscribe, concat/merge 장점 합침)
+                .collectList() // 모든 흐름이 끝나면 하나의 리스트로 모아서 한번에 전달한다.
+                .map(resultList -> {
+                    Image image = (Image) resultList.get(0); // 리스트의 첫번째는 이미지
+                    List<Article> articles = (List<Article>) resultList.get(1); // 리스트의 두번째는 리스트 아티클
+                    Long followCount = (Long) resultList.get(2); // 리스트의 세번째는 카운트
 
-                        return Optional.of(
-                                new User(
-                                        userEntity.getId(),
-                                        userEntity.getName(),
-                                        userEntity.getAge(),
-                                        image,
-                                        articles,
-                                        followCount
-                                )
-                        );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    Optional<Image> imageOptional = Optional.empty();
+                    if(!(image instanceof EmptyImage)) {
+                        imageOptional = Optional.of(image);
                     }
-                });
 
-        // 결과적으로 getUser 메서드 내부에서는...
-        // 3개의 repository 를 access 하여 바로 CompletableFuture 를 리턴 받아서
-        // 기존에 최소 1+3초 이상 걸리던 동기 blocking 로직을.. 최소 1+1초 걸리도록 개선하였다.
-        // 사용되는 스레드는 정말 많은데.. repository 에 access 될 때마다 전부 다른 스레드가 사용되고
-        // callback 작업들(*Async)도 모두 다른 스레드가 사용된다.
+                    return new User(
+                                    userEntity.getId(),
+                                    userEntity.getName(),
+                                    userEntity.getAge(),
+                                    imageOptional,
+                                    articles,
+                                    followCount
+                            );
+                });
     }
 }

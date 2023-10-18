@@ -24,7 +24,7 @@ public class UserReactorRepository {
 
         // Mono 에서 sequence 를 만드는 create(Consumer<MonoSink<T>> callback) 사용, 비동기로 Mono 를 생성한다.
         return Mono.create(sink -> {
-            log.info("UserRepository.findById: {}", userId);
+            log.info("UserRepository.findById: {}, tx: {}", userId, Thread.currentThread().getName());
 
             try {
                 Thread.sleep(1000); // 1초 지연

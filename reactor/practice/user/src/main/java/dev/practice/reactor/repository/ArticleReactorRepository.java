@@ -34,7 +34,7 @@ public class ArticleReactorRepository {
 
         // 여러 값을 보낼 수 있어야 하므로.. Flux 를 이용한다. Flux.create 로 비동기로 Flux 를 생성한다.
         return Flux.create(sink -> {
-            log.info("ArticleRepository.findAllByUserId: {}", userId);
+            log.info("ArticleRepository.findAllByUserId: {}, tx: {}", userId, Thread.currentThread().getName());
 
             try {
                 Thread.sleep(1000); // 1초 지연
