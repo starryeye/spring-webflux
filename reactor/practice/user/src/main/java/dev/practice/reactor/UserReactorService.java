@@ -15,9 +15,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +30,8 @@ public class UserReactorService {
     private final ArticleReactorRepository articleRepository;
     private final ImageReactorRepository imageRepository;
     private final FollowReactorRepository followRepository;
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
 
     @SneakyThrows
     public Mono<User> getUserById(String id) {
@@ -48,31 +54,42 @@ public class UserReactorService {
         // 하지만, findById 내부에서 값이 없다면 예외가 발생한다. -> onErrorReturn 으로 기본 값으로 하여 onComplete 를 발생시킨다. (Flux 라면.. 이후 값들이 있어도 흐르지 않음)
         Mono<Image> imageMono = imageRepository.findById(userEntity.getProfileImageId())
                 .map(imageEntity -> new Image(imageEntity.getId(), imageEntity.getName(), imageEntity.getUrl()))
-                .onErrorReturn(new EmptyImage());
+                .onErrorReturn(new EmptyImage())
+                .subscribeOn(Schedulers.fromExecutorService(executorService));
+
+        log.info("UserService1 tx: {}", Thread.currentThread().getName());
 
 
         // collectList 로 findAllByUserId 에서 onComplete 이벤트가 발생하기 전까지 모든 element 를 내부 리스트에 적재하다가..
-        // onComplete 이벤트가 발생하면 리스트를 하나의 값으로 한 Mono 를 onComplete 시킨다.
+        // onComplete 이벤트가 발생하면 리스트를 하나의 값으로 한 Mono 를 onComplete 시킨다. (Flux -> Mono)
         Mono<List<Article>> articlesMono = articleRepository.findAllByUserId(userEntity.getId())
                 .skip(5) // 최초 5개 스킵
                 .take(2) // 최초 두개만 취한다 -> 위와 합쳐서 6, 7 번째를 취함
                 .map(articleEntity -> new Article(articleEntity.getId(), articleEntity.getTitle(), articleEntity.getContent()))
-                .collectList();
+                .collectList()
+                .subscribeOn(Schedulers.fromExecutorService(executorService));
+
+        log.info("UserService2 tx: {}", Thread.currentThread().getName());
 
         // countByUserId 에서 리턴한 Mono<Long> 의 값(Long) 을 그대로 사용하므로 추가 연산하지 않는다.
-        Mono<Long> followCountMono = followRepository.countByUserId(userEntity.getId());
+        Mono<Long> followCountMono = followRepository.countByUserId(userEntity.getId())
+                .subscribeOn(Schedulers.fromExecutorService(executorService));
 
-        return Flux.mergeSequential(imageMono, articlesMono, followCountMono) // 여러 publisher 를 합친다.(순차적 흐름 + 여러 publisher 를 동시에 subscribe, concat/merge 장점 합침)
-                .collectList() // 모든 흐름이 끝나면 하나의 리스트로 모아서 한번에 전달한다.
-                .map(resultList -> {
-                    Image image = (Image) resultList.get(0); // 리스트의 첫번째는 이미지
-                    List<Article> articles = (List<Article>) resultList.get(1); // 리스트의 두번째는 리스트 아티클
-                    Long followCount = (Long) resultList.get(2); // 리스트의 세번째는 카운트
+        log.info("UserService3 tx: {}", Thread.currentThread().getName());
+
+        // concat, merge, mergeSequencial, zip 사용에 따른 동작 방식과 특성 생각해보기
+        return Mono.zip(imageMono, articlesMono, followCountMono) // 여러 publisher 를 합친다.(각 publisher 에서 1개가 준비되면 tuple 로 묶어서 하나씩 방출)
+                .map(resultTuple -> {
+                    Image image = resultTuple.getT1();
+                    List<Article> articles = resultTuple.getT2();
+                    Long followCount = resultTuple.getT3();
 
                     Optional<Image> imageOptional = Optional.empty();
                     if(!(image instanceof EmptyImage)) {
                         imageOptional = Optional.of(image);
                     }
+
+                    log.info("UserService zip tx: {}", Thread.currentThread().getName()); //TODO 이게 Test worker 로 나오게 하려면?
 
                     return new User(
                                     userEntity.getId(),
