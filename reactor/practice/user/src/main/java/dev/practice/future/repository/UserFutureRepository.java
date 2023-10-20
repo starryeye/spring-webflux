@@ -13,7 +13,7 @@ public class UserFutureRepository {
     private final Map<String, UserEntity> userMap;
 
     public UserFutureRepository() {
-        var user = new UserEntity("1234", "taewoo", 32, "image#1000");
+        var user = new UserEntity("1234", "starryeye", 20, "image#1000");
 
         userMap = Map.of("1234", user);
     }

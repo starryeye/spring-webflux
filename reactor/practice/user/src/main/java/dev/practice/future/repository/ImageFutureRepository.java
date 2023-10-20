@@ -14,7 +14,7 @@ public class ImageFutureRepository {
 
     public ImageFutureRepository() {
         imageMap = Map.of(
-                "image#1000", new ImageEntity("image#1000", "profileImage", "https://dailyone.com/images/1000")
+                "image#1000", new ImageEntity("image#1000", "profileImage", "https://practice.dev/images/1000")
         );
     }
 
