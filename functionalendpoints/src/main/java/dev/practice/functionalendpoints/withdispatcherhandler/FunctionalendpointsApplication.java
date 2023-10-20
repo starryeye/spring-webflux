@@ -1,4 +1,4 @@
-package dev.practice.functionalendpoints;
+package dev.practice.functionalendpoints.withdispatcherhandler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
