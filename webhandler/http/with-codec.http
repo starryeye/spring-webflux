@@ -1,0 +1,18 @@
+### with name
+POST http://localhost:8080
+Content-Type: application/json
+
+{
+  "name": "starryeye"
+}
+
+### without name
+POST http://localhost:8080
+Content-Type: application/json
+
+{
+
+}
+
+### without Content-Type, 응답 Publisher 가 동작하지 않음
+POST http://localhost:8080
