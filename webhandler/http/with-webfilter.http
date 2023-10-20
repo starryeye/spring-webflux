@@ -1,0 +1,6 @@
+### with header
+GET http://localhost:8080
+X-Custom-Name: starryeye
+
+### without header
+GET http://localhost:8080

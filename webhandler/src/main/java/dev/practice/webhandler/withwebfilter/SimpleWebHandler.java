@@ -1,32 +1,22 @@
-package dev.practice.webhandler.withheader;
+package dev.practice.webhandler.withwebfilter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebHandler;
 import reactor.core.publisher.Mono;
 
-public class WebHandlerWithHeader implements WebHandler {
-
-    /**
-     * WebHandler 는 함수형 인터페이스 이다.
-     */
-
+@Slf4j
+public class SimpleWebHandler implements WebHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange) {
 
-        final ServerHttpRequest request = exchange.getRequest();
+        log.info("web handler");
+
         final ServerHttpResponse response = exchange.getResponse();
 
-        // 요청 헤더 read
-        String name = request.getHeaders()
-                .getFirst("X-Custom-Name");
-        if (name == null) {
-            response.setStatusCode(HttpStatus.BAD_REQUEST); // HttpStatus 설정
-            return response.setComplete(); // 필터링.. 바로 응답 처리..
-        }
+        String name = exchange.getAttribute("name"); // filter 에서 넣은 attribute read
 
         // 응답 값
         String content = "Hello " + name;
@@ -34,7 +24,6 @@ public class WebHandlerWithHeader implements WebHandler {
                 response.bufferFactory().wrap(content.getBytes())
         );
 
-        // 응답 헤더 설정
         response.getHeaders()
                 .add("Content-Type", "text/plain");
 
