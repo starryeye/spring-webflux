@@ -1,4 +1,4 @@
-package dev.practice.subscribe;
+package dev.practice.sub1_subscribe;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

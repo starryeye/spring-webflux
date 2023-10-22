@@ -1,17 +1,29 @@
-package dev.practice.subscribe;
+package dev.practice.sub1_subscribe;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.util.context.Context;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 @Slf4j
 public class WithSubscribe2 {
 
     /**
+     * [3]
      *
+     * 	public final Disposable subscribe(
+     *            @Nullable Consumer<? super T> consumer,
+     *            @Nullable Consumer<? super Throwable> errorConsumer,
+     *            @Nullable Runnable completeConsumer,
+     *            @Nullable Context initialContext
+     *            )
+     *
+     *  4 개의 함수형 인터페이스 구현체를 subscribe 의 인자로 전달하면서
+     *  publisher 에 subscribe 하는 방법이다.
+     *
+     *  4 개 중 3 개의 인자는 Reactive Streams 의 Subscriber 인터페이스의 추상 메서드에 해당한다고 생각하면 편하다.
+     *  대신, onSubscription 추상 메서드에 해당되는게 없으므로 subscription 개념을 사용하지 못한다. (backpressure X)
      */
 
     public static void main(String[] args) {
