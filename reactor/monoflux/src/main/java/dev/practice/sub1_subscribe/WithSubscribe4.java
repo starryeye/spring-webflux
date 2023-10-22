@@ -27,6 +27,8 @@ public class WithSubscribe4 {
      * BaseSubscriber..
      * Subscriber 의 추상메서드의 이름을 좀 변경하였고 추가 기능이 존재한다.
      * - subscriber 에서 subscription 의 기능을 사용할 수 있다.
+     * - 더 다양한 사용법과 기능은 PDF 자료 참조
+     *
      */
 
     @SneakyThrows
