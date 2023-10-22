@@ -1,6 +1,9 @@
 # spring-webflux
 Study Spring Webflux
 
+- Spring Webflux -> Reactor -> Reactive Streams
+- Spring Webflux -> Netty -> Java NIO + Reactor Pattern
+
 ## projects
 - netty
   - netty 로 server, client 구현
