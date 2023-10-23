@@ -21,6 +21,9 @@ public class SingleThreadRun {
      * 그리고.. Reactive Streams 에서.. publisher 가 subscriber 의 onNext 를 호출하는 구조이며..
      * 위와 같은 사실을 조금만 생각해보면 publisher 와 subscriber 가 서로 다른 스레드로 동작하는게 아니라..
      * 기본은 결국 같은 스레드로 동작해야함이 효율적임을 알 수 있을 것이다... 요상하다 요상해..
+     * 또한, Reactor 의 Mono, Flux 는
+     * 기본적으로 Cold Publisher 임(Subscriber 에 의해 Publisher 가 수행되고 Publisher 가 Subscriber 의 메서드를 호출함..) 을 생각하면
+     * 받아드리기 쉬울 것이다..
      *
      * 아래 코드의 주석에 숫자를 달아 놨다 순서대로 보며 느껴보자 ex. (1), (2) ...
      */
