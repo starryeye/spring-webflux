@@ -2,7 +2,6 @@ package dev.practice.sub3_scheduler;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,10 +11,10 @@ public class SingleThreadRun {
 
     /**
      * [1]
-     * <p>
+     *
      * Reactor 에서..
      * publisher 와 subscriber 가 어느 스레드에서 동작하는지 알아본다.
-     * <p>
+     *
      * - 기본적으로 publisher 와 subscriber 가 서로 다른 스레드로 동작할 것이라는 생각을 깨부수고 생각하자..
      * 음료수가 담긴 컵에 빨대를 꽂아 놓은 상태를 머리에 두고 생각해보자..
      * publisher 에 subscribe 메서드를 호출하지 않으면 publisher 는 동작하지 않는다...
@@ -63,7 +62,7 @@ public class SingleThreadRun {
                     }
             );
         } finally {
-            executor.shutdown();
+            executor.shutdown(); // graceful shutdown.. 작업이 종료 안되면 영원히 기다림
         }
 
         log.info("end main tx: {}", Thread.currentThread().getName());
