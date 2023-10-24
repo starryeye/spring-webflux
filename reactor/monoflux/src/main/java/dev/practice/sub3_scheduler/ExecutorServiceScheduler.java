@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 public class ExecutorServiceScheduler {
 
     /**
+     * [7]
+     *
      * 이미 존재하는 ExecutorService 를 Scheduler 로 변환하여 사용
      */
 
