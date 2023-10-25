@@ -38,7 +38,8 @@ public class WithoutErrorHandle {
         log.info("start main");
 
         Flux.create(
-                        sink -> sink.error(new RuntimeException("error")) // FluxSink 로 명시적 error 이벤트 발생
+                        sink -> sink.error(new RuntimeException("sink error")) // FluxSink 로 명시적 error 이벤트 발생
+//                        sink -> { throw new RuntimeException("throw exception"); } // throw 로 발생 시켜도 동일한듯..
                 )
                 .subscribe();
         // 에러가 발생하면 downstream 으로 onError 이벤트가 전파된다.
