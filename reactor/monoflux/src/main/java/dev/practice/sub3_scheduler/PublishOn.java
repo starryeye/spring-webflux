@@ -27,6 +27,12 @@ public class PublishOn {
      * 즉...
      * - publishOn 은 위치가 중요하고.. subscribeOn 은 source 실행 스레드에 영향을 주므로 위치가 중요하지 않다.
      * - 별도의 publishOn 이 없고.. A->B->C 순으로 연산자가 chaining 되어있으면 스레드도 연속해서 chaining 실행
+     *
+     *
+     * 참고
+     * 동작방식.. (생각해보면 당연하다.)
+     * 중간에 publishOn 이 없는 한.. source 에서 하나의 onNext 이벤트는 하나의 스레드가 책임지고 subscribe 로 다 넘기고..
+     * 이후.. 다시 값을 생성해서 파이프라인 따라 onNext 로 전달하고 한다.
      */
 
     @SneakyThrows
