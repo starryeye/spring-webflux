@@ -6,7 +6,10 @@ Study Spring Webflux
 - Reactor Netty -> Netty -> Java NIO + Reactor Pattern
 
 ## Before projecs
-- JavaIO...
+- JavaIO
+  - [JavaIO, NIO, AIO Project](https://github.com/starryeye/java/tree/main/server/javaio)
+- Reactive Streams
+  - [Reactive Streams Project](https://github.com/starryeye/java/tree/main/reactivestreams/practice/coldandhot)
 
 ## projects
 - netty
