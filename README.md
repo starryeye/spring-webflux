@@ -5,7 +5,7 @@ Study Spring Webflux
 - Reactor Netty -> Reactor -> Reactive Streams
 - Reactor Netty -> Netty -> Java NIO + Reactor Pattern
 
-## Before projecs
+## Before projects
 - JavaIO
   - [JavaIO, NIO, AIO Project](https://github.com/starryeye/java/tree/main/server/javaio)
 - Reactive Streams
