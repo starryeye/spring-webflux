@@ -8,6 +8,8 @@ import reactor.core.publisher.Flux;
 public class Skip {
 
     /**
+     * [6]
+     *
      * skip, skipLast 연산자를 알아본다.
      *
      * skip
