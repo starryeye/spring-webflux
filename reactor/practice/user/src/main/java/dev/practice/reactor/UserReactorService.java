@@ -56,9 +56,10 @@ public class UserReactorService {
 
         // map 연산자에 도달한 Mono 는 값이 있음이 보장된다. 값이 없다면 map 포함 이후의 연산자가 동작하지 않음
         // 하지만, findById 내부에서 값이 없다면 예외가 발생한다. -> onErrorReturn 으로 기본 값으로 하여 onComplete 를 발생시킨다. (Flux 라면.. 이후 값들이 있어도 흐르지 않음)
+        // TODO 사실, ArticleReactorRepository 에서도 말했고.. findById 내부에서 값이 없다면.. 예외가 발생하지 않고 Mono.empty 임...
         Mono<Image> imageMono = imageRepository.findWithContext()
                 .map(imageEntity -> new Image(imageEntity.getId(), imageEntity.getName(), imageEntity.getUrl()))
-                .onErrorReturn(new EmptyImage())
+                .onErrorReturn(new EmptyImage()) // TODO 에러처리 필요 없을듯.
                 .subscribeOn(Schedulers.fromExecutorService(executorService))
                 .contextWrite(context); // 해당 파이프라인 "위"로 context 적용
 
@@ -84,7 +85,7 @@ public class UserReactorService {
 
         log.info("UserService3 tx: {}", Thread.currentThread().getName());
 
-        // concat, merge, mergeSequencial, zip 사용에 따른 동작 방식과 특성 생각해보기
+        // TODO, concat, merge, mergeSequencial, zip 사용에 따른 동작 방식과 특성 생각해보기
         return Mono.zip(imageMono, articlesMono, followCountMono) // 여러 publisher 를 합친다.(각 publisher 에서 1개가 준비되면 tuple 로 묶어서 하나씩 방출)
                 .map(resultTuple -> {
                     Image image = resultTuple.getT1();

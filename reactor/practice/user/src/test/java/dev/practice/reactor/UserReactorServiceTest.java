@@ -1,11 +1,6 @@
 package dev.practice.reactor;
 
 import dev.practice.common.domain.User;
-import dev.practice.future.UserFutureService;
-import dev.practice.future.repository.ArticleFutureRepository;
-import dev.practice.future.repository.FollowFutureRepository;
-import dev.practice.future.repository.ImageFutureRepository;
-import dev.practice.future.repository.UserFutureRepository;
 import dev.practice.reactor.repository.ArticleReactorRepository;
 import dev.practice.reactor.repository.FollowReactorRepository;
 import dev.practice.reactor.repository.ImageReactorRepository;
@@ -48,6 +43,13 @@ public class UserReactorServiceTest {
         // when
         // Mono::blockingOptional Mono 에 blocking 옵션을 주고.. 결과를 Optional 로 반환 받음
         Optional<User> user = userReactorService.getUserById(userId).blockOptional();
+
+//        userReactorService.getUserById(userId)
+//                .subscribe(
+//                        value -> System.out.println("value: " + value),
+//                        error -> System.out.println("error: " + error),
+//                        () -> System.out.println("onComplete")
+//                );
 
         // then
         assertTrue(user.isEmpty());

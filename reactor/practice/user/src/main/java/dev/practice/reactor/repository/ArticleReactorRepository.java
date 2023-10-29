@@ -71,7 +71,7 @@ public class ArticleReactorRepository {
                     Optional<UserEntity> userEntityOptional = contextView.getOrEmpty("user"); // context 에서 key 가 "user" 인 value 를 받는다.
 
                     if (userEntityOptional.isEmpty()) {
-                        // 사실 Optional 처리 할 필요 없는듯..
+                        // TODO 사실 Optional 처리 할 필요 없는듯..
                         // userRepository.findById 이후 userEntity 없으면.. 하위 흐름은 동작하지 않으므로..
                         // not null 이 보장될 거 같음..
                         throw new RuntimeException("user not found");

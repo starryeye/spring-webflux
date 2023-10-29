@@ -49,6 +49,7 @@ public class ImageReactorRepository {
     public Mono<ImageEntity> findWithContext() {
 
         // deferContextual 을 사용하여 contextView 를 받고 publisher 를 반환하는 Function 을 쓴다.
+        // TODO, findWithContext 를 사용할 필요없이 findById 에서 파라미터 없애고 sink 로 접근해도 될듯 (나머지 Repository 도 동일)
         return Mono.deferContextual(contextView -> {
 
                     Optional<UserEntity> userEntityOptional = contextView.getOrEmpty("user");
