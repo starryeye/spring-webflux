@@ -55,7 +55,7 @@ public class UserReactorService {
 
 
         // map 연산자에 도달한 Mono 는 값이 있음이 보장된다. 값이 없다면 map 포함 이후의 연산자가 동작하지 않음
-        // 하지만, imageRepository findById 내부에서 값이 없다면 예외가 발생한다. (user 는 있지만, user 에 매칭되는 image 가 없는 경우를 말함)
+        // 하지만, imageRepository findById 내부에서 (코드확인해보면..) 값이 없다면 예외가 발생한다. (user 는 있지만, user 에 매칭되는 image 가 없는 경우를 말함)
         // -> onErrorReturn 으로 기본 값으로 하여 onComplete 를 발생시킨다. (Flux 라면.. 이후 값들이 있어도 흐르지 않음)
         Mono<Image> imageMono = imageRepository.findWithContext()
                 .map(imageEntity -> new Image(imageEntity.getId(), imageEntity.getName(), imageEntity.getUrl()))
