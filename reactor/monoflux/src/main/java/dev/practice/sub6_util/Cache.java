@@ -9,6 +9,8 @@ import java.util.stream.IntStream;
 public class Cache {
 
     /**
+     * [8]
+     *
      * cache 연산자에 대해 알아본다.
      *
      * public final Flux<T> cache()
