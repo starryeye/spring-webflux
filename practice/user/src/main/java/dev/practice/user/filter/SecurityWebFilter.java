@@ -27,6 +27,13 @@ import reactor.util.context.ContextView;
 @Component
 public class SecurityWebFilter implements WebFilter {
 
+    /**
+     * - X-I-AM 헤더 없으면 UNAUTHORIZED
+     * - X-I-AM 헤더 값(토큰)이 AuthService 의 tokenUserIdMap 에 존재하지 않는 key 라면 UNAUTHORIZED
+     * - X-I-AM 헤더 값(토큰)이 AuthService 의 tokenUserIdMap 에 존재하는 key 라면
+     * userId 를 Authentication (spring security lib) 에서 Principal (java lib) 의 name 으로 사용하여 계속 진행
+     */
+
     private final AuthService authService;
 
     @Override
