@@ -27,7 +27,7 @@ import reactor.util.context.ContextView;
 @Component
 public class SecurityWebFilter implements WebFilter {
 
-    private AuthService authService;
+    private final AuthService authService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
