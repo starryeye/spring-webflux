@@ -1,6 +1,8 @@
 package dev.practice.user.filter;
 
 import dev.practice.user.auth.IamAuthentication;
+import dev.practice.user.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
@@ -15,13 +17,18 @@ import reactor.util.context.ContextView;
 
 /**
  * bean 으로 등록만해도 WebFilter 로서, 동작하게 된다.
- *
+ * <p>
  * 참고
  * Spring 의 도움없이 WebFilter 를 등록하는 과정은..
  * spring-webflux/webhandler/withwebfilter 코드를 보면 된다.
  */
+
+@RequiredArgsConstructor
 @Component
 public class SecurityWebFilter implements WebFilter {
+
+    private AuthService authService;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
@@ -31,22 +38,32 @@ public class SecurityWebFilter implements WebFilter {
                 .getHeaders()
                 .getFirst("X-I-AM");//multiValue 이므로 first 로 접근
 
-        if(iam == null) {
+        if (iam == null) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED); // 401
             return response.setComplete(); // 바로 응답을 내림
         }
 
-        Authentication authentication = new IamAuthentication(iam); // 헤더 값을 name 필드로 사용
+        return authService.getNameByToken(iam)
+                .map(IamAuthentication::new) // userId 값을 IamAuthentication name 필드로 사용
+                .flatMap(
+                        iamAuthentication -> chain.filter(exchange) // WebHandler 혹은 다음 WebFilter 로 넘긴다.
+                                .contextWrite( // context 로 authentication 등록
+                                        context -> {
 
-        return chain.filter(exchange) // WebHandler 혹은 다음 WebFilter 로 넘긴다.
-                .contextWrite( // context 로 authentication 등록
-                        context -> {
-
-                            // 기존의 context 를 건드리지 않고 authentication 을 포함시켜 새로운 context 를 만들어 전달
-                            ContextView newContext = ReactiveSecurityContextHolder
-                                    .withAuthentication(authentication);
-                            return context.putAll(newContext);
-                        }
+                                            // 기존의 context 를 건드리지 않고 authentication 을 포함시켜 새로운 context 를 만들어 전달
+                                            ContextView newContext = ReactiveSecurityContextHolder
+                                                    .withAuthentication(iamAuthentication);
+                                            return context.putAll(newContext);
+                                        }
+                                )
+                )
+                .switchIfEmpty( // getNameByToken 에서 Mono.empty 로 내려올 경우..
+                        Mono.defer(
+                                () -> {
+                                    response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                                    return response.setComplete(); // 바로 응답을 내림
+                                }
+                        )
                 );
     }
 }
