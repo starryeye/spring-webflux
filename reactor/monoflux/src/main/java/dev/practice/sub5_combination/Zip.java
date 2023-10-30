@@ -68,6 +68,6 @@ public class Zip {
 
         log.info("end main, tx: {}", Thread.currentThread().getName());
 
-        Thread.sleep(10000);
+        Thread.sleep(10000); // 캐시 스케줄러는 데몬 스레드
     }
 }
