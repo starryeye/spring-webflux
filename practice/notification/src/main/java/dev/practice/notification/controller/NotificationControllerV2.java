@@ -21,7 +21,7 @@ public class NotificationControllerV2 {
      * 나중에 값을 집어넣을 수 있는
      * 파이프 라인만 일단 만들어두는 느낌..
      */
-    private Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
+    private static final Sinks.Many<String> sink = Sinks.many().unicast().onBackpressureBuffer();
 
     // 이벤트 생성 API
     @PostMapping
@@ -29,7 +29,7 @@ public class NotificationControllerV2 {
 
         String notificationMessage = event.getType() + ": " + event.getMessage();
 
-        log.info("addNotification, message: {}, tx: {}", notificationMessage, Thread.currentThread().getName());
+        log.info("addNotification v2, message: {}, tx: {}", notificationMessage, Thread.currentThread().getName());
 
         sink.tryEmitNext(notificationMessage); // 값을 집어 넣는다.
 
