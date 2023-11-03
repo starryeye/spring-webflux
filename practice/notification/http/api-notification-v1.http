@@ -1,0 +1,4 @@
+### 간단한 Server Sent Event, Client 에게 일정 주기로 이벤트를 전송
+### 해당 요청은 Client 에서 호출한다.
+GET http://localhost:8080/api/notifications/v1
+
