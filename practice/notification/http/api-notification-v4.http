@@ -1,0 +1,20 @@
+### 이벤트 구독
+GET http://localhost:8080/api/notifications/v4
+
+### 이벤트 생성
+POST http://localhost:8080/api/notifications/v4
+Content-Type: application/json
+
+{
+  "type": "follow",
+  "message": "새로운 팔로워가 생겼습니다."
+}
+
+### 두번째 이벤트 생성
+POST http://localhost:8080/api/notifications/v4
+Content-Type: application/json
+
+{
+  "type": "gift",
+  "message": "새로운 선물이 도착했습니다."
+}
