@@ -30,3 +30,6 @@ Study Spring Webflux
   - Annotated Controller
   - WebClient
   - Spring security reactive
+- practice/notification
+  - Http streaming 기법을 구현
+  - ServerSentEvent, Sink 활용
