@@ -1,2 +1,2 @@
-WEBSOCKET ws://localhost:8080/simple-url-handler-mapping/web-socket-handler/greet
+WEBSOCKET ws://localhost:8080/simple-url-handler-mapping/web-socket-handler/upper-case
 Content-Type: application/json

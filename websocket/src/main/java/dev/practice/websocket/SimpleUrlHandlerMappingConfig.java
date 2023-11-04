@@ -43,7 +43,7 @@ public class SimpleUrlHandlerMappingConfig {
 
         Map<String, Object> urlMap = Map.of(
                 "/simple-url-handler-mapping/web-handler/greet", new GreetWebHandler(), // key 로 매핑될 url, value 로 매핑시켜줄 WebHandler 를 등록하였다.
-                "/simple-url-handler-mapping/web-socket-handler/greet", new UpperCaseWebSocketHandler()
+                "/simple-url-handler-mapping/web-socket-handler/upper-case", new UpperCaseWebSocketHandler()
         );
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
