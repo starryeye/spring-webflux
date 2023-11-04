@@ -1,0 +1,7 @@
+### client 1
+WEBSOCKET ws://localhost:8080/chat
+X-I-AM: a
+
+### client 2
+WEBSOCKET ws://localhost:8080/chat
+X-I-AM: b
