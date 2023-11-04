@@ -12,6 +12,9 @@ public class EchoWebSocketHandler implements WebSocketHandler {
     @Override
     public Mono<Void> handle(WebSocketSession session) {
 
+        // todo, 생각해보기.. 여기는 최초 연결 시점 1회만 로그가 남겨진다..
+        log.info("EchWebSocketHandler handle!, tx: {}", Thread.currentThread().getName());
+
         Flux<WebSocketMessage> echoFlux = session.receive()
                 .map(
                         webSocketMessage -> {
