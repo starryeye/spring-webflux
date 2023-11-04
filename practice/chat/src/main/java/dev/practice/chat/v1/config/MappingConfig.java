@@ -1,6 +1,6 @@
-package dev.practice.chat.config;
+package dev.practice.chat.v1.config;
 
-import dev.practice.chat.handler.ChatWebSocketHandler;
+import dev.practice.chat.v1.handler.ChatWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;

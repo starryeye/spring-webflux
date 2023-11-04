@@ -1,4 +1,4 @@
-package dev.practice.chat.handler;
+package dev.practice.chat.v1.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
