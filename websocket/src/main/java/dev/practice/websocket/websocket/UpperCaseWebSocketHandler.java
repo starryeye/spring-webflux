@@ -6,7 +6,7 @@ import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class GreetWebSocketHandler implements WebSocketHandler {
+public class UpperCaseWebSocketHandler implements WebSocketHandler {
 
     // WebSocketHandler 구현
     @Override
