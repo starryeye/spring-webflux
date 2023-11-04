@@ -32,4 +32,4 @@ Study Spring Webflux
   - Spring security reactive
 - practice/notification
   - Http streaming 기법을 구현
-  - ServerSentEvent, Sink 활용
+  - ServerSentEvent, Sinks 활용
