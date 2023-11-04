@@ -1,6 +1,7 @@
 package dev.practice.websocket;
 
 import dev.practice.websocket.webhandler.GreetWebHandler;
+import dev.practice.websocket.websocket.EchoWebSocketHandler;
 import dev.practice.websocket.websocket.UpperCaseWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,8 @@ public class SimpleUrlHandlerMappingConfig {
 
         Map<String, Object> urlMap = Map.of(
                 "/simple-url-handler-mapping/web-handler/greet", new GreetWebHandler(), // key 로 매핑될 url, value 로 매핑시켜줄 WebHandler 를 등록하였다.
-                "/simple-url-handler-mapping/web-socket-handler/upper-case", new UpperCaseWebSocketHandler()
+                "/simple-url-handler-mapping/web-socket-handler/upper-case", new UpperCaseWebSocketHandler(),
+                "simple-url-handler-mapping/web-socket-handler/echo", new EchoWebSocketHandler()
         );
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
