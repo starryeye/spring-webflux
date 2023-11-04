@@ -1,6 +1,7 @@
-package dev.practice.chat.v1.config;
+package dev.practice.chat.config;
 
 import dev.practice.chat.v1.handler.ChatWebSocketHandler;
+import dev.practice.chat.v2.handler.ChatWebSocketHandlerV2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
@@ -13,11 +14,13 @@ public class MappingConfig {
 
     @Bean
     public SimpleUrlHandlerMapping simpleUrlHandlerMapping(
-            ChatWebSocketHandler chatWebSocketHandler
+            ChatWebSocketHandler chatWebSocketHandler,
+            ChatWebSocketHandlerV2 chatWebSocketHandlerV2
     ) {
 
         Map<String, WebSocketHandler> urlMapper = Map.of(
-                "/chat", chatWebSocketHandler
+                "/chat", chatWebSocketHandler,
+                "/chat/v2", chatWebSocketHandlerV2
         );
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
