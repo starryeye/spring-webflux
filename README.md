@@ -33,3 +33,9 @@ Study Spring Webflux
 - practice/notification
   - Http streaming 기법을 구현
   - ServerSentEvent, Sinks 활용
+- websocket
+  - WebSocket 통신 프로토콜을 사용하는 간단한 서버 구현
+  - SimpleUrlHandlerMapping, WebSocketHandler 활용
+- practice/chat
+  - WebSocketHandler 를 이용한 채팅 서버 구현
+  - SimpleUrlHandlerMapping, WebSocketHandler, WebSocketService, Sinks 활용
