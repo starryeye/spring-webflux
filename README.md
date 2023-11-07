@@ -39,3 +39,6 @@ Study Spring Webflux
 - practice/chat
   - WebSocketHandler 를 이용한 채팅 서버 구현
   - SimpleUrlHandlerMapping, WebSocketHandler, WebSocketService, Sinks 활용
+
+## Posting
+- [Reactive Manifesto](https://starryeye.tistory.com/195)
