@@ -7,7 +7,7 @@ Study Spring Webflux
 
 ## Before projects
 - JavaIO
-  - [JavaIO, NIO, AIO, Reactor Pattern, Proactor Project](https://github.com/starryeye/java/tree/main/server/javaio)
+  - [JavaIO, NIO, AIO, Reactor Pattern, Proactor Pattern Project](https://github.com/starryeye/java/tree/main/server/javaio)
 - Reactive Streams
   - [Reactive Streams, Cold/Hot publisher Project](https://github.com/starryeye/java/tree/main/reactivestreams/practice/coldandhot)
 
