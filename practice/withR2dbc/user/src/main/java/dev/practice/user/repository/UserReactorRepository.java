@@ -11,16 +11,16 @@ import java.util.Map;
 @Slf4j
 @Repository
 public class UserReactorRepository {
-    private final Map<String, UserEntity> userMap;
+    private final Map<Long, UserEntity> userMap;
 
     public UserReactorRepository() {
-        var user = new UserEntity("1234", "starryeye", 20, "1");
+        var user = new UserEntity(1234L, "starryeye", 20, "1", "1q2w3e4r!");
 
-        userMap = Map.of("1234", user);
+        userMap = Map.of(1234L, user);
     }
 
     @SneakyThrows
-    public Mono<UserEntity> findById(String userId) {
+    public Mono<UserEntity> findById(Long userId) {
 
         // Mono 에서 sequence 를 만드는 create(Consumer<MonoSink<T>> callback) 사용, 비동기로 Mono 를 생성한다.
         return Mono.create(sink -> {

@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserEntity {
-    private final String id;
+    private final Long id;
     private final String name;
-    private final int age;
+    private final Integer age;
     private final String profileImageId;
+    private final String password;
 }

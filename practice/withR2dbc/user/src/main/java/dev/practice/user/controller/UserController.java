@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public Mono<UserResponse> getUserById(
-            @PathVariable("userId") String userId
+            @PathVariable("userId") Long userId
     ) {
 
         return ReactiveSecurityContextHolder.getContext() // WebFilter 에서 넘겨준 SecurityContext 를 Mono 로 받는다.
@@ -31,7 +31,7 @@ public class UserController {
 
                             String name = securityContext.getAuthentication().getName(); // WebFilter 에서 채움
 
-                            if (!name.equals(userId)) { // 토큰으로 찾은 name(userId) 와 PathVariable 로 들어온 userId 가 같지 않으면 에러 처리
+                            if (!name.equals(userId.toString())) { // 토큰으로 찾은 name(userId) 와 PathVariable 로 들어온 userId 가 같지 않으면 에러 처리
                                 return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)); // TODO, WebExceptionHandler 가 처리?
                             }
 

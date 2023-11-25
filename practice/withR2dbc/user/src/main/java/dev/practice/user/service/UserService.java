@@ -25,7 +25,7 @@ public class UserService {
         this.webClient = WebClient.create("http://localhost:8081");
     }
 
-    public Mono<User> findById(String userId) {
+    public Mono<User> findById(Long userId) {
 
         return userReactorRepository.findById(userId)
                 .flatMap(
