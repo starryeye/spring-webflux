@@ -1,0 +1,11 @@
+# docker-compose -p mysql-r2dbc-user-db up -d
+version: '3'
+services:
+  mysql-r2dbc-user-db:
+    image: mysql:8.0.31
+    container_name: user-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: user
