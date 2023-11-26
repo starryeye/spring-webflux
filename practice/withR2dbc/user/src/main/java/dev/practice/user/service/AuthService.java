@@ -1,5 +1,6 @@
 package dev.practice.user.service;
 
+import dev.practice.user.common.domain.Auth;
 import dev.practice.user.common.repository.AuthEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,5 +43,15 @@ public class AuthService {
                 ).doOnNext(
                         name -> log.info("Auth R2dbcEntityTemplate select, userId={}", name)
                 );
+    }
+
+    public Mono<Auth> createAuth(Long userId) {
+
+        String newToken = Auth.createToken();
+
+        AuthEntity newAuth = AuthEntity.create(userId, newToken);
+
+        return entityTemplate.insert(newAuth)
+                .map(Auth::of);
     }
 }

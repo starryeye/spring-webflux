@@ -6,22 +6,25 @@ import dev.practice.user.common.domain.User;
 import dev.practice.user.common.repository.UserEntity;
 import dev.practice.user.repository.UserR2dbcRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
+    private final AuthService authService;
+
     private final UserR2dbcRepository userR2dbcRepository;
 
     // image server 로 image 정보 요청
     private final WebClient webClient;
 
-    public UserService(UserR2dbcRepository userReactorRepository) {
+    public UserService(AuthService authService, UserR2dbcRepository userReactorRepository) {
+        this.authService = authService;
         this.userR2dbcRepository = userReactorRepository;
         this.webClient = WebClient.create("http://localhost:8081");
     }
@@ -69,7 +72,11 @@ public class UserService {
                 );
     }
 
+    @Transactional
     public Mono<User> createUser(String name, Integer age, String password, String profileImageId) {
+
+        // user 생성, DB insert
+        // auth 생성, DB insert
 
         // profileImage 는 이미 만들어져 있다고 가정한다.
         // User 를 만들때 image 서버로 요청하여 image 를 가져와야하지만, 생략한다.
@@ -77,6 +84,10 @@ public class UserService {
         UserEntity newUser = UserEntity.create(name, age, profileImageId, password);
 
         return userR2dbcRepository.save(newUser)
+                .flatMap(
+                        saved -> authService.createAuth(saved.getId())
+                                .map(auth -> saved)
+                )
                 .map(
                         saved -> User.of(
                                 saved,
