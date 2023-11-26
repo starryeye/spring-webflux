@@ -6,7 +6,7 @@ GET http://localhost:8080/api/users/100000
     });
 %}
 
-###
+### 회원 정보 검색
 GET http://localhost:8080/api/users/1234
 X-I-AM: abcd
 
@@ -19,3 +19,15 @@ X-I-AM: abcd
         client.assert(response.body.age === 20);
     });
 %}
+
+### 회원 가입
+POST http://localhost:8080/api/users/signup
+Content-Type: application/json
+
+{
+  "name": "Alice",
+  "age": 20,
+  "gender": "F",
+  "password": "123123",
+  "profileImageId": "2"
+}

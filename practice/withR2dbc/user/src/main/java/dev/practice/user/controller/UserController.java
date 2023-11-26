@@ -1,18 +1,18 @@
 package dev.practice.user.controller;
 
 import dev.practice.user.controller.dto.ProfileImageResponse;
+import dev.practice.user.controller.dto.SignupUserRequest;
 import dev.practice.user.controller.dto.UserResponse;
 import dev.practice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/users")
@@ -58,5 +58,15 @@ public class UserController {
                                     );
                         }
                 );
+    }
+
+    @PostMapping("/signup")
+    public Mono<UserResponse> signupUser(
+            @RequestBody SignupUserRequest request
+    ) {
+
+        log.info("request={}", request);
+
+        return Mono.empty();
     }
 }
