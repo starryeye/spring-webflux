@@ -31,7 +31,8 @@ public class UserEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    // 기존 코드(without R2dbc)를 위함..
+    // 생성자는 현재 하나이므로 @PersistenceCreator 를 사용하지 않아도 되긴함.
+    //Object mapping 에서 사용할 생성자, property population 을 최소화 한다.
     @PersistenceCreator // property population 을 최소화 하기 위해 여기다가함.. 이러면 AllArgsConstructor 는 필요없는듯?
     public UserEntity(Long id, String name, Integer age, String profileImageId, String password) {
         this.id = id;
@@ -42,10 +43,7 @@ public class UserEntity {
     }
 
     // for R2dbc
-    public UserEntity(String name, Integer age, String profileImageId, String password) {
-        this.name = name;
-        this.age = age;
-        this.profileImageId = profileImageId;
-        this.password = password;
+    public static UserEntity create(String name, Integer age, String profileImageId, String password) {
+        return new UserEntity(null, name, age, profileImageId, password);
     }
 }

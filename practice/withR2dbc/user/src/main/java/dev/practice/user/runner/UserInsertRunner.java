@@ -28,7 +28,7 @@ public class UserInsertRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        UserEntity user = new UserEntity("starryeye", 20, "1", "1q2w3e4r!");
+        UserEntity user = UserEntity.create("starryeye", 20, "1", "1q2w3e4r!");
 
         // user 와 saved 는 동일한 객체이다.
         UserEntity saved = userR2dbcRepository.save(user).block(); // todo, block mean..
