@@ -3,7 +3,7 @@ package dev.practice.user.service;
 import dev.practice.user.common.domain.EmptyImage;
 import dev.practice.user.common.domain.Image;
 import dev.practice.user.common.domain.User;
-import dev.practice.user.repository.UserReactorRepository;
+import dev.practice.user.repository.UserR2dbcRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,19 +15,19 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final UserReactorRepository userReactorRepository;
+    private final UserR2dbcRepository userR2dbcRepository;
 
     // image server 로 image 정보 요청
     private final WebClient webClient;
 
-    public UserService(UserReactorRepository userReactorRepository) {
-        this.userReactorRepository = userReactorRepository;
+    public UserService(UserR2dbcRepository userReactorRepository) {
+        this.userR2dbcRepository = userReactorRepository;
         this.webClient = WebClient.create("http://localhost:8081");
     }
 
     public Mono<User> findById(Long userId) {
 
-        return userReactorRepository.findById(userId)
+        return userR2dbcRepository.findById(userId)
                 .flatMap(
                         userEntity -> {
 

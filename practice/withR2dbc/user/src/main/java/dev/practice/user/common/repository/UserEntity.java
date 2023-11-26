@@ -5,11 +5,12 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 
-@AllArgsConstructor
+//@AllArgsConstructor
 @Table("USER")
 @Data
 public class UserEntity {
@@ -31,6 +32,7 @@ public class UserEntity {
     private LocalDateTime updatedAt;
 
     // 기존 코드(without R2dbc)를 위함..
+    @PersistenceCreator // property population 을 최소화 하기 위해 여기다가함.. 이러면 AllArgsConstructor 는 필요없는듯?
     public UserEntity(Long id, String name, Integer age, String profileImageId, String password) {
         this.id = id;
         this.name = name;

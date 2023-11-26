@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
+//@Component
 public class UserInsertRunner implements CommandLineRunner {
 
     private final UserR2dbcRepository userR2dbcRepository;
