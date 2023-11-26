@@ -3,6 +3,7 @@ package dev.practice.user.service;
 import dev.practice.user.common.domain.EmptyImage;
 import dev.practice.user.common.domain.Image;
 import dev.practice.user.common.domain.User;
+import dev.practice.user.common.repository.UserEntity;
 import dev.practice.user.repository.UserR2dbcRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -61,17 +62,26 @@ public class UserService {
                                                     profileImage = Optional.of(image);
                                                 }
 
-                                                return new User(
-                                                        userEntity.getId(),
-                                                        userEntity.getName(),
-                                                        userEntity.getAge(),
-                                                        profileImage,
-                                                        List.of(),
-                                                        0L
-                                                );
+                                                return User.of(userEntity, profileImage);
                                             }
                                     );
                         }
+                );
+    }
+
+    public Mono<User> createUser(String name, Integer age, String password, String profileImageId) {
+
+        // profileImage 는 이미 만들어져 있다고 가정한다.
+        // User 를 만들때 image 서버로 요청하여 image 를 가져와야하지만, 생략한다.
+
+        UserEntity newUser = UserEntity.create(name, age, profileImageId, password);
+
+        return userR2dbcRepository.save(newUser)
+                .map(
+                        saved -> User.of(
+                                saved,
+                                Optional.of(new EmptyImage())
+                        )
                 );
     }
 }
