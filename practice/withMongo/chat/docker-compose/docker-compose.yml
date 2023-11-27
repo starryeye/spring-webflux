@@ -1,0 +1,56 @@
+# 1.  /etc/hosts 변경 필요
+# 2. openssl rand -base64 741 > mongodb.key
+# 3. chmod 600 mongodb.key
+# 4. $ docker-compose -p mongodb-reactive-chat-db up -d
+# mongodb 실행 후, replica 설정 해줘야 함
+
+version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:6.0.5
+    hostname: mongo1
+    container_name: mongo1
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: chat
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db/replica/mongo1:/data/db
+      - ./mongodb.key:/etc/mongodb.key
+    command:
+      - '--replSet'
+      - 'myReplicaSet'
+      - '--keyFile'
+      - '/etc/mongodb.key'
+      - '--bind_ip_all'
+  mongo2:
+    image: mongo:6.0.5
+    hostname: mongo2
+    container_name: mongo2
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: chat
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    depends_on:
+      - mongo1
+    ports:
+      - 27018:27018
+    volumes:
+      - ./data/db/replica/mongo2:/data/db
+      - ./mongodb.key:/etc/mongodb.key
+    command:
+      - '--replSet'
+      - 'myReplicaSet'
+      - '--keyFile'
+      - '/etc/mongodb.key'
+      - '--bind_ip_all'
+      - '--port'
+      - '27018'
+networks:
+  default:
+    name: mongoCluster
