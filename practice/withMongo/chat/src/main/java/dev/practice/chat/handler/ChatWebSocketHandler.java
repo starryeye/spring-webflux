@@ -15,7 +15,10 @@ import reactor.core.publisher.Mono;
 public class ChatWebSocketHandler implements WebSocketHandler {
 
     /**
-     * chat project (without mongodb) 에서 v2 베이스이다.
+     * chat project (without mongodb) 에서 v2 베이스로 고도화 하였다.
+     *
+     * todo, a 가 로그인하지 않은 b 에게 메시지를 보낸 이후,
+     *  b 가 로그인을 하면 a 가 보낸 메시지는 전달 되지 않는다. 이를 해결 해보자.
      */
 
     private final ChatService chatService;
@@ -28,7 +31,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         Flux<Chat> chatFlux = chatService.register(from);
         chatService.sendChat(new Chat("System", from, from + "님 채팅방에 오신 것을 환영합니다."));
         log.info("{}가 채팅방에 입장하였습니다.", from);
-        
+
         session.receive()
                 .doOnNext(
                         webSocketMessage -> {
