@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
-@Document(collation = "chatDocument")
+@Document(collation = "chatDocument") // 해당 entity 를 chatDocument collection 에 하나의 document 로 매핑한다.
 public class ChatDocument {
 
     @Id
@@ -26,7 +26,7 @@ public class ChatDocument {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @PersistenceCreator // document to object mapping 용
+    @PersistenceCreator // document to object mapping 용, 공식 문서 추천 방법 (AllArgsConstructor) 이다.
     public ChatDocument(ObjectId id, String from, String to, String message, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.from = from;
