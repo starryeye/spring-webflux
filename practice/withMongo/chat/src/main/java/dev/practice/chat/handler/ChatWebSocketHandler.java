@@ -38,10 +38,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                             String to = splitPayload[0].trim();
                             String message = splitPayload[1].trim();
 
-                            boolean result = chatService.sendChat(to, new Chat(from, message));
-                            if(!result) {
-                                chatService.sendChat(from, new Chat("System", "대화 상대가 없습니다."));
-                            }
+                            chatService.sendChat(new Chat(from, to, message));
                         }
                 )
                 .subscribe();

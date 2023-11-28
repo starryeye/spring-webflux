@@ -22,26 +22,27 @@ public class ChatService {
 
         chatSinkMap.put(from, sink);
 
-        sink.tryEmitNext(new Chat("System", from + "님 채팅방에 오신 것을 환영합니다."));
+        sendChat(new Chat("System", from, from + "님 채팅방에 오신 것을 환영합니다."));
         log.info("{}가 채팅방에 입장하였습니다.", from);
 
         return sink.asFlux();
     }
 
-    public boolean sendChat(String to, Chat chat) {
+    public void sendChat(Chat chat) {
 
-        Sinks.Many<Chat> targetSink = chatSinkMap.get(to);
+        Sinks.Many<Chat> targetSink = chatSinkMap.get(chat.getTo());
 
         if(Objects.nonNull(targetSink)) {
 
             if(targetSink.currentSubscriberCount() > 0) {
                 targetSink.tryEmitNext(chat);
-                return true;
             }else {
-                chatSinkMap.remove(to);
+                chatSinkMap.remove(chat.getTo());
             }
-        }
+        } else {
 
-        return false;
+            Sinks.Many<Chat> mySink = chatSinkMap.get(chat.getFrom());
+            mySink.tryEmitNext(new Chat("System", chat.getFrom(), "대화 상대가 없습니다."));
+        }
     }
 }

@@ -26,7 +26,7 @@ public class ChatApplication {
 		SpringApplication.run(ChatApplication.class, args);
 	}
 
-	@Bean
+//	@Bean
 	ApplicationRunner runner() {
 		return args -> {
 
