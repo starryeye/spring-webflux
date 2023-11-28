@@ -1,8 +1,13 @@
 # 1.  /etc/hosts 변경 필요
 # 2. openssl rand -base64 741 > mongodb.key
+# -> replica 에서는 key 가 필수이다.
 # 3. chmod 600 mongodb.key
 # 4. $ docker-compose -p mongodb-reactive-chat-db up -d
 # mongodb 실행 후, replica 설정 해줘야 함
+# 5. mongo1 의 터미널에서 계속 진행..
+# 6. $ mongosh -u root -p
+# 8. $ init.js 내용 copy & paste
+# 9. Database connect 할 때, authMechanism :	SCRAM-SHA-1, authSource : admin
 
 version: '3.8'
 
