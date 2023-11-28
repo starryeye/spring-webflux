@@ -22,9 +22,6 @@ public class ChatService {
 
         chatSinkMap.put(from, sink);
 
-        sendChat(new Chat("System", from, from + "님 채팅방에 오신 것을 환영합니다."));
-        log.info("{}가 채팅방에 입장하였습니다.", from);
-
         return sink.asFlux();
     }
 

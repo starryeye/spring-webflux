@@ -26,8 +26,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         String from = (String) session.getAttributes().get("iam");
 
         Flux<Chat> chatFlux = chatService.register(from);
-
-
+        chatService.sendChat(new Chat("System", from, from + "님 채팅방에 오신 것을 환영합니다."));
+        log.info("{}가 채팅방에 입장하였습니다.", from);
+        
         session.receive()
                 .doOnNext(
                         webSocketMessage -> {
