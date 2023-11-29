@@ -40,9 +40,12 @@ Study Spring Webflux
   - WebSocketHandler 를 이용한 채팅 서버 구현
   - SimpleUrlHandlerMapping, WebSocketHandler, WebSocketService, Sinks 활용
 - practice/withR2dbc/user
-  - practice/user 에서 MySQL 을 추가함
+  - practice/user 에서 MySQL 을 추가
   - spring data r2dbc 를 사용하여 DB 와 연동
   - image 는 practice/image 사용
+- practice/withMongo/chat
+  - practice/chat 에서 MongoDB 를 추가
+  - spring data mongodb reactive 를 사용하여 연동
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
