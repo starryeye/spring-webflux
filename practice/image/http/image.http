@@ -14,7 +14,7 @@ GET http://localhost:8081/api/images/1
         client.assert(response.status === 200);
 
         client.assert(response.body.id === '1');
-        client.assert(response.body.name === 'profileImage');
+        client.assert(response.body.name === "starryeye's profileImage");
         client.assert(response.body.url === 'https://practice.dev/images/1');
 
     });
