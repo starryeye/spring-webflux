@@ -14,6 +14,11 @@ public class ImageService {
 
     public Mono<Image> getImageById(String imageId) {
         return imageReactorRepository.findById(imageId)
-                .map(imageEntity -> new Image(imageEntity.getId(), imageEntity.getName(), imageEntity.getUrl()));
+                .map(Image::of);
+    }
+
+    public Mono<Image> createImage(String id, String name, String url) {
+        return imageReactorRepository.save(id, name, url)
+                .map(Image::of);
     }
 }

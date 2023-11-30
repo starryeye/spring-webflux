@@ -78,6 +78,14 @@ public class ImageReactorRepository {
                     );
         });
     }
+    
+    public Mono<ImageEntity> save(String id, String name, String url) {
+
+        Map<String, String> map = Map.of("id", id, "name", name, "url", url);
+
+        return hashOperations.putAll(id, map)
+                .then(findById(id));
+    }
 
     public Mono<ImageEntity> findWithContext() {
 

@@ -1,5 +1,6 @@
 package dev.practice.image.handler;
 
+import dev.practice.image.handler.dto.CreateRequest;
 import dev.practice.image.handler.dto.ImageResponse;
 import dev.practice.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,21 @@ public class ImageHandler {
                         // onError 이벤트 발생은 동일, Throwable 변경, HttpStatus 값을 404 로 내린다...
                         // WebExceptionHandler 가 처리한다.
                         e -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                );
+    }
+
+    public Mono<ServerResponse> addImage(ServerRequest serverRequest) {
+
+        return serverRequest.bodyToMono(CreateRequest.class)
+                .flatMap(
+                        createRequest -> imageService.createImage(
+                                createRequest.getId(),
+                                createRequest.getName(),
+                                createRequest.getUrl()
+                        )
+                ).flatMap(
+                        image -> ServerResponse.ok()
+                                .bodyValue(new ImageResponse(image.getId(), image.getName(), image.getUrl()))
                 );
     }
 }
