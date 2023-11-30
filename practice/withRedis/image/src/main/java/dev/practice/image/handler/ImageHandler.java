@@ -51,6 +51,7 @@ public class ImageHandler {
                                 .bodyValue(new ImageResponse(image.getId(), image.getName(), image.getUrl()))
                 );
 
+        // request bodyToMono 보다 먼저 찍힘 bodyToMono 는 publisher 를 반환하고 non-blocking 임을 알 수 있다.
         log.info("Handler, addImage end, tx={}", Thread.currentThread().getName());
 
         return result;

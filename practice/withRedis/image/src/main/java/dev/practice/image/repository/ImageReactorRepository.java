@@ -46,6 +46,7 @@ public class ImageReactorRepository {
 
         // Mono 에서 sequence 를 만드는 create(Consumer<MonoSink<T>> callback) 사용, 비동기로 Mono 를 생성한다.
         // create 는 Thread.sleep 을 수행하지 않고 non-blocking 으로 넘어가기 위함이다. (findById 메서드 호출 스레드입장)
+        // -> Mono.create 작업 스레드를 호출 스레드와 분리하지 않으면 결국 의미 없다. (현 동작상 의미 없는 코드이다.)
         return Mono.create(sink -> {
             log.info("ImageRepository.findById: {}, tx: {}", id, Thread.currentThread().getName());
 
@@ -60,6 +61,8 @@ public class ImageReactorRepository {
                             strings -> log.info("multiGet, strings={}, tx={}", strings, Thread.currentThread().getName())
                     )
                     .subscribe( // todo, subscribe 를 쓰지말고 doOnNext 을 쓰면? 스레드 관점에서 생각해보기
+                            // subscribe 를 사용한 순간 blocking 이 되어 버렸다. Mono.create 의 작업 스레드가 multiGet 을 하고 subscribe 까지 수행함.
+                            // IO 호출 이후 작업은 콜백(프레임 워크나 라이브러리에게 위임해야함)으로 수행해야 reactive programming 의 의미가 있으므로 지양해야함.
                             strings -> {
 
                                 if(strings.stream().allMatch(Objects::isNull)) {
