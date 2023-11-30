@@ -4,6 +4,7 @@ import dev.practice.image.handler.dto.CreateRequest;
 import dev.practice.image.handler.dto.ImageResponse;
 import dev.practice.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -11,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ImageHandler {
@@ -32,7 +34,12 @@ public class ImageHandler {
 
     public Mono<ServerResponse> addImage(ServerRequest serverRequest) {
 
-        return serverRequest.bodyToMono(CreateRequest.class)
+        log.info("Handler, addImage start, tx={}", Thread.currentThread().getName());
+
+        Mono<ServerResponse> result = serverRequest.bodyToMono(CreateRequest.class)
+                .doOnNext(
+                        createRequest -> log.info("request bodyToMono, tx={}", Thread.currentThread().getName())
+                )
                 .flatMap(
                         createRequest -> imageService.createImage(
                                 createRequest.getId(),
@@ -43,5 +50,9 @@ public class ImageHandler {
                         image -> ServerResponse.ok()
                                 .bodyValue(new ImageResponse(image.getId(), image.getName(), image.getUrl()))
                 );
+
+        log.info("Handler, addImage end, tx={}", Thread.currentThread().getName());
+
+        return result;
     }
 }

@@ -57,7 +57,7 @@ public class ImageReactorRepository {
 
             hashOperations.multiGet(id, List.of("id", "name", "url"))
                     .doOnNext(
-                            strings -> log.info("strings={}", strings)
+                            strings -> log.info("multiGet, strings={}, tx={}", strings, Thread.currentThread().getName())
                     )
                     .subscribe( // todo, subscribe 를 쓰지말고 doOnNext 을 쓰면? 스레드 관점에서 생각해보기
                             strings -> {
@@ -81,9 +81,12 @@ public class ImageReactorRepository {
     
     public Mono<ImageEntity> save(String id, String name, String url) {
 
+        log.info("save, tx={}", Thread.currentThread().getName());
+
         Map<String, String> map = Map.of("id", id, "name", name, "url", url);
 
         return hashOperations.putAll(id, map)
+                .doOnNext(sf -> log.info("putAll, tx={}", Thread.currentThread().getName()))
                 .then(findById(id));
     }
 
