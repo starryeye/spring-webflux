@@ -1,1 +1,12 @@
-
+# The settings below are the default settings and will work even without them.
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      password:

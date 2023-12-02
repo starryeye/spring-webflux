@@ -1,6 +1,6 @@
 server:
   port: 8081
-# ?? ??? ?? ??? ??? ???
+# The settings below are the default settings and will work even without them.
 spring:
   data:
     redis:
