@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 public class blockXXX {
 
     /**
+     * [11]
      * blockXXX 연산자에 대해 알아본다.
      *
      * public T block()

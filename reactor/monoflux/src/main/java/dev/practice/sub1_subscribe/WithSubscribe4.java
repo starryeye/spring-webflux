@@ -29,6 +29,8 @@ public class WithSubscribe4 {
      * - subscriber 에서 subscription 의 기능을 사용할 수 있다.
      * - 더 다양한 사용법과 기능은 PDF 자료 참조
      *
+     * CoreSubscriber, BaseSubscriber 모두 Reactor (reactorproject) 에 포함된다.
+     *
      */
 
     @SneakyThrows
