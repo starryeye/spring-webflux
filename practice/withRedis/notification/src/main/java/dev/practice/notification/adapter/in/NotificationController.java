@@ -1,4 +1,4 @@
-package dev.practice.notification.controller;
+package dev.practice.notification.adapter.in;
 
 import dev.practice.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class NotificationController {
 
         String notificationMessage = event.getType() + ": " + event.getMessage();
 
-        notificationService.addMessageToSink(notificationMessage);
+        notificationService.addMessage(notificationMessage);
 
         return Mono.just("ok");
     }

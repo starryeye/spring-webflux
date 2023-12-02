@@ -1,4 +1,4 @@
-package dev.practice.notification.controller;
+package dev.practice.notification.adapter.in;
 
 import lombok.Getter;
 import lombok.Setter;
