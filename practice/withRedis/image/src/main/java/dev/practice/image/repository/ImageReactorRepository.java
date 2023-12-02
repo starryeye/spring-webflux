@@ -23,7 +23,7 @@ public class ImageReactorRepository {
     /**
      * spring-data-redis-reactive 에서는 repository interface 를 제공하지 않는다.
      * 따라서, ReactiveRedisTemplate 이 사용자가 사용할 수 있는 가장 고수준의 객체이다.
-     * 하지만, 여기서는 ReactiveRedisTemplate 을 직접 사용하지 않고 ReactiveHashOperations 을 사용할 것임.
+     * 여기서는 ReactiveRedisTemplate 이 제공하는 ReactiveHashOperations 을 사용한다.
      *
      * 참고
      * spring-data-redis 에서는 hash 기반의 repository interface 를 제공한다.
