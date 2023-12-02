@@ -2,6 +2,7 @@ package dev.practice.notification.adapter.out;
 
 import dev.practice.notification.port.out.NotificationStream;
 import dev.practice.notification.service.NotificationService;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -23,11 +24,13 @@ public class NotificationRedisStream implements NotificationStream {
     private static final String HASH_KEY = "message";
 
     private final ReactiveStreamOperations<String, Object, Object> reactiveStreamOperations;
+    private final StreamReceiver<String, MapRecord<String, String, String>> streamReceiver;
 
     public NotificationRedisStream(
             ReactiveStringRedisTemplate reactiveStringRedisTemplate,
             ReactiveRedisConnectionFactory reactiveRedisConnectionFactory
     ) {
+
         // ReactiveStreamOperations init
         this.reactiveStreamOperations = reactiveStringRedisTemplate.opsForStream();
 
@@ -35,7 +38,17 @@ public class NotificationRedisStream implements NotificationStream {
         StreamReceiver.StreamReceiverOptions<String, MapRecord<String, String, String>> options = StreamReceiver.StreamReceiverOptions.builder()
                 .pollTimeout(Duration.ofMillis(100L)) // redis 에 접근하여, 얼마나 자주 데이터를 가져올것인가. (default 2s) 즉, busy-wait, pull model
                 .build();
-        StreamReceiver<String, MapRecord<String, String, String>> streamReceiver = StreamReceiver.create(reactiveRedisConnectionFactory, options);
+        this.streamReceiver = StreamReceiver.create(reactiveRedisConnectionFactory, options);
+    }
+
+    // 다른 클래스로 분리해도 좋을 듯..?
+    // pushMessage 메서드 관점에서는 out 이 확실한데.. (그래서 의존성 역전으로 interface 상속)
+    // runStreamReceiver 입장에서 보면 애매하다.
+    // -> lettuce 입장에서는 redis 를 호출 (out) 이 맞으나
+    // -> 현재 out 패키지인데 service 를 직접 의존하면서 in 느낌으로 동작함 (callback 이긴하지만)... NotificationService.doReceiver()
+    // -> hexagonal architecture 의 의존성 원칙을 위배한 것은 아니다.
+    @PostConstruct
+    public void runStreamReceiver() {
 
         // StreamReceiver 작업 개발
         // Redis Stream 을 활용하여 redis 에 이벤트를 저장하고 receive 하여 Sinks 에 이벤트를 흘려보내줌 (receive 하여 Sinks 에 이벤트 흘려보내는 부분)
