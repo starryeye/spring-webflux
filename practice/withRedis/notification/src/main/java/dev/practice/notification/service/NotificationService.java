@@ -43,6 +43,7 @@ public class NotificationService {
         this.streamReceiver = StreamReceiver.create(reactiveRedisConnectionFactory, options);
 
         // StreamReceiver 작업 개발
+        // Redis Stream 을 활용하여 redis 에 이벤트를 저장하고 receive 하여 Sinks 에 이벤트를 흘려보내줌 (receive 하여 Sinks 에 이벤트 흘려보내는 부분)
         streamReceiver.receive(StreamOffset.create(STREAM_NAME, ReadOffset.latest()))
                 .subscribe( // todo, main 에서 subscribe 를 했는데 lettuce-nioEventLoop 에 의해서 실행된다. 내부적으로 subscribeOn 이 걸려있는 것 같다...
                         mapRecord -> {
@@ -63,6 +64,7 @@ public class NotificationService {
 
         log.info("addNotification, message: {}, tx: {}", notificationMessage, Thread.currentThread().getName());
 
+        // Redis Stream 을 활용하여 redis 에 이벤트를 저장하고 receive 하여 Sinks 에 이벤트를 흘려보내줌 (redis 에 이벤트 저장하는 부분 자료 구조는 Redis Stream 사용)
         reactiveStreamOperations.add(STREAM_NAME, Map.of(HASH_KEY, notificationMessage))
                         .subscribe();
     }
