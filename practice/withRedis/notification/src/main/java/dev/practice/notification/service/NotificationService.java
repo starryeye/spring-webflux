@@ -21,7 +21,6 @@ import java.util.Map;
 public class NotificationService {
 
     private final ReactiveStreamOperations<String, String, String> reactiveStreamOperations;
-    private final StreamReceiver<String, MapRecord<String, String, String>> streamReceiver;
 
     private static final String STREAM_NAME = "notification:1";
     private static final String HASH_KEY = "message";
@@ -40,7 +39,7 @@ public class NotificationService {
         StreamReceiver.StreamReceiverOptions<String, MapRecord<String, String, String>> options = StreamReceiver.StreamReceiverOptions.builder()
                 .pollTimeout(Duration.ofMillis(100L)) // redis 에 접근하여, 얼마나 자주 데이터를 가져올것인가. (default 2s) 즉, busy-wait, pull model
                 .build();
-        this.streamReceiver = StreamReceiver.create(reactiveRedisConnectionFactory, options);
+        StreamReceiver<String, MapRecord<String, String, String>> streamReceiver = StreamReceiver.create(reactiveRedisConnectionFactory, options);
 
         // StreamReceiver 작업 개발
         // Redis Stream 을 활용하여 redis 에 이벤트를 저장하고 receive 하여 Sinks 에 이벤트를 흘려보내줌 (receive 하여 Sinks 에 이벤트 흘려보내는 부분)
