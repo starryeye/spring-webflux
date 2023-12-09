@@ -30,8 +30,8 @@ public class UserInsertRunner implements CommandLineRunner {
 
         UserEntity user = UserEntity.create("starryeye", 20, "1", "1q2w3e4r!");
 
-        // user 와 saved 는 동일한 객체이다.
-        UserEntity saved = userR2dbcRepository.save(user).block(); // todo, block mean..
+        // todo, user 와 saved 는 동일한 객체이다. why?
+        UserEntity saved = userR2dbcRepository.save(user).block();
 
 
         log.info("savedUser={}", saved);
