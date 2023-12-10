@@ -28,6 +28,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
+    /**
+     * Unit Test (Domain test, 비즈니스 테스트에 적합)
+     */
+
     @Mock
     R2dbcEntityTemplate mockR2dbcEntityTemplate; // prefix 로 mock 을 붙여 Mock 객체임을 강조한다.
 
