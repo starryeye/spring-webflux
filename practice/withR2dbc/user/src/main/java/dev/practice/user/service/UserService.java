@@ -1,5 +1,6 @@
 package dev.practice.user.service;
 
+import dev.practice.user.client.ImageHttpClient;
 import dev.practice.user.common.domain.EmptyImage;
 import dev.practice.user.common.domain.Image;
 import dev.practice.user.common.domain.User;
@@ -8,10 +9,8 @@ import dev.practice.user.repository.UserR2dbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,9 +20,7 @@ public class UserService {
     private final AuthService authService;
 
     private final UserR2dbcRepository userR2dbcRepository;
-
-    // image server 로 image 정보 요청
-    private final WebClient webClient;
+    private final ImageHttpClient imageHttpClient;
 
 
     public Mono<User> findById(Long userId) {
@@ -33,26 +30,19 @@ public class UserService {
                         userEntity -> {
 
                             String imageId = userEntity.getProfileImageId();
-                            Map<String, String> urlVariableMap = Map.of("imageId", imageId);
 
-                            return webClient.get()
-                                    .uri("/api/images/{imageId}", urlVariableMap)
-                                    .retrieve() // 요청을 서버에 전달, ResponseSpec 을 반환
-                                    .toEntity(ImageResponse.class) // Mono<ResponseEntity<ImageResponse>>
+
+                            return imageHttpClient.getImageResponseByImageId(imageId)
                                     .map(
-                                            responseEntity -> responseEntity.getBody()
-                                    )
-                                    .map(
-                                            body -> new Image(
-                                                    body.getId(),
-                                                    body.getName(),
-                                                    body.getUrl()
+                                            imageResponse -> new Image(
+                                                    imageResponse.getId(),
+                                                    imageResponse.getName(),
+                                                    imageResponse.getUrl()
                                             )
                                     )
                                     .switchIfEmpty( // 응답 image 가 없다면
                                             Mono.just(new EmptyImage())
-                                    )
-                                    .map(
+                                    ).map(
                                             image -> {
 
                                                 Optional<Image> profileImage = Optional.empty();
