@@ -5,6 +5,7 @@ import dev.practice.user.common.domain.Image;
 import dev.practice.user.common.domain.User;
 import dev.practice.user.common.repository.UserEntity;
 import dev.practice.user.repository.UserR2dbcRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
@@ -23,11 +25,6 @@ public class UserService {
     // image server 로 image 정보 요청
     private final WebClient webClient;
 
-    public UserService(AuthService authService, UserR2dbcRepository userReactorRepository) {
-        this.authService = authService;
-        this.userR2dbcRepository = userReactorRepository;
-        this.webClient = WebClient.create("http://localhost:8081");
-    }
 
     public Mono<User> findById(Long userId) {
 
