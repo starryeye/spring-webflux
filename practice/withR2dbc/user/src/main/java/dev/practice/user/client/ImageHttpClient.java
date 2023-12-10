@@ -1,6 +1,5 @@
 package dev.practice.user.client;
 
-import dev.practice.user.service.ImageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
