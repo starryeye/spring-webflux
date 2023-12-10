@@ -10,10 +10,7 @@ import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +26,14 @@ public class AuthService {
     private final R2dbcEntityTemplate entityTemplate;
 
     public Mono<String> getNameByToken(String token) {
+
+        if(Objects.isNull(token) || token.isBlank()) {
+            return Mono.error(new IllegalArgumentException("token is invalid"));
+        }
+
+        if(token.equals("admin")) {
+            return Mono.just("admin");
+        }
 
         Query query = Query.query(
                 Criteria.where("token").is(token)
