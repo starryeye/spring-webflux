@@ -42,6 +42,7 @@ Study Spring Webflux
 - practice/withR2dbc/user
   - practice/user 에서 MySQL 을 추가
   - spring data r2dbc 를 사용하여 DB 와 연동
+  - reactor-test 를 사용한 비동기 non-blocking 코드 Test
   - image 는 practice/image 사용
 - practice/withMongo/chat
   - practice/chat 에서 MongoDB 를 추가
