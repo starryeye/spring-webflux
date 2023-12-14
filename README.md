@@ -48,7 +48,9 @@ Study Spring Webflux
   - practice/chat 에서 MongoDB 를 추가
   - spring data mongodb reactive 를 사용하여 연동
 - practice/withRedis/image
+  - practice/image 에서 Redis 를 추가
 - practice/withRedis/notice
+  - practice/notice 에서 Redis 를 추가
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
