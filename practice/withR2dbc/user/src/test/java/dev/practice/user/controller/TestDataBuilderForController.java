@@ -6,7 +6,7 @@ import dev.practice.user.common.domain.User;
 import java.util.Collections;
 import java.util.Optional;
 
-public class TestDataBuilder {
+public class TestDataBuilderForController {
 
     public static User createUser(Long id) {
         var profileImage = new Image(

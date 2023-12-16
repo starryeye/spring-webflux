@@ -146,7 +146,7 @@ class UserControllerTest {
             // given
             Long userId = 1L;
             String token = "token";
-            User user = TestDataBuilder.createUser(userId);
+            User user = TestDataBuilderForController.createUser(userId);
 
             // stubbing
             when(mockAuthService.getNameByToken(token))
@@ -199,7 +199,7 @@ class UserControllerTest {
             );
 
             Long userId = 1L;
-            User createdUser = TestDataBuilder.createUser(
+            User createdUser = TestDataBuilderForController.createUser(
                     userId,
                     name,
                     age,
