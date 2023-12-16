@@ -24,4 +24,27 @@ public class TestDataBuilder {
                 100L
         );
     }
+
+    public static User createUser(
+            Long id,
+            String name,
+            Integer age,
+            String password,
+            String profileImageId
+    ) {
+        var profileImage = new Image(
+                profileImageId,
+                "tester's profile",
+                "https://practice.dev/images/1"
+        );
+
+        return new User(
+                id,
+                name,
+                age,
+                Optional.of(profileImage),
+                Collections.emptyList(),
+                100L
+        );
+    }
 }

@@ -53,6 +53,10 @@ public class UserController {
         log.info("request={}", request);
 
         return userService.createUser(request.getName(), request.getAge(), request.getPassword(), request.getProfileImageId())
-                .map(UserResponse::of);
+                .map(UserResponse::of)
+                .onErrorMap( // todo, global exception handler... (controller advice..) 로 전환 해보기..
+                        RuntimeException.class, e -> new ResponseStatusException(HttpStatus.BAD_REQUEST)
+                )
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
     }
 }

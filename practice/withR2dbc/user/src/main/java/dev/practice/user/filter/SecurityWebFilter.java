@@ -37,17 +37,16 @@ public class SecurityWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        final ServerHttpResponse response = exchange.getResponse();
-
-        String iam = exchange.getRequest()
-                .getHeaders()
-                .getFirst("X-I-AM");//multiValue 이므로 first 로 접근
-
         //임시로.. 회원 가입은 pass 시킨다. -> todo spring security PreAuthorize 로 고도화 가능
         if(exchange.getRequest().getURI().getPath().equals("/api/users/signup")) {
             return chain.filter(exchange);
         }
 
+        final ServerHttpResponse response = exchange.getResponse();
+
+        String iam = exchange.getRequest()
+                .getHeaders()
+                .getFirst("X-I-AM");//multiValue 이므로 first 로 접근
 
         if (iam == null) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED); // 401

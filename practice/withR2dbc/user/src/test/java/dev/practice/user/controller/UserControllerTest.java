@@ -3,10 +3,7 @@ package dev.practice.user.controller;
 import dev.practice.user.common.domain.User;
 import dev.practice.user.service.AuthService;
 import dev.practice.user.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,8 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -182,6 +178,135 @@ class UserControllerTest {
         }
     }
 
+    @Nested // UserService::signupUser 메서드 테스트 전용
+    class SignupUser {
+
+        @DisplayName("SignupUserRequest 로 요청하면 UserResponse 가 응답으로 전달된다.")
+        @Test
+        void when_signup_request_is_given_then_returns_saved_user() {
+            // controller test 이므로 UserService 는 Mock 객체로 진행되고 실제 저장되는지는 확인하지 않는다.
+
+            // given
+            String name = "tester";
+            Integer age = 20;
+            String profileImageId = "1";
+            String password = "123123";
+            SignupUserReq request = new SignupUserReq(
+                    name,
+                    age,
+                    password,
+                    profileImageId
+            );
+
+            Long userId = 1L;
+            User createdUser = TestDataBuilder.createUser(
+                    userId,
+                    name,
+                    age,
+                    password,
+                    profileImageId
+            );
+
+            // stubbing
+            when(mockUserService.createUser(
+                    anyString(),
+                    anyInt(),
+                    anyString(),
+                    anyString()
+            )).thenReturn(Mono.just(createdUser));
+
+            // when
+            // then
+            webTestClient.post()
+                    .uri("/api/users/signup")
+                    .bodyValue(request)
+                    .exchange()
+                    .expectStatus()
+                    .isCreated()
+                    .expectBody(UserRes.class)
+                    .value(
+                            resultBody -> {
+                                assertEquals(createdUser.getId(), resultBody.id);
+                                assertEquals(createdUser.getAge(), resultBody.age);
+                                assertEquals(createdUser.getFollowCount(), resultBody.followCount);
+
+                                assertEquals(createdUser.getProfileImage().orElseThrow().getId(), resultBody.imageResponse.orElseThrow().id);
+                                assertEquals(createdUser.getProfileImage().orElseThrow().getName(), resultBody.imageResponse.orElseThrow().name);
+                            }
+                    );
+        }
+
+        @DisplayName("userService 에서 Mono.empty 를 반환하면 400 에러를 응답으로 내린다.")
+        @Test
+        void when_create_user_returns_empty_mono_then_returns_status_400() {
+
+            // given
+            String name = "tester";
+            Integer age = 20;
+            String profileImageId = "1";
+            String password = "123123";
+            SignupUserReq request = new SignupUserReq(
+                    name,
+                    age,
+                    password,
+                    profileImageId
+            );
+
+            // stubbing
+            when(mockUserService.createUser(
+                    anyString(),
+                    anyInt(),
+                    anyString(),
+                    anyString()
+            )).thenReturn(Mono.empty());
+
+            // when
+            // then
+            webTestClient.post()
+                    .uri("/api/users/signup")
+                    .bodyValue(request)
+                    .exchange()
+                    .expectStatus()
+                    .is4xxClientError();
+        }
+
+        @DisplayName("userService 에서 exception 이 발생하면 400 에러를 응답으로 내린다.")
+        @Test
+        void when_create_user_returns_error_then_returns_status_400() {
+
+            // given
+            String name = "tester";
+            Integer age = 20;
+            String profileImageId = "1";
+            String password = "123123";
+            SignupUserReq request = new SignupUserReq(
+                    name,
+                    age,
+                    password,
+                    profileImageId
+            );
+
+            IllegalStateException error = new IllegalStateException("user service error throw..");
+
+            // stubbing
+            when(mockUserService.createUser(
+                    anyString(),
+                    anyInt(),
+                    anyString(),
+                    anyString()
+            )).thenReturn(Mono.error(error));
+
+            // when
+            // then
+            webTestClient.post()
+                    .uri("/api/users/signup")
+                    .bodyValue(request)
+                    .exchange()
+                    .expectStatus()
+                    .is4xxClientError();
+        }
+    }
+
     /**
      * 아래 private static class 는 실제 UserResponse, ProfileImageResponse 클래스에 대응 되는 Test 용 클래스이다.
      * 실제 클래스를 써도 되긴한다.
@@ -209,5 +334,16 @@ class UserControllerTest {
         private String id;
         private String name;
         private String url;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    private static class SignupUserReq {
+        private String name;
+        private Integer age;
+        private String password;
+        private String profileImageId;
     }
 }
