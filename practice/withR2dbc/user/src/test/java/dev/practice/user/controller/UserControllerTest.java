@@ -1,15 +1,23 @@
 package dev.practice.user.controller;
 
+import dev.practice.user.common.domain.User;
 import dev.practice.user.service.AuthService;
 import dev.practice.user.service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,7 +105,7 @@ class UserControllerTest {
             String token = "token";
 
             // stubbing
-            when(mockAuthService.getNameByToken(eq(token)))
+            when(mockAuthService.getNameByToken(token))
                     .thenReturn(Mono.just("2"));
 
             // when
@@ -119,9 +127,9 @@ class UserControllerTest {
             String token = "token";
 
             // stubbing
-            when(mockAuthService.getNameByToken(eq(token)))
+            when(mockAuthService.getNameByToken(token))
                     .thenReturn(Mono.just(String.valueOf(userId)));
-            when(mockUserService.findById(eq(userId)))
+            when(mockUserService.findById(userId))
                     .thenReturn(Mono.empty());
 
             // when
@@ -137,13 +145,69 @@ class UserControllerTest {
         @DisplayName("모든 조건이 부합하면, UserResponse 가 반환된다.")
         @Test
         void when_all_conditions_are_perfect_then_returns_user_resp() {
+            // stubbing 된 user 를 이용해서 UserResponse 가 생성되어 리턴되는지 확인한다.
 
             // given
-
+            Long userId = 1L;
+            String token = "token";
+            User user = TestDataBuilder.createUser(userId);
 
             // stubbing
+            when(mockAuthService.getNameByToken(token))
+                    .thenReturn(Mono.just(String.valueOf(userId))); // token 을 주면 userId 를 리턴 stubbing
+            when(mockUserService.findById(userId))
+                    .thenReturn(Mono.just(user)); // userId 를 주면 user 를 리턴 stubbing
+
             // when
             // then
+            webTestClient.get()
+                    .uri("/api/users/{userId}", userId)
+                    .header("X-I-AM", token)
+                    .exchange()
+                    .expectStatus()
+                    .isOk()
+                    .expectHeader()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(UserRes.class)
+                    .value(
+                            resultBody -> {
+                                assertEquals(user.getId(), resultBody.id);
+                                assertEquals(user.getAge(), resultBody.age);
+                                assertEquals(user.getFollowCount(), resultBody.followCount);
+
+                                assertEquals(user.getProfileImage().orElseThrow().getId(), resultBody.imageResponse.orElseThrow().id);
+                                assertEquals(user.getProfileImage().orElseThrow().getName(), resultBody.imageResponse.orElseThrow().name);
+                            }
+                    );
         }
+    }
+
+    /**
+     * 아래 private static class 는 실제 UserResponse, ProfileImageResponse 클래스에 대응 되는 Test 용 클래스이다.
+     * 실제 클래스를 써도 되긴한다.
+     *
+     * 실제 객체들이 변경 되었을 때 테스트에서 fail 이 정확하게 일어나도록 인지를 하기 위한 목적으로
+     * 중복이지만, 따로 선언해서 사용해보도록 하겠다.
+     */
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    private static class UserRes {
+        private Long id;
+        private String name;
+        private Integer age;
+        private Long followCount;
+        private Optional<ProfileImageRes> imageResponse;
+    }
+
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    private static class ProfileImageRes {
+        private String id;
+        private String name;
+        private String url;
     }
 }
