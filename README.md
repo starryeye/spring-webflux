@@ -43,14 +43,17 @@ Study Spring Webflux
   - practice/user 에서 MySQL 을 추가
   - spring data r2dbc 를 사용하여 DB 와 연동
   - reactor-test 를 사용한 비동기 non-blocking 코드 Test
+    - Unit test : UserService, AuthService
+    - Slice test : UserController, UserR2dbcRepository
 - practice/withMongo/chat
   - practice/chat 에서 MongoDB 를 추가
   - spring data mongodb reactive 를 사용하여 연동
+  - todo, Test code (mongodb embedded 제공)
 - practice/withRedis/image
   - practice/image 에서 Redis 를 추가
   - spring data redis reactive 를 사용하여 연동
 - practice/withRedis/notice
-  - practice/notice 에서 Redis 를 추가\
+  - practice/notice 에서 Redis 를 추가
   - spring data redis reactive 를 사용하여 연동
 
 ## Posting
