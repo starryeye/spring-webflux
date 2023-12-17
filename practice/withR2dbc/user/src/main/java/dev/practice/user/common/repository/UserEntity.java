@@ -11,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.time.LocalDateTime;
 
 //@AllArgsConstructor
-@Table("USER")
+@Table("USERS")
 @Data
 public class UserEntity {
 
