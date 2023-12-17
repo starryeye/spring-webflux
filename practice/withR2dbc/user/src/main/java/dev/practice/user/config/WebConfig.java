@@ -1,5 +1,6 @@
 package dev.practice.user.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -8,7 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebConfig {
 
     @Bean
-    public WebClient imageWebClient() {
-        return WebClient.create("http://localhost:8081");
+    public WebClient imageWebClient(
+            @Value("${image.server.url:http://localhost:8081}") String imageServerUrl
+    ) {
+        return WebClient.create(imageServerUrl);
     }
 }

@@ -46,6 +46,9 @@ dependencies {
 	testImplementation 'com.mysql:mysql-connector-j:8.2.0' // 왜인지 모르겠지만, jdbc driver 가 필요하다.
 	testImplementation 'org.testcontainers:r2dbc'
 
+	// mockWebServer
+	testImplementation 'com.squareup.okhttp3:mockwebserver'
+
 
 //	runtimeOnly("io.netty:netty-resolver-dns-native-macos:_:osx-aarch_64")
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
