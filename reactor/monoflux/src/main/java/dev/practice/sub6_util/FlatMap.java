@@ -19,6 +19,8 @@ public class FlatMap {
      * - 중첩 for loop 비슷한 결과가 나타난다.
      * - onErrorResume 과 구조가 비슷하다. (Throwable 을 받아 publisher 반환)
      *
+     * 더 알아보기..
+     * - thenMany, transform 연산자..
      *
      * 특이점
      * - TODO, 가끔! publishOn 에 의해 doOnNext 는 전부 parallel 로 동작하는데.. 마지막 (5,1), (5,2) 는 main 으로 동작한다.... 이유는?

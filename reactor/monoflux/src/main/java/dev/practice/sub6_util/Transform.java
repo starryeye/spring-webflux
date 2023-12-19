@@ -30,6 +30,13 @@ public class Transform {
      * - thenMany 와 마찬가지로 Function 함수형인터페이스 구현에 따라 transform 연산자를 사용하면
      * flatMap 과 동일하게 동작하도록 만들 수 있다.
      *
+     *
+     * 주의사항
+     * - transform 연산자는 publisher 의 이벤트와는 전혀 상관이 없다.
+     * publisher 를 이벤트와 상관없이 통째로 바꿀 수 있는 개념
+     * - thenMany 에서는 source publisher 에서 complete 이벤트에 의해 수행되고.. (error 발생 시 thenMany 를 수행하지 않고 그대로 흘려보냄)
+     * - flatMap 에서는 source publisher 에서 next 이벤트에 의해 수행되고.. (error 발생 시 thenMany 를 수행하지 않고 그대로 흘려보냄)
+     *
      */
 
     public static void main(String[] args) {
