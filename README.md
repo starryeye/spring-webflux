@@ -45,6 +45,7 @@ Study Spring Webflux
   - reactor-test 를 사용한 비동기 non-blocking 코드 Test
     - Unit test : UserService, AuthService
     - Slice test : UserController, UserR2dbcRepository
+    - Integration test : User
 - practice/withMongo/chat
   - practice/chat 에서 MongoDB 를 추가
   - spring data mongodb reactive 를 사용하여 연동
