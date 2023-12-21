@@ -33,7 +33,7 @@ Study Spring Webflux
   - Spring security reactive
 - practice/notification
   - Http streaming 기법을 구현
-  - ServerSentEvent, Sinks 활용
+  - ServerSentEvent, Sinks 활용 (sse)
 - websocket
   - WebSocket 통신 프로토콜을 사용하는 간단한 서버 구현
   - SimpleUrlHandlerMapping, WebSocketHandler 활용
