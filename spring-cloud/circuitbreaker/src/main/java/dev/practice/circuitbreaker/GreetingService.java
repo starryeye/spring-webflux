@@ -11,31 +11,23 @@ import java.time.Duration;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GreetingService {
 
-    private final ReactiveCircuitBreakerFactory circuitBreakerFactory; // todo, AOP 로 빼면 좋을 듯..
+    /**
+     * todo, AOP 로 빼면 좋을 듯..
+     *  -> @CircuitBreaker 어노테이션 알아보기
+     */
+    private final ReactiveCircuitBreakerFactory circuitBreakerFactory;
 
     private final String MESSAGE = "hello, %s!";
     private final String FALLBACK_MESSAGE = "hello, world!";
 
-    private Long delayInMillis;
-
-
-    public GreetingService(ReactiveCircuitBreakerFactory circuitBreakerFactory) {
-        this.circuitBreakerFactory = circuitBreakerFactory;
-        this.delayInMillis = 0L;
-    }
-
-    // test 를 위해서 delayInMillis 를 set 할 수 있도록하였다. fluent 하게 코드를 작성하도록 chaining 지원
-    public GreetingService setDelayInMillis(Long delayInMillis) {
-        this.delayInMillis = delayInMillis;
-        return this;
-    }
 
     // 요청 수행 메서드, test 를 위해서 circuitBreakerId 를 받도록 구현하였다.
-    public Mono<String> greeting(String to, String circuitBreakerId) {
+    public Mono<String> greeting(String to, Long delayInMillis, String circuitBreakerId) {
 
-        return doGreeting(to) // 실제 요청 수행 publisher
+        return doGreeting(to, delayInMillis) // 실제 요청 수행 publisher
                 .transform(
                         publisher -> {
                             // 서킷 브레이커 생성
@@ -51,10 +43,10 @@ public class GreetingService {
                 );
     }
 
-    private Mono<String> doGreeting(String to) {
+    private Mono<String> doGreeting(String to, Long delayInMillis) {
 
         // 실제 요청 수행 publisher 를 반환한다.
-        return Mono.delay(Duration.ofMillis(this.delayInMillis))
+        return Mono.delay(Duration.ofMillis(delayInMillis))
                 .then(
                         Mono.just(MESSAGE.formatted(to))
                 );
