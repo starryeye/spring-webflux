@@ -2,6 +2,7 @@ package dev.practice.circuitbreaker;
 
 import dev.practice.circuitbreaker.config.AutoConfigureReactiveCircuitBreaker;
 import dev.practice.circuitbreaker.config.TestCircuitBreakerConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +14,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+@Slf4j
 @Import(TestCircuitBreakerConfig.class) // test 를 위한 bean 들을 등록한다. (여러 서킷 브레이커 등록)
 @AutoConfigureReactiveCircuitBreaker // 서킷 브레이커 테스트를 위한 어노테이션을 개발 (auto configuration)
 @ExtendWith(SpringExtension.class) // 비어있는 Spring container 로 시작
@@ -59,8 +64,21 @@ class GreetingServiceTest {
     void greeting_delay_5000_and_wait_1000() {
 
         // given
+        Long delayMillis = 5000L;
+        String circuitBreakerId = "default";
+
         // when
         // then
+        StepVerifier.withVirtualTime(
+
+                        // publisher 에 5초 딜레이를 걸어서 요청 후 응답이 5초 이후에 온 것 처럼 실행되도록 한다.
+                        () -> greetingService.greeting("starryeye", delayMillis, circuitBreakerId)
+                )
+                .thenAwait(Duration.ofSeconds(1)) // virtual time 을 사용하여 1초 빨리감기를 수행하였다.
+                .expectNext(FALLBACK_MESSAGE) // 서킷 브레이커는 기본 설정으로 1초 타임 아웃 정책을 가지므로, fallback 메시지가 응답된다.
+                .verifyComplete();
+
+        verify(greeter, never()).generate("starryeye"); // 5초 후 greeter::generate 메서드를 실행하기 때문에 실행 한 적이 없어야 정상이다.
     }
 
 }
