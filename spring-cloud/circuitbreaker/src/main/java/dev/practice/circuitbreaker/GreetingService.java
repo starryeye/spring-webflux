@@ -19,8 +19,8 @@ public class GreetingService {
      *  -> @CircuitBreaker 어노테이션 알아보기
      */
     private final ReactiveCircuitBreakerFactory circuitBreakerFactory;
+    private final Greeter greeter;
 
-    private final String MESSAGE = "hello, %s!";
     private final String FALLBACK_MESSAGE = "hello, world!";
 
 
@@ -46,9 +46,9 @@ public class GreetingService {
     private Mono<String> doGreeting(String to, Long delayInMillis) {
 
         // 실제 요청 수행 publisher 를 반환한다.
-        return Mono.delay(Duration.ofMillis(delayInMillis))
+        return Mono.delay(Duration.ofMillis(delayInMillis)) // delayInMillis 만큼 지연되고 greeter.generate 가 수행된다.
                 .then(
-                        Mono.just(MESSAGE.formatted(to))
+                        Mono.just(greeter.generate(to))
                 );
     }
 }
