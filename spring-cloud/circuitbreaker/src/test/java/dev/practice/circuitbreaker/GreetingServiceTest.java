@@ -35,7 +35,7 @@ class GreetingServiceTest {
 
     @DisplayName("모든 설정값이 기본 값이며, id 가 default 인 서킷 브레이커를 만들고 publisher(요청) 를 수행하면 성공한다.")
     @Test
-    void greetingNoDelay() {
+    void greeting_no_delay() {
 
         // given
         Long delayMillis = 0L;
@@ -47,11 +47,20 @@ class GreetingServiceTest {
 
         // then
         StepVerifier.create(result)
-                .expectNext(SUCCESS_MESSAGE) // 기대한 응답을 검증
+                .expectNext(SUCCESS_MESSAGE) // 기대한 응답을 검드
                 .verifyComplete();
 
         verify(greeter).generate("starryeye"); // 요청이 수행되었다는 것을 검증
 
+    }
+
+    @DisplayName("서킷 브레이커는 기본 설정 값으로 요청 시 1초 타임아웃 정책을 가지고 있다.")
+    @Test
+    void greeting_delay_5000_and_wait_1000() {
+
+        // given
+        // when
+        // then
     }
 
 }
