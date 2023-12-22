@@ -1,7 +1,9 @@
 package dev.practice.circuitbreaker;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class Greeter {
 
@@ -12,6 +14,9 @@ public class Greeter {
     private final String MESSAGE = "hello, %s!";
 
     public String generate(String to) {
+
+        log.info("generate invoke !!");
+
         return MESSAGE.formatted(to);
     }
 }

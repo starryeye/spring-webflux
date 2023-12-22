@@ -48,7 +48,9 @@ public class GreetingService {
         // 실제 요청 수행 publisher 를 반환한다.
         return Mono.delay(Duration.ofMillis(delayInMillis)) // delayInMillis 만큼 지연되고 greeter.generate 가 수행된다.
                 .then(
-                        Mono.just(greeter.generate(to))
+                        Mono.fromCallable(
+                                () -> greeter.generate(to)
+                        )
                 );
     }
 }
