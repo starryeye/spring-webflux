@@ -22,6 +22,7 @@ ext {
 dependencies {
 	// 사실 webflux 는 필요 없네
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// reactive 환경에서는 spring cloud circuit breaker 구현이 resilience4j 이다.
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
 
 	compileOnly 'org.projectlombok:lombok'
