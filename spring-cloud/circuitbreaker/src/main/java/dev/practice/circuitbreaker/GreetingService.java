@@ -45,7 +45,7 @@ public class GreetingService {
 
     private Mono<String> doGreeting(String to, Long delayInMillis) {
 
-        // 실제 요청 수행 publisher 를 반환한다.
+        // 실제 요청 수행 publisher 를 반환한다. (서킷 브레이커에 의해 수행 될 publisher 이다.)
         return Mono.delay(Duration.ofMillis(delayInMillis)) // delayInMillis 만큼 지연되고 greeter.generate 가 수행된다.
                 .then(
                         Mono.fromCallable(
