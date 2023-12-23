@@ -53,4 +53,17 @@ public class GreetingService {
                         )
                 );
     }
+
+    public Mono<String> greetingWithException(String circuitBreakerId) {
+
+        // 요청 수행 publisher 에서 에러 이벤트 발생하는 시나리오
+        Mono<String> request = Mono.error(new RuntimeException());
+
+        return request.transform(
+                publisher -> {
+                    ReactiveCircuitBreaker reactiveCircuitBreaker = circuitBreakerFactory.create(circuitBreakerId);
+                    return reactiveCircuitBreaker.run(publisher, throwable -> Mono.just(FALLBACK_MESSAGE));
+                }
+        );
+    }
 }

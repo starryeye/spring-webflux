@@ -81,4 +81,21 @@ class GreetingServiceTest {
         verify(greeter, never()).generate("starryeye"); // 5초 후 greeter::generate 메서드를 실행하기 때문에 실행 한 적이 없어야 정상이다.
     }
 
+    @DisplayName("서킷브레이커에 의해 수행할 publisher(요청) 에서 exception 이 발생하면 fallback 메시지가 반환된다.")
+    @Test
+    void greeting_to_throw_exception() {
+
+        // given
+        String circuitBreakerId = "exception";
+
+        // when
+        Mono<String> result = greetingService.greetingWithException(circuitBreakerId);
+
+        // then
+        StepVerifier.create(result)
+                .expectNext(FALLBACK_MESSAGE)
+                .verifyComplete();
+
+    }
+
 }
