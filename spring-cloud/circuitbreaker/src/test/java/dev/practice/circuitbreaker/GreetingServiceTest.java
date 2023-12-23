@@ -117,7 +117,7 @@ class GreetingServiceTest {
         IntStream.range(0, 4)
                 .forEach(
                         i -> StepVerifier.create(requestWithNoDelay)
-                                .expectNext(SUCCESS_MESSAGE)
+                                .expectNext(SUCCESS_MESSAGE) // no delay 로 진행시켜서 Greeter::generate 가 수행됨
                                 .verifyComplete()
                 );
 
@@ -140,12 +140,54 @@ class GreetingServiceTest {
         IntStream.range(0, 100)
                 .forEach(
                         i -> StepVerifier.create(requestWithNoDelay)
-                                .expectNext(FALLBACK_MESSAGE)
+                                .expectNext(FALLBACK_MESSAGE) // no delay 로 수행하였지만, open 상태라서 Greeter::generate 가 수행되지 않는다.
                                 .verifyComplete()
                 );
 
         verify(greeter, times(4)).generate("starryeye");
 
+    }
+
+    @DisplayName("open 상태의 서킷브레이커를 수동으로 half-open 상태로 만들어본다.")
+    @Test
+    void make_circuit_breaker_half_open_manually() {
+        // 서킷 브레이커 상태를 수동으로 관리하는 방법은 지양해야한다.
+
+        // given
+        String circuitBreakerId = "mini";
+
+        Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
+
+        // 4 회 실패 시켜서 open 상태가 된다.
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2))
+                                .expectNext(FALLBACK_MESSAGE)
+                                .verifyComplete()
+                );
+
+        Mono<String> requestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        StepVerifier.create(requestWithNoDelay)
+                .expectNext(FALLBACK_MESSAGE) // no delay 로 진행했지만, open 상태라 Fallback message 가 반환된다. (Greeter::genreate 가 수행되지 않음)
+                .verifyComplete();
+
+
+        // when
+        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker(circuitBreakerId);
+        log.info("change state to half-open manually");
+        circuitBreaker.transitionToHalfOpenState(); // 수동으로 half-open 상태로 변경
+
+        // then
+        CircuitBreaker.State currentState = circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState();
+        assertEquals(CircuitBreaker.State.HALF_OPEN, currentState);
+
+        // half-open 상태에서는 검증을 위해 publisher(요청) 를 수행시킨다. 해당 요청은 no delay 로 진행시켜서 Greeter::generate 가 수행됨을 알수 있다.
+        StepVerifier.create(requestWithNoDelay)
+                .expectNext(SUCCESS_MESSAGE)
+                .verifyComplete();
+
+        verify(greeter, times(1)).generate("starryeye");
     }
 
 }
