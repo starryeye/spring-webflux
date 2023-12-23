@@ -4,6 +4,7 @@ import dev.practice.circuitbreaker.config.AutoConfigureReactiveCircuitBreaker;
 import dev.practice.circuitbreaker.config.TestCircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -190,4 +191,39 @@ class GreetingServiceTest {
         verify(greeter, times(1)).generate("starryeye");
     }
 
+    @SneakyThrows
+    @DisplayName("open 상태에서 5초가 지나면 자동으로 half-open 상태가 된다.")
+    @Test
+    void make_circuit_breaker_half_open_automatically() {
+
+        // given
+        String circuitBreakerId = "autoHalf"; // TestCircuitBreakerConfig 에 autoHalf 이름을 가진 서킷 브레이커에 대한 설정이 있다.
+
+        Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
+        // 4회 실패로 인한 close 에서 open 상태로 변경됨.
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay) // delay 로 진행 시켜서 time out 1초 가 지나서 서킷브레이커에서 publisher 를 실패처리한다.
+                                .thenAwait(Duration.ofSeconds(2)) // 2초 빨리감기
+                                .expectNext(FALLBACK_MESSAGE) // fallback message 반환됨
+                                .verifyComplete()
+                );
+        verify(greeter, never()).generate("starryeye");
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+        // when
+        log.info("wait 6000ms");
+        Thread.sleep(6000L); // autoHalf 서킷브레이커는 open 상태에서 5초 대기하면 half-open 상태로 변경된다.
+
+        // then
+        assertEquals(CircuitBreaker.State.HALF_OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+        // open 에서는 publisher(요청) 을 무조건 수행하지 않는데에 비해..
+        // half open 상태에서는 검증 목적으로 publisher 를 수행한다.
+        Mono<String> reuqestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        StepVerifier.create(reuqestWithNoDelay)
+                .expectNext(SUCCESS_MESSAGE) // no delay 로 수행하여 time out 이 걸리지 않아서 Greeter::generate 가 수행된다.
+                .verifyComplete();
+        verify(greeter, times(1)).generate("starryeye");
+    }
 }

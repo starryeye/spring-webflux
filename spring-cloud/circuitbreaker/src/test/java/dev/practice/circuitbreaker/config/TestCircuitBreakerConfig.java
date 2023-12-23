@@ -9,6 +9,7 @@ import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigB
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -87,6 +88,31 @@ public class TestCircuitBreakerConfig {
         String[] targetCircuitBreakerIds = new String[]{"mini"};
 
         return reactiveResilience4JCircuitBreakerFactory -> {
+            // logging 추가
+            reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(getEventLogger(), targetCircuitBreakerIds);
+            // 서킷 브레이커 설정
+            reactiveResilience4JCircuitBreakerFactory.configure(
+                    resilience4JConfigBuilder -> resilience4JConfigBuilder.circuitBreakerConfig(circuitBreakerConfig),
+                    targetCircuitBreakerIds
+            );
+        };
+    }
+
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> autoHalfFactory() {
+
+        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50) // failureRate 50 % 가 되면 close 에서 open 으로 변경됨, (sliding window size 가 4 이므로 2 회 실패시.. 변경됨)
+                .slidingWindowSize(4) // sliding window size 4
+                .enableAutomaticTransitionFromOpenToHalfOpen() // open 상태에서 half-open 상태로 일정 시간(5초) 가 지나면 변경됨.
+                .waitDurationInOpenState(Duration.ofSeconds(5)) // open 상태에서 5초 지나면 half-open 상태가 된다.
+                .build();
+
+        // 아래 Id 를 가진 서킷브레이커에 적용할 것이다. (서킷 브레이커가 생성되진 않음, factory.create 를 통해 생성해서 사용해야함, 예약 설정일 뿐이다.)
+        String[] targetCircuitBreakerIds = new String[]{"autoHalf"};
+
+        return reactiveResilience4JCircuitBreakerFactory -> {
+
             // logging 추가
             reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(getEventLogger(), targetCircuitBreakerIds);
             // 서킷 브레이커 설정
