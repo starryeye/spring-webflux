@@ -30,7 +30,7 @@ public class GreetingService {
         return doGreeting(to, delayInMillis) // 실제 요청 수행 publisher
                 .transform(
                         publisher -> {
-                            // 서킷 브레이커 생성
+                            // 서킷 브레이커 생성, 요청 마다 생성하는 것 같지만, 한번 생성하면 재사용되는듯.
                             ReactiveCircuitBreaker reactiveCircuitBreaker = circuitBreakerFactory.create(circuitBreakerId);
                             /**
                              * 생성한 서킷 브레이커로 요청을 수행

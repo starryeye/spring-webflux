@@ -112,12 +112,12 @@ class GreetingServiceTest {
         // given
         String circuitBreakerId = "mini"; // TestCircuitBreakerConfig 에 mini 이름을 가진 서킷 브레이커에 대한 설정이 있다.
 
-        Mono<String> requestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        Mono<String> requestWithoutDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
         // 처음 4회는 정상 수행 (sliding window 가 4 라서 4회 동안 close 상태로 진행, delay 를 0 으로 잡아서 time out 걸리지 않아 정상 처리)
         // sliding window 가 다 채워지기 전 까지는 무조건 close 상태이다. -> failureRate 검사는 모두 채워져야 계산한다.
         IntStream.range(0, 4)
                 .forEach(
-                        i -> StepVerifier.create(requestWithNoDelay)
+                        i -> StepVerifier.create(requestWithoutDelay)
                                 .expectNext(SUCCESS_MESSAGE) // no delay 로 진행시켜서 Greeter::generate 가 수행됨
                                 .verifyComplete()
                 );
@@ -140,7 +140,7 @@ class GreetingServiceTest {
 
         IntStream.range(0, 100)
                 .forEach(
-                        i -> StepVerifier.create(requestWithNoDelay)
+                        i -> StepVerifier.create(requestWithoutDelay)
                                 .expectNext(FALLBACK_MESSAGE) // no delay 로 수행하였지만, open 상태라서 Greeter::generate 가 수행되지 않는다.
                                 .verifyComplete()
                 );
@@ -155,7 +155,7 @@ class GreetingServiceTest {
         // 서킷 브레이커 상태를 수동으로 관리하는 방법은 지양해야한다.
 
         // given
-        String circuitBreakerId = "mini";
+        String circuitBreakerId = "manually";
 
         Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
 
@@ -168,8 +168,8 @@ class GreetingServiceTest {
                                 .verifyComplete()
                 );
 
-        Mono<String> requestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
-        StepVerifier.create(requestWithNoDelay)
+        Mono<String> requestWithoutDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        StepVerifier.create(requestWithoutDelay)
                 .expectNext(FALLBACK_MESSAGE) // no delay 로 진행했지만, open 상태라 Fallback message 가 반환된다. (Greeter::genreate 가 수행되지 않음)
                 .verifyComplete();
 
@@ -184,7 +184,7 @@ class GreetingServiceTest {
         assertEquals(CircuitBreaker.State.HALF_OPEN, currentState);
 
         // half-open 상태에서는 검증을 위해 publisher(요청) 를 수행시킨다. 해당 요청은 no delay 로 진행시켜서 Greeter::generate 가 수행됨을 알수 있다.
-        StepVerifier.create(requestWithNoDelay)
+        StepVerifier.create(requestWithoutDelay)
                 .expectNext(SUCCESS_MESSAGE)
                 .verifyComplete();
 
@@ -213,17 +213,120 @@ class GreetingServiceTest {
 
         // when
         log.info("wait 6000ms");
-        Thread.sleep(6000L); // autoHalf 서킷브레이커는 open 상태에서 5초 대기하면 half-open 상태로 변경된다.
+        Thread.sleep(6000L); // "autoHalf" 서킷브레이커는 open 상태에서 5초 대기하면 half-open 상태로 변경된다.
 
         // then
         assertEquals(CircuitBreaker.State.HALF_OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
 
         // open 에서는 publisher(요청) 을 무조건 수행하지 않는데에 비해..
         // half open 상태에서는 검증 목적으로 publisher 를 수행한다.
-        Mono<String> reuqestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
-        StepVerifier.create(reuqestWithNoDelay)
+        Mono<String> requestWithoutDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        StepVerifier.create(requestWithoutDelay)
                 .expectNext(SUCCESS_MESSAGE) // no delay 로 수행하여 time out 이 걸리지 않아서 Greeter::generate 가 수행된다.
                 .verifyComplete();
         verify(greeter, times(1)).generate("starryeye");
+    }
+
+    @SneakyThrows
+    @DisplayName("half-open 상태에서 close 상태로 전환 시켜본다.")
+    @Test
+    void make_circuit_breaker_half_open_to_close() {
+
+        // given
+        String circuitBreakerId = "halfOpenToClose"; // TestCircuitBreakerConfig 에 halfOpenToClose 이름을 가진 서킷 브레이커에 대한 설정이 있다.
+
+        Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
+        // delay 로 진행해서 time out 이 걸려 publisher(요청) 실패(Greeter::generate 수행 X), 4회 실패하여 close -> open
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2))
+                                .expectNext(FALLBACK_MESSAGE)
+                                .verifyComplete()
+                );
+        verify(greeter, never()).generate("starryeye");
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+        Thread.sleep(4000L); // "halfOpenToClose" 서킷 브레이커는 open 상태에서 3초 후 half-open 상태로 자동 변경된다.
+        assertEquals(CircuitBreaker.State.HALF_OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+
+        // when
+        Mono<String> requestWithoutDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+
+        // half-open 상태에서는 검증을 위해 permittedNumberOfCallsInHalfOpenState 수 만큼 publisher(요청) 를 수행한다.
+        // 6개 중 4개는 성공
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.create(requestWithoutDelay)
+                                .expectNext(SUCCESS_MESSAGE) // no delay 라서 Greeter::generate 가 실행 된다.
+                                .verifyComplete()
+                );
+        // 6개 중 2개는 실패 처리
+        IntStream.range(0, 2)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2))
+                                .expectNext(FALLBACK_MESSAGE) // delay 라서 Greeter::generate 가 실행 되지 않는다.
+                                .verifyComplete()
+
+                );
+
+        // then
+        // 6개 중 4개가 성공하여 실패율이 50% 가 되지 않아 close 상태가 되었다.
+        assertEquals(CircuitBreaker.State.CLOSED, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+    }
+
+    @SneakyThrows
+    @DisplayName("half-open 상태에서 open 상태로 전환 시켜본다.")
+    @Test
+    void make_circuit_breaker_half_open_to_open() {
+
+
+        // given
+        String circuitBreakerId = "halfOpenToOpen"; // TestCircuitBreakerConfig 에 halfOpen 이름을 가진 서킷 브레이커에 대한 설정이 있다.
+
+        Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
+        // delay 로 진행해서 time out 이 걸려 publisher(요청) 실패(Greeter::generate 수행 X), 4회 실패하여 close -> open
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2))
+                                .expectNext(FALLBACK_MESSAGE)
+                                .verifyComplete()
+                );
+        verify(greeter, never()).generate("starryeye");
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+        Thread.sleep(4000L); // "halfOpenToOpen" 서킷 브레이커는 open 상태에서 3초 후 half-open 상태로 자동 변경된다.
+        assertEquals(CircuitBreaker.State.HALF_OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+
+        // when
+        Mono<String> requestWithoutDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+
+        // half-open 상태에서는 검증을 위해 permittedNumberOfCallsInHalfOpenState 수 만큼 publisher(요청) 를 수행한다.
+        // 6개 중 2개는 성공
+        IntStream.range(0, 2)
+                .forEach(
+                        i -> StepVerifier.create(requestWithoutDelay)
+                                .expectNext(SUCCESS_MESSAGE) // no delay 라서 Greeter::generate 가 실행 된다.
+                                .verifyComplete()
+                );
+        // 6개 중 4개는 실패 처리
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2))
+                                .expectNext(FALLBACK_MESSAGE) // delay 라서 Greeter::generate 가 실행 되지 않는다.
+                                .verifyComplete()
+
+                );
+
+        // then
+        // 6개 중 4개가 성공하여 실패율이 50% 가 되지 않아 close 상태가 되었다.
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
     }
 }

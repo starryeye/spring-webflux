@@ -85,7 +85,7 @@ public class TestCircuitBreakerConfig {
                 .build();
 
         // 아래 Id 를 가진 서킷브레이커에 적용할 것이다. (서킷 브레이커가 생성되진 않음, factory.create 를 통해 생성해서 사용해야함, 예약 설정일 뿐이다.)
-        String[] targetCircuitBreakerIds = new String[]{"mini"};
+        String[] targetCircuitBreakerIds = new String[]{"mini", "manually"};
 
         return reactiveResilience4JCircuitBreakerFactory -> {
             // logging 추가
@@ -121,5 +121,38 @@ public class TestCircuitBreakerConfig {
                     targetCircuitBreakerIds
             );
         };
+    }
+
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> halfOpenFactory() {
+
+        /**
+         * failureRateThreshold 가 50 인 의미 2가지
+         *
+         * 1. close 단계
+         * sliding window size 4 에서 2 개 (50%) 실패하면 open 으로 변경된다.
+         *
+         * 2. half-open 단계
+         * permittedNumberOfCallsInHalfOpenState 가 6 이므로 3 개 (50%) 실패하면 다시 open 으로 변경된다.
+         */
+
+        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50)
+                .slidingWindowSize(4)
+                .enableAutomaticTransitionFromOpenToHalfOpen()
+                .waitDurationInOpenState(Duration.ofSeconds(3))
+                .permittedNumberOfCallsInHalfOpenState(6) // half-open 단계의 sliding window 라 생각하면 편하다.
+                .build();
+
+        String[] targetCircuitBreakerIds = new String[]{"halfOpenToClose", "halfOpenToOpen"};
+
+        return reactiveResilience4JCircuitBreakerFactory -> {
+            reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(getEventLogger(), targetCircuitBreakerIds);
+            reactiveResilience4JCircuitBreakerFactory.configure(
+                    resilience4JConfigBuilder -> resilience4JConfigBuilder.circuitBreakerConfig(circuitBreakerConfig),
+                    targetCircuitBreakerIds
+            );
+        };
+
     }
 }
