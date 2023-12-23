@@ -20,8 +20,7 @@ import java.time.Duration;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 @Import(TestCircuitBreakerConfig.class) // test 를 위한 bean 들을 등록한다. (여러 서킷 브레이커 등록)
@@ -137,6 +136,15 @@ class GreetingServiceTest {
         // then
         // 해당 서킷브레이커는 open 상태이다.
         assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
+
+        IntStream.range(0, 100)
+                .forEach(
+                        i -> StepVerifier.create(requestWithNoDelay)
+                                .expectNext(FALLBACK_MESSAGE)
+                                .verifyComplete()
+                );
+
+        verify(greeter, times(4)).generate("starryeye");
 
     }
 
