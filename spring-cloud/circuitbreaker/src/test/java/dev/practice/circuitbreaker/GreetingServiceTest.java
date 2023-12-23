@@ -2,6 +2,8 @@ package dev.practice.circuitbreaker;
 
 import dev.practice.circuitbreaker.config.AutoConfigureReactiveCircuitBreaker;
 import dev.practice.circuitbreaker.config.TestCircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,9 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
+import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -30,6 +34,9 @@ class GreetingServiceTest {
 
     @Autowired
     private GreetingService greetingService;
+
+    @Autowired
+    private CircuitBreakerRegistry circuitBreakerRegistry;
 
     @SpyBean
     private Greeter greeter;
@@ -95,6 +102,41 @@ class GreetingServiceTest {
         StepVerifier.create(result)
                 .expectNext(FALLBACK_MESSAGE)
                 .verifyComplete();
+
+    }
+
+    @DisplayName("서킷 브레이커 상태를 close 에서 open 으로 전환 시켜본다.")
+    @Test
+    void make_circuit_breaker_open() {
+
+        // given
+        String circuitBreakerId = "mini"; // TestCircuitBreakerConfig 에 mini 이름을 가진 서킷 브레이커에 대한 설정이 있다.
+
+        Mono<String> requestWithNoDelay = greetingService.greeting("starryeye", 0L, circuitBreakerId);
+        // 처음 4회는 정상 수행 (sliding window 가 4 라서 4회 동안 close 상태로 진행, delay 를 0 으로 잡아서 time out 걸리지 않아 정상 처리)
+        // sliding window 가 다 채워지기 전 까지는 무조건 close 상태이다. -> failureRate 검사는 모두 채워져야 계산한다.
+        IntStream.range(0, 4)
+                .forEach(
+                        i -> StepVerifier.create(requestWithNoDelay)
+                                .expectNext(SUCCESS_MESSAGE)
+                                .verifyComplete()
+                );
+
+        // when
+        Mono<String> requestWithDelay = greetingService.greeting("starryeye", 5000L, circuitBreakerId);
+        // sliding window 가 모두 채워졌으므로 2회를 실패 시키면 failureRate 50% 만족하여 close 에서 open 으로 전환될 것이다.
+        IntStream.range(0, 2)
+                .forEach(
+                        // 딜레이 요청으로 타임아웃 (기본 값 1초) 걸려서 실패 처리됨
+                        i -> StepVerifier.withVirtualTime(() -> requestWithDelay)
+                                .thenAwait(Duration.ofSeconds(2)) // 2초 빨리 감기
+                                .expectNext(FALLBACK_MESSAGE)
+                                .verifyComplete()
+                );
+
+        // then
+        // 해당 서킷브레이커는 open 상태이다.
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker(circuitBreakerId).getState());
 
     }
 

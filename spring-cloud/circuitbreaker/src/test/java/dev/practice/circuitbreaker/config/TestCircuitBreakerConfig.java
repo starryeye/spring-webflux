@@ -9,6 +9,8 @@ import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigB
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @Slf4j
 @TestConfiguration
 public class TestCircuitBreakerConfig {
@@ -54,9 +56,13 @@ public class TestCircuitBreakerConfig {
     @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultFactory() {
 
+        // (서킷 브레이커가 생성되진 않음, factory.create 를 통해 생성해서 사용해야함, 예약 설정일 뿐이다.)
+
         return reactiveResilience4JCircuitBreakerFactory -> {
             reactiveResilience4JCircuitBreakerFactory.configureDefault( // 별도의 설정을 가지지 않는 서킷 브레이커들은 해당 설정을 가진다는 의미 (서킷 브레이커 글로벌 설정)
                     id -> {
+
+                        // logging 추가
                         reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(getEventLogger(), id);
 
                         return new Resilience4JConfigBuilder(id)
@@ -64,6 +70,29 @@ public class TestCircuitBreakerConfig {
                                         CircuitBreakerConfig.ofDefaults() // 기본 설정으로 빌드
                                 ).build();
                     }
+            );
+        };
+    }
+
+    @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> miniFactory() {
+
+        // 서킷 브레이커 설정
+        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+                .failureRateThreshold(50) // 실패가 50% 비율이 되면 close 에서 open 상태로 변경
+                .slidingWindowSize(4) // sliding window 4
+                .build();
+
+        // 아래 Id 를 가진 서킷브레이커에 적용할 것이다. (서킷 브레이커가 생성되진 않음, factory.create 를 통해 생성해서 사용해야함, 예약 설정일 뿐이다.)
+        String[] targetCircuitBreakerIds = new String[]{"mini"};
+
+        return reactiveResilience4JCircuitBreakerFactory -> {
+            // logging 추가
+            reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(getEventLogger(), targetCircuitBreakerIds);
+            // 서킷 브레이커 설정
+            reactiveResilience4JCircuitBreakerFactory.configure(
+                    resilience4JConfigBuilder -> resilience4JConfigBuilder.circuitBreakerConfig(circuitBreakerConfig),
+                    targetCircuitBreakerIds
             );
         };
     }
