@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes: # 아래 두개의 route 는 동일하다.(id 만 다름) 순서대로 shortcut, fully expanded 방식이라 부른다.
+        - id: greeting-cookie
+          uri: http://localhost:8001
+          predicates:
+            - Cookie=greeting, ^H.*
+        - id: greeting-cookie2
+          uri: http://localhost:8001
+          predicates:
+            - name: Cookie
+              args:
+                name: greeting2
+                regexp: ^H.*
