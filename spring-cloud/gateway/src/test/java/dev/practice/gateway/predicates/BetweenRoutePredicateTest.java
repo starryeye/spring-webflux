@@ -41,7 +41,7 @@ public class BetweenRoutePredicateTest {
     void test() {
 
         /**
-         * [1]
+         * [3]
          * application-predicate-between.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
