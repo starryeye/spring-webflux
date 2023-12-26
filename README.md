@@ -57,6 +57,8 @@ Study Spring Webflux
 - practice/withRedis/notice
   - practice/notice 에서 Redis 를 추가
   - spring data redis reactive 를 사용하여 연동
+- spring-cloud
+  - reactive stack + spring cloud
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
