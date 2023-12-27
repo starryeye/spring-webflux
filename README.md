@@ -61,6 +61,7 @@ Study Spring Webflux
   - reactive stack + spring cloud
   - spring cloud gateway (reactive)
   - spring cloud circuit breaker (reactive)
+  - spring cloud stream (with kafka)
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
