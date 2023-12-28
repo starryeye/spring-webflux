@@ -4,8 +4,8 @@ spring:
       routes: # 순서대로 shortcut, fully expanded 방식의 Path predicate
         - id: greeting-path
           uri: http://localhost:8001
-          predicates:
-            - Path=/greeting/{segment},/greeting2/**,true # {segment}, ant pattern 두가지 방식 지원 ( segment 는 ServerWebExchange 로 접근 가능.. gateway Route predicate 직접 만들 때.. 인듯)
+          predicates: # {segment}, ant pattern 두가지 방식 지원 ( segment 는 ServerWebExchange 로 접근 가능.. gateway Route predicate 직접 만들 때.. 인듯)
+            - Path=/greeting/{segment},/greeting2/**,true # Path=<path1, path2, ..., matchTrailingSlash>
         - id: hello-path
           uri: http://localhost:8001
           predicates:
