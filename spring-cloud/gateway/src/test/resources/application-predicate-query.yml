@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes: # 순서대로 shortcut, fully expanded 방식의 Path predicate
+        - id: greeting-query
+          uri: http://localhost:8001
+          predicates:
+            - Query=greeting, ^H.* # queryParam 으로 K: greeting, V: ^H.* 가 존재해야 동작
+        - id: greeting-query2
+          uri: http://localhost:8001
+          predicates:
+            - name: Query
+              args:
+                param: greeting2
+                regexp: ^H.*
