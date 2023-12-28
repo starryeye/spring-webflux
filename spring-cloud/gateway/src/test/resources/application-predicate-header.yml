@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes: # 아래 두개의 route 는 동일하다.(id 만 다름) 순서대로 shortcut, fully expanded 방식이라 부른다.
+        - id: greeting-header
+          uri: http://localhost:8001
+          predicates:
+            - Header=x-greeting, ^H.* # K : x-greeting, V : ^H.* 인 헤더가 있어야 동작한다.
+        - id: greeting-header2
+          uri: http://localhost:8001
+          predicates:
+            - name: Header
+              args:
+                header: x-greeting2
+                regexp: ^H.*
