@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    gateway:
+      routes: # 순서대로 shortcut, fully expanded 방식의 Path predicate
+        - id: main
+          uri: http://localhost:8001
+          predicates: # weight 값을 기반으로 트래픽 전달 가중치를 조절한다.
+            - Weight=group1, 99
+          filters:
+            - SetPath=/branch/main # 99 의 비중으로 main 경로로 전달됨
+        - id: canary
+          uri: http://localhost:8001
+          predicates:
+            - name: Weight
+              args:
+                weight.group: group1
+                weight.weight: 1
+          filters:
+            - SetPath=/branch/canary # 1 의 비중으로 canary 경로로 전달됨
