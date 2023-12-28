@@ -43,7 +43,7 @@ public class PathRoutePredicateTest {
     void test() throws InterruptedException {
 
         /**
-         * [7]
+         * [8]
          * application-predicate-path.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
