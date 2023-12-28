@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: get-or-post
+          uri: http://localhost:8001
+          predicates:
+            - Method=GET,POST # http GET, POST method 여야 한다. (소문자 허용되지 않음)
+        - id: options
+          uri: http://localhost:8001
+          predicates:
+            - name: Method
+              args:
+                methods:
+                  - OPTIONS # http OPTIONS method 여야 한다.
