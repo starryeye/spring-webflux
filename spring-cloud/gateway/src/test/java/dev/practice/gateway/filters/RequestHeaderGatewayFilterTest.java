@@ -58,7 +58,7 @@ public class RequestHeaderGatewayFilterTest {
          * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/add)
          * 3. predicate 가 만족하므로 AddRequestHeader 가 동작 (X-Test 헤더에 hello value 추가)
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
-         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
+         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok 가 응답으로 내려온다.
          * 6. 검증
          */
 
@@ -96,7 +96,7 @@ public class RequestHeaderGatewayFilterTest {
          * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/set)
          * 3. predicate 가 만족하므로 SetRequestHeader 가 동작 (X-Test 헤더에 world value 덮어쓰기)
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
-         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
+         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok 가 응답으로 내려온다.
          * 6. 검증
          */
 
@@ -134,7 +134,7 @@ public class RequestHeaderGatewayFilterTest {
          * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/map)
          * 3. predicate 가 만족하므로 MapRequestHeader 가 동작 (X-Test 헤더값이 X-Test-Copy 헤더값으로 카피)
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
-         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
+         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok 가 응답으로 내려온다.
          * 6. 검증
          */
 
@@ -172,7 +172,7 @@ public class RequestHeaderGatewayFilterTest {
          * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/remove)
          * 3. predicate 가 만족하므로 RemoveRequestHeader 가 동작 (X-Test 헤더가 삭제됨)
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
-         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
+         * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok 가 응답으로 내려온다.
          * 6. 검증
          */
 
