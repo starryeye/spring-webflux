@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway: # client -> gateway -> target
+      routes:
+        - id: add-response-header
+          uri: http://localhost:8001
+          predicates:
+            - Path=/add
+          filters: # spring cloud gateway 가 기본으로 제공하는 AddResponseHeader gatewayFilter 이다.
+            - AddResponseHeader=X-Test, hello # target 서버에서 응답을 받고 header 를 추가하여(덮어쓰기X) client 로 응답을 전달한다.
+        - id: set-response-header
+          uri: http://localhost:8001
+          predicates:
+            - Path=/set
+          filters: # spring cloud gateway 가 기본으로 제공하는 SetResponseHeader gatewayFilter 이다.
+            - SetResponseHeader=X-Test, hello # target 서버에서 응답을 받고 header 를 덮어쓰기하여 client 로 응답을 전달한다.
+        - id: rewrite-response-header
+          uri: http://localhost:8001
+          predicates:
+            - Path=/rewrite
+          filters: # spring cloud gateway 가 기본으로 제공하는 RewriteResponseHeader gatewayFilter 이다.
+            - RewriteResponseHeader=X-Test, h.+, hello # target 서버에서 응답을 받고 header 에서 X-Test value 중.. h.+ 값이 있으면 hello 로 rewrite 한 후, client 로 응답을 전달한다.
+        - id: remove-response-header
+          uri: http://localhost:8001
+          predicates:
+            - Path=/remove
+          filters: # spring cloud gateway 가 기본으로 제공하는 RemoveResponseHeader gatewayFilter 이다.
+            - RemoveResponseHeader=X-Test # target 서버에서 응답을 받고 header 에서 X-Test 헤더를 삭제하고 client 로 응답을 전달한다.
