@@ -88,7 +88,7 @@ public class ResponseHeaderGatewayFilterTest {
          * 테스트 시나리오
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
-         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/add)
+         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/set)
          * 3. predicate 가 만족하므로 SetResponseHeader 가 동작 예정(X-Test 헤더에 hello value 덮어쓰기), 응답 헤더에 적용된다.
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
          * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, 주어진 헤더(X-Test:world) 가 응답으로 내려온다.
@@ -124,7 +124,7 @@ public class ResponseHeaderGatewayFilterTest {
          * 테스트 시나리오
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
-         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/add)
+         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/rewrite)
          * 3. predicate 가 만족하므로 RewriteResponseHeader 가 동작 예정(X-Test 헤더에 h.+ value 가 있으면 hello 로 대체됨), 응답 헤더에 적용된다.
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
          * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, 주어진 헤더(X-Test:hhhh) 가 응답으로 내려온다.
@@ -160,7 +160,7 @@ public class ResponseHeaderGatewayFilterTest {
          * 테스트 시나리오
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
-         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/add)
+         * 2. gateway 서버에서는 predicate 를 보고 검증 (이 Test 에서는 Path predicate 를 만족하도록 함, Path=/remove)
          * 3. predicate 가 만족하므로 RemoveResponseHeader 가 동작 예정(X-Test 헤더가 삭제), 응답 헤더에 적용된다.
          * 4. gateway 에서 localhost:8001 로 요청을 보낸다.
          * 5. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, 설정한 헤더가 포함되어 응답으로 내려온다.
