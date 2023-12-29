@@ -6,7 +6,7 @@ spring:
           uri: http://localhost:8001
           predicates:
             - Path=/created
-          filters:
+          filters: # Spring cloud gateway 에서 기본으로 제공하는 SetStatus gatewayFilter
             - SetStatus=201 # target 서버에서 어떤 응답 코드를 내리던 gateway 에서 client 로 응답을 내릴 때 201 로 셋팅하여 내린다.
         - id: set-bad-request-status
           uri: http://localhost:8001
