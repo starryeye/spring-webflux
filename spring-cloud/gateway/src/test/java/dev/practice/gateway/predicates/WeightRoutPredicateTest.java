@@ -54,7 +54,7 @@ public class WeightRoutPredicateTest {
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
          * 2. gateway 서버에서는 predicate weight 조건에 의해 main or canary 가 동작
-         * 3. gateway 에서 weight 가중치 비율로 main or canary 로 선택되어 요청됨 localhost:8001/branch/main or localhost:8001/branch/canary 로 요청을 보낸다. (필터에서 조작이 없으므로 webTestClient 에서 도메인만 변경된 상태로 그대로 요청)
+         * 3. gateway 에서 weight 가중치 비율로 main or canary 로 선택되어 요청됨 localhost:8001/branch/main or localhost:8001/branch/canary 로 요청을 보낸다. (WebTestClient 에서 요청은 "/" 로 보냈지만필터에서 필터 조작으로 "/branch/main" or "/branch/canary" 가 추가됨)
          * 4. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
          * 5. gateway 의 응답관련 filter 가 없으므로 그대로 최종 webTestClient 로 응답이 내려간다.
          * 6. 검증
