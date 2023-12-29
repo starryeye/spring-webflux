@@ -45,7 +45,7 @@ public class ResponseHeaderGatewayFilterTest {
     void test() {
 
         /**
-         * [12]
+         * [13]
          * application-gatewayfilter-responseheader.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
@@ -82,7 +82,7 @@ public class ResponseHeaderGatewayFilterTest {
     void test2() {
 
         /**
-         * [12]
+         * [13]
          * application-gatewayfilter-responseheader.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
@@ -118,7 +118,7 @@ public class ResponseHeaderGatewayFilterTest {
     void test3() {
 
         /**
-         * [12]
+         * [13]
          * application-gatewayfilter-responseheader.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
@@ -154,7 +154,7 @@ public class ResponseHeaderGatewayFilterTest {
     void test4() {
 
         /**
-         * [12]
+         * [13]
          * application-gatewayfilter-responseheader.yml 에 의해 spring cloud gateway 가 동작함.
          *
          * 테스트 시나리오
