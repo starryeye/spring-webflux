@@ -71,7 +71,7 @@ public class RequestParamGatewayFilterTest {
                 .expectStatus().isOk();
 
         // then
-        RecordedRequest request = mockWebServer.takeRequest();
+        RecordedRequest request = mockWebServer.takeRequest(); // gateway 에서 mockWebServer 로 보낸 요청 정보를 획득
         String path = request.getPath();
         assertEquals("/add?greeting=hello&greeting=world", path); // AddRequestParam GatewayFilter 에 의해 mockWebServer 로 요청할 때 greeting world request param 이 추가 되었다.
     }
@@ -108,7 +108,7 @@ public class RequestParamGatewayFilterTest {
                 .expectStatus().isOk();
 
         // then
-        RecordedRequest request = mockWebServer.takeRequest();
+        RecordedRequest request = mockWebServer.takeRequest(); // gateway 에서 mockWebServer 로 보낸 요청 정보를 획득
         String path = request.getPath();
         assertEquals("/remove", path); // RemoveRequestParam GatewayFilter 에 의해 mockWebServer 로 요청할 때 greeting request param 이 삭제되었다.
     }
