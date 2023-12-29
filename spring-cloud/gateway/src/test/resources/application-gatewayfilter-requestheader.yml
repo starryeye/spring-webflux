@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: add-request-header # route 식별자, 기능적 의미 없음
+          uri: http://localhost:8001 # predicate 가 만족한다면 filters 를 적용 후 이 uri 로 요청한다.
+          predicates:
+            - Path=/add # predicate Path(기본 제공) 에 의해 "{gateway domain}/add" 이면, 해당 route 적용
+          filters: # spring gateway 가 기본 제공하는 "AddRequestHeader" gatewayFilter
+            - AddRequestHeader=X-Test, hello # 요청 헤더에 K: X-Test, V: hello 추가(덮어쓰기 아님)
+
+        - id: set-request-header # route 식별자, 기능적 의미 없음
+          uri: http://localhost:8001 # predicate 가 만족한다면 filters 를 적용 후 이 uri 로 요청한다.
+          predicates:
+            - Path=/set # predicate Path(기본 제공) 에 의해 "{gateway domain}/set" 이면, 해당 route 적용
+          filters: # spring gateway 가 기본 제공하는 "SetRequestHeader" gatewayFilter 사용
+            - SetRequestHeader=X-Test, world # 요청 헤더에 K: X-Test, V: world 덮어쓰기
+
+        - id: map-request-header # route 식별자, 기능적 의미 없음
+          uri: http://localhost:8001 # predicate 가 만족한다면 filters 를 적용 후 이 uri 로 요청한다.
+          predicates:
+            - Path=/map # predicate Path(기본 제공) 에 의해 "{gateway domain}/map" 이면, 해당 route 적용
+          filters: # spring gateway 가 기본 제공하는 "MapRequestHeader" gatewayFilter 사용
+            - MapRequestHeader=X-Test, X-Test-Copy # X-Test 헤더 값을 T-Test-Copy 로 복사한다.
+
+        - id: remove-request-header # route 식별자, 기능적 의미 없음
+          uri: http://localhost:8001 # predicate 가 만족한다면 filters 를 적용 후 이 uri 로 요청한다.
+          predicates:
+            - Path=/remove # predicate Path(기본 제공) 에 의해 "{gateway domain}/remove" 이면, 해당 route 적용
+          filters: # spring gateway 가 기본 제공하는 "RemoveRequestHeader" gatewayFilter 사용
+            - RemoveRequestHeader=X-Test # X-Test 헤더를 삭제한다.
