@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    gateway: # client -> gateway -> target
+      routes:
+        - id: prefix-path
+          uri: http://localhost:8001
+          predicates:
+            - Path=/prefix
+          filters: # Spring cloud gateway 에서 기본으로 제공하는 PrefixPath gatewayFilter
+            - PrefixPath=/hello # gateway 에서 target 서버에 요청 보낼때 요청 path 에 주어진 prefix 를 붙인다. (즉, http://localhost:8001/hello/prefix~~ 로 요청이 가게됨)
+
+        - id: strip-prefix
+          uri: http://localhost:8001
+          predicates:
+            - Path=/strip/**
+          filters: # Spring cloud gateway 에서 기본으로 제공하는 StripPrefix gatewayFilter
+            - StripPrefix=3 # gateway 에서 target 서버에 요청 보낼때 요청 path 에서 "/" 기준으로 나눠서 주어진 갯수만큼 prefix 를 제거하여 요청보냄
+
+        - id: set-path
+          uri: http://localhost:8001
+          predicates:
+            - Path=/set/{segment}
+          filters: # Spring cloud gateway 에서 기본으로 제공하는 SetPath gatewayFilter
+            - SetPath=/hello/{segment} # gateway 에서 target 서버에 요청 보낼때 요청 path 를 template 으로 변경한다. (test 참고)
+
+        - id: rewrite-path
+          uri: http://localhost:8001
+          predicates:
+            - Path=/rewrite/**
+          filters: # Spring cloud gateway 에서 기본으로 제공하는 RewritePath gatewayFilter
+            - "RewritePath=/rewrite/(?<group1>.*),\
+                /hello/${group1}/world"
+            # (?<group1>.*) 에 해당하는 값을 ${group1} 에 매핑하여 요청 path 를 변경한다 (test 참고)
