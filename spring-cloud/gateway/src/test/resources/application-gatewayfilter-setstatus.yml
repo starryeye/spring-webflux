@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway: # client -> gateway -> target
+      routes: # shortcut 방식에서는 숫자만 가능, full expanded 에서는 enum 기반의 문자열도 가능
+        - id: set-ok-status
+          uri: http://localhost:8001
+          predicates:
+            - Path=/created
+          filters:
+            - SetStatus=201 # target 서버에서 어떤 응답 코드를 내리던 gateway 에서 client 로 응답을 내릴 때 201 로 셋팅하여 내린다.
+        - id: set-bad-request-status
+          uri: http://localhost:8001
+          predicates:
+            - Path=/bad-request
+          filters:
+            - name: SetStatus
+              args:
+                status: BAD_REQUEST # target 서버에서 어떤 응답 코드를 내리던 gateway 에서 client 로 응답을 내릴 때 400 으로 셋팅하여 내린다.
