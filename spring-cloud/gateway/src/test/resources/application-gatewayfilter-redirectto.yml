@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    gateway: # client -> gateway -> target
+      routes: # 아래 두개의 route 는 동일하다.(id 만 다름) 순서대로 shortcut, fully expanded 방식이라 부른다.
+        - id: redirect-to
+          uri: http://localhost:8001
+          predicates:
+            - Path=/redirect
+          filters: # spring cloud gateway 에서 기본으로 제공하는 RedirectTo GatewayFilter 이다.
+            - RedirectTo=308, http://practice.dev # target 서버(localjost:8001) 에서 무슨 응답을 gateway 로 보내던 간에 client 로 응답을 내릴때 308, location http://practice.dev 로 설정하여 리다이렉트 정보를 내린다.
+        - id: redirect-to2
+          uri: http://localhost:8001
+          predicates:
+            - Path=/redirect
+          filters:
+            - name: RedirectTo
+              args:
+                status: 308
+                url: http://practice.dev
