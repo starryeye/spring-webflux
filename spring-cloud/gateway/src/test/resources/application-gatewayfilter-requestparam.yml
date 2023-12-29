@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: add-request-param
+          uri: http://localhost:8001
+          predicates:
+            - Path=/add
+          filters:
+            - AddRequestParameter=greeting, world # gateway 에서 target 서버(http://localhost:8001)로 요청 보낼때 request param 을 추가한다.(덮어 쓰기 X)
+        - id: remove-request-param
+          uri: http://localhost:8001
+          predicates:
+            - Path=/remove
+          filters:
+            - RemoveRequestParameter=greeting # gateway 에서 target 서버(http://localhost:8001)로 요청 보낼때 request param 을 삭제한다.
