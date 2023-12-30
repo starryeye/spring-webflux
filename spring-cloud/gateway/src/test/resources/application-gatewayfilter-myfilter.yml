@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      routes: # 순서대로 shortcut 방식, full expanded 방식
+
+        - id: add-hello-prefix
+          uri: http://localhost:8001
+          predicates:
+            - Method=GET
+          filters: # 직접 만든 MyFilter GatewayFilter 구현은 MyFilterGatewayFilterFactory.java 참고
+            - MyFilter=hello
+
+        - id: add-world-prefix
+          uri: http://localhost:8001
+          predicates:
+            - Method=GET
+          filters:
+            - name: MyFilter
+              args:
+                greeting: world
