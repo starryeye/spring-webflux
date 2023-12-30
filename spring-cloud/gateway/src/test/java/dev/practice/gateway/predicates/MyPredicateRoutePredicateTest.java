@@ -18,10 +18,10 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ActiveProfiles("predicate-mycustom")
+@ActiveProfiles("predicate-mypredicate")
 @AutoConfigureWebTestClient
 @SpringBootTest
-public class MyCustomRoutePredicateTest {
+public class MyPredicateRoutePredicateTest {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -46,13 +46,13 @@ public class MyCustomRoutePredicateTest {
 
         /**
          * [11]
-         * application-predicate-mycustom.yml 에 의해 spring cloud gateway 가 동작함.
-         * - MyCustomRoutePredicateFactory.java 에 apply 메서드 조건을 따름
+         * application-predicate-mypredicate.yml 에 의해 spring cloud gateway 가 동작함.
+         * - MyPredicateRoutePredicateFactory.java 에 apply 메서드 조건을 따름
          *
          * 테스트 시나리오
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
-         * 2. gateway 서버에서는 predicate MyCustom 조건에 의해 hello(id) 가 동작, request uri path 에 주어진 greeting 값이 존재하는지 확인
+         * 2. gateway 서버에서는 predicate MyPredicate 조건에 의해 hello(id) 가 동작, request uri path 에 주어진 greeting 값이 존재하는지 확인
          * 3. 존재하면, gateway 에서 localhost:8001 로 요청을 보낸다. (필터에서 조작이 없으므로 webTestClient 에서 도메인만 변경된 상태로 그대로 요청)
          * 4. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
          * 5. gateway 의 응답관련 filter 가 없으므로 그대로 최종 webTestClient 로 응답이 내려간다.
@@ -71,7 +71,7 @@ public class MyCustomRoutePredicateTest {
         // when
         // then
         webTestClient.get()
-                .uri("/hello") // application-predicate-mycustom.yml 의 predicate args greeting 값인 hello 가 request url path 에 포함
+                .uri("/hello") // application-predicate-mypredicate.yml 의 predicate args greeting 값인 hello 가 request url path 에 포함
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo(message);
@@ -88,13 +88,13 @@ public class MyCustomRoutePredicateTest {
 
         /**
          * [11]
-         * application-predicate-mycustom.yml 에 의해 spring cloud gateway 가 동작함.
-         * - MyCustomRoutePredicateFactory.java 에 apply 메서드 조건을 따름
+         * application-predicate-mypredicate.yml 에 의해 spring cloud gateway 가 동작함.
+         * - MyPredicateRoutePredicateFactory.java 에 apply 메서드 조건을 따름
          *
          * 테스트 시나리오
          * WebTestClient -> gateway -> MockWebServer
          * 1. webTestClient 로 현재 테스트 타겟 서버인 spring cloud gateway 에 요청을 보낸다.
-         * 2. gateway 서버에서는 predicate MyCustom 조건에 의해 world(id) 가 동작, request uri path 에 주어진 greeting 값(world)이 존재하는지 확인
+         * 2. gateway 서버에서는 predicate MyPredicate 조건에 의해 world(id) 가 동작, request uri path 에 주어진 greeting 값(world)이 존재하는지 확인
          * 3. 존재하면, gateway 에서 localhost:8001 로 요청을 보낸다. (필터에서 조작이 없으므로 webTestClient 에서 도메인만 변경된 상태로 그대로 요청)
          * 4. MockWebServer 를 사용하여 mocking 된 서버에 stubbing 된 것과 같이 200 ok, message 가 응답으로 내려온다.
          * 5. gateway 의 응답관련 filter 가 없으므로 그대로 최종 webTestClient 로 응답이 내려간다.
@@ -113,7 +113,7 @@ public class MyCustomRoutePredicateTest {
         // when
         // then
         webTestClient.get()
-                .uri("/world") // application-predicate-mycustom.yml 의 predicate MyCustom greeting 값인 "world" 가 request url path 에 포함
+                .uri("/world") // application-predicate-mypredicate.yml 의 predicate MyPredicate greeting 값인 "world" 가 request url path 에 포함
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo(message);
