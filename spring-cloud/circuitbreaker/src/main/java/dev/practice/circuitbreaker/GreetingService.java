@@ -43,6 +43,18 @@ public class GreetingService {
                 );
     }
 
+    /**
+     * 참고
+     *
+     * fallback 이 수행되는 경우 정리
+     * - close 상태 일 때는 요청을 했는데 timeout 이 걸리거나 예외가 발생된 경우..
+     * - open 상태일 땐 무조건 수행
+     *
+     * close 상태일 때 요청하고 응답을 받았는데 http status 가 400, 500 등이라도 서킷브레이커가 fallback 을 수행해주진 않는다.
+     * 왜냐하면, 서킷 브레이커는 요청/응답을 잘 받았는지에 대해서만 관심이 있기 때문..
+     * 따라서, http status 나 특정 응답에 따라 fallback 을 수행하고 싶다면.. 직접 구현해줘야함.
+     */
+
     private Mono<String> doGreeting(String to, Long delayInMillis) {
 
         // 실제 요청 수행 publisher 를 반환한다. (서킷 브레이커에 의해 수행 될 publisher 이다.)
