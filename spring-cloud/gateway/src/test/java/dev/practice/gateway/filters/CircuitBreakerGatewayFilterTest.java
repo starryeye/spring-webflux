@@ -1,6 +1,10 @@
 package dev.practice.gateway.filters;
 
 import dev.practice.gateway.config.CircuitBreakerTestConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -23,6 +27,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Slf4j
 @ActiveProfiles(
         {
                 "gatewayfilter-circuitbreaker",
@@ -42,6 +47,9 @@ public class CircuitBreakerGatewayFilterTest {
     private final String SUCCESS_MESSAGE = "hello, success!";
     private final String FALLBACK_MESSAGE = "hello, fallback!";
 
+    @Autowired
+    private CircuitBreakerRegistry circuitBreakerRegistry;
+
 
     @BeforeEach
     void setUp() throws IOException {
@@ -52,6 +60,8 @@ public class CircuitBreakerGatewayFilterTest {
     @AfterEach
     void tearDown() throws IOException {
         mockWebServer.shutdown();
+        circuitBreakerRegistry.circuitBreaker("MyCircuitBreaker")
+                .reset();
     }
 
     @DisplayName("Spring cloud gateway 에서 기본으로 제공해주는 CircuitBreaker GatewayFilter")
@@ -106,6 +116,8 @@ public class CircuitBreakerGatewayFilterTest {
                                 .expectBody(String.class).isEqualTo(FALLBACK_MESSAGE) // FallbackController 에서 응답한 응답 데이터가 client 로 도착한다.
                 ); // 4회 동안 실패 처리가 되어 이후 MyCircuitBreaker 는 open 상태가 된다.
 
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker("MyCircuitBreaker").getState()); // Open 상태 검증
+
         IntStream.range(0, 100)
                 .forEach(
                         i -> webTestClient.get()
@@ -118,6 +130,7 @@ public class CircuitBreakerGatewayFilterTest {
         assertEquals(4, mockWebServer.getRequestCount()); // 최초 close 상태일 때 4회 보낸 요청만 mockWebServer 로 전달 됨.
     }
 
+    @SneakyThrows
     @DisplayName("http status 에 따라 fallback 수행하도록 함, 서킷 브레이커만의 기본 동작은 아님 CircuitBreaker GatewayFilter 에서 제공")
     @Test
     void test2() {
@@ -161,5 +174,18 @@ public class CircuitBreakerGatewayFilterTest {
                 );
 
         assertEquals(4, mockWebServer.getRequestCount()); // close 상태로 진행하였으므로 4 회 모두 요청됨
+
+        // 아래는 해당 Test 와는 관계 없지만 추가 검증
+        // 실패율 50% 이상이므로 Open 으로 변경됨
+        assertEquals(CircuitBreaker.State.OPEN, circuitBreakerRegistry.circuitBreaker("MyCircuitBreaker").getState());
+
+        log.info("3s init");
+        Thread.sleep(3000); // half-open 상태로 전환을 위해 3 초 대기
+        log.info("3s end");
+
+        // 3초 지나서 half-open 상태로 변경됨
+        assertEquals(CircuitBreaker.State.HALF_OPEN, circuitBreakerRegistry.circuitBreaker("MyCircuitBreaker").getState());
+
+        log.info("test end"); // test 가 끝나고 Half-open 에서 close 로 변경되는건.. teardown 메서드의 cb reset 때문이다.
     }
 }
