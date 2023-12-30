@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,5 +116,50 @@ public class CircuitBreakerGatewayFilterTest {
                 ); // open 상태의 cb 는 더이상 mockWebServer 로 요청 보내지 않고 fallback 만을 수행한다.
 
         assertEquals(4, mockWebServer.getRequestCount()); // 최초 close 상태일 때 4회 보낸 요청만 mockWebServer 로 전달 됨.
+    }
+
+    @DisplayName("http status 에 따라 fallback 수행하도록 함, 서킷 브레이커만의 기본 동작은 아님 CircuitBreaker GatewayFilter 에서 제공")
+    @Test
+    void test2() {
+
+        /**
+         * HTTP Status 에 따라 fallback 이 수행되는지 확인해본다.
+         */
+
+        // given
+        int slidingWindowSize = 4;
+
+
+        // stubbing
+        List<Integer> mockWebServerResponseStatusCodes = List.of(200, 200, 400, 500);
+        mockWebServerResponseStatusCodes.forEach(
+                statusCode -> mockWebServer.enqueue(
+                        new MockResponse()
+                                .setResponseCode(statusCode) // success message 와 함께 status code 를 200, 200, 400, 500 순으로 응답하도록 함
+                                .setBody(SUCCESS_MESSAGE)
+                )
+        );
+
+        // when
+        // then
+        IntStream.range(0, slidingWindowSize)
+                .forEach(
+                        i -> {
+
+                            String expectBody = SUCCESS_MESSAGE;
+                            if(mockWebServerResponseStatusCodes.get(i) != 200) {
+                                expectBody = FALLBACK_MESSAGE;
+                            }
+
+                            // 서킷 브레이커는 이전에 사용되지 않았으므로 sliding window size 만큼 close 로 진행된다.
+                            webTestClient.get()
+                                    .uri("/hello")
+                                    .exchange()
+                                    .expectStatus().isOk() // mockWebServer 에서 400, 500 으로 내려도 fallback 이 수행되었으므로 gateway 에서 client 로 200 ok 로 내리는듯..
+                                    .expectBody(String.class).isEqualTo(expectBody); // mockWebServer 에서 gateway 로 400, 500 이 응답되면 CircuitBreaker GatewayFilter 에 의해 fallback 수행됨
+                        }
+                );
+
+        assertEquals(4, mockWebServer.getRequestCount()); // close 상태로 진행하였으므로 4 회 모두 요청됨
     }
 }
