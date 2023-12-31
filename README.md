@@ -59,9 +59,9 @@ Study Spring Webflux
   - spring data redis reactive 를 사용하여 연동
 - spring-cloud
   - reactive stack + spring cloud
-  - spring cloud gateway (reactive)
-  - spring cloud circuit breaker (reactive)
-  - spring cloud stream (with kafka)
+    - spring cloud gateway (reactive)
+    - spring cloud circuit breaker (reactive)
+    - spring cloud stream (with kafka)
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
