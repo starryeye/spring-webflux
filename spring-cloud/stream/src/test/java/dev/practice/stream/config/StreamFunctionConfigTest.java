@@ -91,4 +91,38 @@ class StreamFunctionConfigTest {
                 }
         );
     }
+
+    @DisplayName("Input/Output Destination 으로 데이터를 넣으면 받아볼 수 있다.")
+    @Test
+    void MapFluxStringTest() {
+
+        /**
+         * 아래는 InputDestination 으로 데이터를 넣으면 Function 이 동작하여 데이터를 다시 OutputDestination 으로 받아 확인 해볼 수 있다.
+         * input / output binder 에 kafka 를 연동해놓으면(kafka consumer / producer or kafka streams?)
+         * 사용자가 등록해놓은 Function 빈이 작동하여 데이터를 kafka 로 부터 받고 다시 kafka 로 전송할 것임을 생각해볼 수 있다.
+         *
+         * testcode(외부) -> inputDestination -> input binder -> Function -> output binder -> outputDestination -> 외부
+         * testcode -> outputDestination
+         */
+
+        // given
+        String expectMessage = "hello, world!";
+        String payload = "world";
+        GenericMessage<String> input = new GenericMessage<>(payload);
+
+        // spring.cloud.function.definition 에 mapFluxString(등록한 스프링 빈, Function) 적용 되어있음.
+        // naming convention : {cloud function bean 이름}-in/out-{argument index}
+        String inputBinderName = "mapFluxString-in-0";
+        String outputBinderName = "mapFluxString-out-0";
+
+
+        // when
+        inputDestination.send(input, inputBinderName); // 등록된 input binder 로 메시지 전송
+
+        // then
+        Message<byte[]> output = outputDestination.receive(0, outputBinderName); // 등록된 output binder 로 부터 데이터를 받아볼 수 있다.
+        String outputMessage = new String(output.getPayload());
+
+        assertEquals(expectMessage, outputMessage);
+    }
 }
