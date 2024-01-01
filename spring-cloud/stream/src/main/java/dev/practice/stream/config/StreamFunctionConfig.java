@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Flux;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -38,5 +39,20 @@ public class StreamFunctionConfig {
          */
 
         return () -> Flux.just("one", "two", "three");
+    }
+
+    @Bean
+    public Function<Flux<String>, Flux<String>> mapFluxString() {
+
+        /**
+         * 함수형 인터페이스 Function(T -> R) 를 만들어 빈으로 등록한다.
+         *
+         * T : Function 의 T 로 Flux<String> 을 받아서 Flux::map 연산자를 수행(value 를 조작하여 hello 등을 붙인다.)
+         * R : Flux::map 연산자 반환타입인 Flux<String> 을 그대로 반환한다.
+         */
+
+        return stringFlux -> stringFlux.map(
+                s -> "hello, " + s + "!"
+        );
     }
 }
