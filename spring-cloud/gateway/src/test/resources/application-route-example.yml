@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: hello
+          uri: http://localhost:8001
+          predicates:
+            - Path=/hello/**
+            - Method=GET
+            - Header=X-I-AM, .+
+          filters:
+            - AddResponseHeader=X-Hello, world
+            - SetStatus=201
+        - id: world
+          uri: http://localhost:8001
+          predicates:
+            - Path=/world/**
+          filters:
+            - RewritePath=/world/(?<segment>.*), /$\{segment}
