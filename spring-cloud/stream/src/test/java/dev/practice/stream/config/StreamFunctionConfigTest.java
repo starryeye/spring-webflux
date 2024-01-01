@@ -10,7 +10,10 @@ import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -35,7 +38,9 @@ class StreamFunctionConfigTest {
 
         /**
          * 아래는 직접 inputDestination 을 통해 메시지를 전달하는 것을 검증해보았다.
-         * inputDestination 에 kafka 를 연동해놓으면(kafka consumer) 사용자가 등록해놓은 Consumer 빈이 작동할 것이라고 생각해 볼 수 있다.
+         * input binder 에 kafka 를 연동해놓으면(kafka consumer) 사용자가 등록해놓은 Consumer 빈이 작동할 것이라고 생각해 볼 수 있다.
+         *
+         * testcode(외부) -> inputDestination -> input binder -> Consumer
          */
 
         // given
@@ -52,5 +57,38 @@ class StreamFunctionConfigTest {
 
         // then
         verify(spyPrintService).print("consumer print value : {}", payload); // spy 객체로 해당 파라미터가 전달되는지 검증
+    }
+
+    @DisplayName("OutputDestination 으로 output binder 가 전송한 메시지 확인 가능")
+    @Test
+    void sequenceFluxString() {
+
+        /**
+         * 아래는 outputDestination 을 통해 메시지가 전송되는 것을 확인해보았다.
+         * output binder 에 kafka 를 연동해놓으면(kafka producer) 사용자가 등록해놓은 Supplier 빈이 작동하여 데이터를 kafka 로 전송할 것임을 생각해볼 수 있다.
+         *
+         * Supplier -> output binder -> outputDestination -> 외부
+         * testcode -> outputDestination
+         */
+
+        // given
+        // spring.cloud.function.definition 에 sequenceFluxString(등록한 스프링 빈, Supplier) 적용 되어있음.
+        // naming convention : {cloud function bean 이름}-out-{argument index}
+        String outputBinderName = "sequenceFluxString-out-0";
+        List<String> expectStrings = List.of("one", "two", "three"); // supplier 에서 생산하는 element
+
+        // when
+        // then
+        expectStrings.forEach(
+                expect -> {
+
+                    // 스프링 빈으로 등록한 Supplier 에서 데이터를 생성하여 output binder 에게 넘긴 것을 outputDestination 에서 받아본다.
+                    Message<byte[]> output = outputDestination.receive(0, outputBinderName);
+
+                    String outputMessage = new String(output.getPayload());
+
+                    assertEquals(expect, outputMessage);
+                }
+        );
     }
 }

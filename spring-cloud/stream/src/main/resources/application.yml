@@ -2,4 +2,4 @@
 spring:
   cloud:
     function: # ?? ???? ??? ??? ?? spring cloud function ?? ?????? ??, Consumer : input binder, Supplier : output binder, Function : function binder
-      definition: printFluxString
+      definition: printFluxString;sequenceFluxString
