@@ -27,6 +27,12 @@ ext {
 
 dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-stream'
+
+	// spring cloud stream 의 binder 구현체로 kafka binder reactive 사용 (kafka binder 를 사용하면 reactive stack 의 이점을 누리지 못한다.)
+	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka-reactive'
+//	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
+
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

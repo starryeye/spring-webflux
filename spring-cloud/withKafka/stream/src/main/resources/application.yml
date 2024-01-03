@@ -1,1 +1,40 @@
 
+spring:
+  cloud:
+
+    function: # ??? ?? ? ? spring cloud function ?? ???? binding ? ?? ?..
+      definition: printFluxString;sequenceFluxString;mapFluxString
+
+    stream:
+
+      kafka: # kafka ??
+        binder: # kafka ??? ?? ??
+          brokers: localhost:9092,localhost:9093,localhost:9094
+        bindings: # ?? binding ?? consumer ? ??
+          mapFluxString-in-0:
+            consumer:
+              start-offset: latest
+          printFluxString-in-0:
+            consumer:
+              start-offset: earliest
+
+      bindings: # spring cloud stream binding ?? (kafka ??? ??? ????)
+        mapFluxString-in-0:
+          binder: reactorKafka # mapFluxString-in-0 binding ? kafka ? binder ? ??, (lib, kafka ? kafka ?.. kafka-reactive ??? reactorKafka ?..)
+          destination: name # kafka ?? ???? ??.
+          content-type: text/plain
+          group: group1 # kafka ?? consumer group ? ????.?
+        printFluxString-in-0:
+          binder: reactorKafka
+          destination: name
+          content-type: text/plain
+          group: group2
+        sequenceFluxString-out-0:
+          binder: reactorKafka
+          destination: name
+          content-type: text/plain
+        mapFluxString-out-0:
+          binder: reactorKafka
+          destination: greeting
+          content-type: text/plain
+
