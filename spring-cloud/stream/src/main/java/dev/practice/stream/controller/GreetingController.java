@@ -20,12 +20,12 @@ public class GreetingController {
 
         /**
          * Stream Function 을 등록하면 설정을 통해 간편하게 Spring cloud stream 을 이용할 수 있다. (kafka 연동)
-         * 그러나.. 수동으로 특정 input or function binder 에 전달하고 싶을 수 도 있다...
+         * 그러나.. 수동으로 특정 input or function binding 에 전달하고 싶을 수 도 있다...
          * 그럴 땐, StreamBridge 를 이용하면 된다.
          *
          * 참고로..
          * StreamFunctionConfigTest.java 에서 이용한 inputDestination, outputDestination 은 Test 용 객체이다.
          */
-        streamBridge.send("mapFluxString-in-0", message); // function binder 로 데이터 넣증
+        streamBridge.send("mapFluxString-in-0", message); // function binding 로 데이터 넣증
     }
 }

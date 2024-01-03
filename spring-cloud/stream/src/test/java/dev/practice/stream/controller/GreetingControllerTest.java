@@ -30,12 +30,12 @@ class GreetingControllerTest {
     @Test
     void test() {
         /**
-         * controller 에서 StreamBridge 를 통해 function binder 로 데이터를 넣고 있다.
+         * controller 에서 StreamBridge 를 통해 function binding 으로 데이터를 넣고 있다.
          *
          * 테스트 시나리오
-         * 1. controller 에 요청하여 데이터를 function binder 로 넣는다. (input)
+         * 1. controller 에 요청하여 데이터를 function binding 으로 넣는다. (input)
          * 2. function binder 가 동작하여 데이터가 출력(output) 된다.
-         * 3. outputDestination 을 이용하여 출력된 데이터를 확인하여 검증
+         * 3. outputDestination 을 이용하여 출력된 데이터를 확인하여 검
          */
 
         // given
