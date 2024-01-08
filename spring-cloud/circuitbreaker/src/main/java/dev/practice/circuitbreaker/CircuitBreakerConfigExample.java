@@ -58,6 +58,19 @@ public class CircuitBreakerConfigExample {
     }
 
     @Bean
+    public Customizer<ReactiveResilience4JCircuitBreakerFactory> onlyLoggerFactory() {
+
+        // Logger 셋팅만 해주는 케이스. 나머지 셋팅은 .yml 을 통해 진행하면 된다. (여기선 따로 하진 않음, 그래서 defaultFactory 설정으로 될듯)
+
+        String[] targetCircuitBreakerIds = new String[]{"OnlyLogger"};
+        return reactiveResilience4JCircuitBreakerFactory -> {
+            reactiveResilience4JCircuitBreakerFactory.addCircuitBreakerCustomizer(
+                    getEventLogger(), targetCircuitBreakerIds
+            );
+        };
+    }
+
+    @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> fullFactory() {
 
         // 특정 서킷 브레이커 대상 설정
