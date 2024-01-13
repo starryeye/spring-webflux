@@ -2,6 +2,7 @@ package dev.practice.webclient.client;
 
 import dev.practice.webclient.response.ExchangeResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -10,6 +11,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ExchangeClient {
@@ -36,7 +38,13 @@ public class ExchangeClient {
 //                .headers()
 //                .attributes()
                 .retrieve() // 요청!
-//                .onStatus() // 응답 설정
+//                .onStatus( // 응답 설정
+//                        HttpStatusCode::is4xxClientError,
+//                        resp -> {
+//                            log.error("ClientError = {}", resp.statusCode());
+//                            return Mono.error(new RuntimeException("ClientError"));
+//                        }
+//                )
                 .bodyToMono(ExchangeResponse.class);
     }
 
