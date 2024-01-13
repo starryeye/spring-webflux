@@ -1,4 +1,4 @@
-package dev.practice.webclient.config;
+package dev.practice.webclient.client;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,7 @@ public class WebClientConfig {
     public WebClient worldClient() {
 
         // 위와 동일한 설정을 가진 WebClient 이다.
-        return WebClient.create("https://open.er-api.com/v6"); // create 이용
+        // private final WebClient helloClient, worldClient; 로 하면 각각 DI 된다.
+        return WebClient.create("https://open.er-api.com"); // create 이용
     }
 }

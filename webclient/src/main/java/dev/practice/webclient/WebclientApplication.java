@@ -1,8 +1,15 @@
 package dev.practice.webclient;
 
+import dev.practice.webclient.client.ExchangeClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
+@Slf4j
+@RequiredArgsConstructor
 @SpringBootApplication
 public class WebclientApplication {
 
@@ -18,10 +25,34 @@ public class WebclientApplication {
 	 * - non-blocking reactive http 클라이언트
 	 * - Reactor Netty, Jetty, apache 의 HttpComponent 를 이용하여 구현
 	 * - 메서드 체이닝
+	 *
+	 *
+	 * 해당 프로젝트에 Timeout 관련 설정법을 다루는데 그냥 circuit breaker 사용하는게 맞는듯
+	 *
+	 *
+	 * todo
+	 * 	1. post() request body
+	 * 	2. flux response
 	 */
+
+	private final ExchangeClient exchangeClient;
 
 	public static void main(String[] args) {
 		SpringApplication.run(WebclientApplication.class, args);
 	}
 
+
+	@Bean
+	public ApplicationRunner runner() {
+		return args -> {
+
+			exchangeClient.helloCall()
+					.doOnNext(
+							exchangeResponse -> {
+								log.info("result = {}, krw = {}", exchangeResponse.getResult(), exchangeResponse.getRates().getKRW());
+							}
+					)
+					.subscribe();
+		};
+	}
 }
