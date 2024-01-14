@@ -49,7 +49,15 @@ public class WebclientApplication {
 			exchangeClient.helloCall()
 					.doOnNext(
 							exchangeResponse -> {
-								log.info("result = {}, krw = {}", exchangeResponse.getResult(), exchangeResponse.getRates().getKRW());
+								//ZoneId 가 Z 로 출력되는 것은 UTC (UTC = 세계 기준시 = +00:00 = GMT 이다.)
+								//kst 2024-01-14T09:02:32+09:00[Asia/Seoul] 로 출력된 시간은 이미 +9 가 되어있는 시간임
+								log.info("result = {}, zoneId = {}, krw = {}, utc = {}, kst = {}",
+										exchangeResponse.getResult(),
+										exchangeResponse.getTimeLastUpdateUtc().getZone(),
+										exchangeResponse.getRates().getKRW(),
+										exchangeResponse.getTimeLastUpdateUtc(),
+										exchangeResponse.getTimeLastUpdateInKst()
+								);
 							}
 					)
 					.subscribe();
