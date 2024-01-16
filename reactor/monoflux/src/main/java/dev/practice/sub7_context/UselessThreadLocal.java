@@ -19,7 +19,9 @@ public class UselessThreadLocal {
      *
      * publishOn, subscribeOn 으로 실행 스레드가 달라질 경우..
      * ThreadLocal 을 쓸 수 있을까?
-     * -> 아래 실행결과를 참고 해봐도 되지만.. 스레드로컬 사용할 수 없다. (스레드가 변경되므로..)
+     * -> 아래 실행결과를 참고 해봐도 되지만.. 스레드로컬 사용할 수 없다.
+     * -> 코드상 동일한 코드 블럭 내에 있어서 같은 변수(스택 영역)를 사용하지만, 스레드가 달라서 스택영역이 공유되지 않아 참조하여도 null 이다.
+     *
      * -> 그래서 나온게 "context" 이다.
      */
 
@@ -29,14 +31,15 @@ public class UselessThreadLocal {
         log.info("start main, tx: {}", Thread.currentThread().getName());
 
         // ThreadLocal 생성
-        ThreadLocal<String> threadLocal = new ThreadLocal<>();
+        ThreadLocal<String> threadLocalInMain = new ThreadLocal<>();
+        threadLocalInMain.set("main");
 
-        threadLocal.set("starryeye");
+        log.info("threadLocal: {}, tx: {}", threadLocalInMain.get(), Thread.currentThread().getName());
 
         Flux.create(
                 sink -> {
                     // SingleScheduler 로 실행
-                    log.info("threadLocal: {}, tx: {}", threadLocal.get(), Thread.currentThread().getName());
+                    log.info("threadLocalInMain: {}, tx: {}", threadLocalInMain.get(), Thread.currentThread().getName());
                     sink.next(1);
                 }
         ).publishOn(
@@ -44,7 +47,9 @@ public class UselessThreadLocal {
         ).map(
                 value -> {
                     // ParallelScheduler 로 실행
-                    log.info("threadLocal: {}, tx: {}", threadLocal.get(), Thread.currentThread().getName());
+                    ThreadLocal<String> threadLocalInParallelScheduler = new ThreadLocal<>();
+                    threadLocalInParallelScheduler.set("parallel");
+                    log.info("threadLocalInParallelScheduler: {}, tx: {}", threadLocalInParallelScheduler.get(), Thread.currentThread().getName());
                     return value;
                 }
         ).publishOn(
@@ -52,7 +57,7 @@ public class UselessThreadLocal {
         ).map(
                 value -> {
                     // BoundedElasticScheduler 로 실행
-                    log.info("threadLocal: {}, tx: {}", threadLocal.get(), Thread.currentThread().getName());
+                    log.info("threadLocalInMain: {}, tx: {}", threadLocalInMain.get(), Thread.currentThread().getName());
                     return value;
                 }
         ).subscribeOn(

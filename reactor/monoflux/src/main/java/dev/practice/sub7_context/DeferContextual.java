@@ -22,7 +22,7 @@ public class DeferContextual {
         log.info("start main, tx: {}", Thread.currentThread().getName());
 
         // DeferAndFlatMap.java 에 의해 아래는 결국 Mono.just(1) 이다.
-        // contextView 를 파이프라인 중간에서 읽기 위해 아래와 같은 패턴을 사용한 것이다..
+        // contextView 를 파이프라인 중간에서 읽기 위해 아래와 같은 패턴을 사용한 것이다.. (initialAndReadContext 에서는 중간에 읽기 위해 create, sink 를 이용중)
         Mono.just(1) // publisher 끝
                 .flatMap( // 파이프라인 중간 연산자
                         value -> Mono.deferContextual( // deferContextual

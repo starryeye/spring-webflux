@@ -1,7 +1,9 @@
 package dev.practice.sub7_context;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.context.Context;
 import reactor.util.context.ContextView;
 
@@ -18,6 +20,7 @@ public class InitialAndReadContext {
      *
      */
 
+    @SneakyThrows
     public static void main(String[] args) {
 
         log.info("start main, tx: {}", Thread.currentThread().getName());
@@ -31,8 +34,26 @@ public class InitialAndReadContext {
                         String name = contextView.get("name");
                         log.info("publisher contextView name: {}, tx: {}", name, Thread.currentThread().getName());
 
-                        fluxSink.next(name);
+                        fluxSink.next(1);
+                        fluxSink.complete();
                     }
+                )
+                .publishOn(
+                        Schedulers.boundedElastic()
+                )
+                .flatMap(
+                        value -> Flux.create(
+                                fluxSink -> {
+
+                                    // 중간에 thread 가 변경되었음에도 context 는 초기화되지 않았다.
+                                    ContextView contextView = fluxSink.contextView();
+                                    String name = contextView.get("name");
+                                    log.info("publisher2 contextView name: {}, tx: {}", name, Thread.currentThread().getName());
+
+                                    fluxSink.next("a");
+                                    fluxSink.complete();
+                                }
+                        )
                 )
                 .subscribe(
                         value -> log.info("subscribe value: {}, tx: {}", value, Thread.currentThread().getName()),
@@ -42,5 +63,7 @@ public class InitialAndReadContext {
                 );
 
         log.info("end main, tx: {}", Thread.currentThread().getName());
+
+        Thread.sleep(3000L);
     }
 }

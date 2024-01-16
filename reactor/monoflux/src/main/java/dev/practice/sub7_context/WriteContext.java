@@ -29,15 +29,31 @@ public class WriteContext {
                         fluxSink -> {
                             ContextView contextView = fluxSink.contextView(); // context 에 접근
                             String name = contextView.get("name");
+                            // starryeye2 출력됨
                             log.info("publisher contextView name: {}, tx: {}", name, Thread.currentThread().getName());
 
                             fluxSink.next(name);
+                            fluxSink.complete();
                         }
                 )
                 .contextWrite(
                         context -> context.put("name", "starryeye2") // context 수정한다.
                 )
+                .flatMap(
+                        value -> Flux.create(
+                                fluxSink -> {
+                                    ContextView contextView = fluxSink.contextView(); // context 에 접근
+                                    String name = contextView.get("name");
+                                    // starryeye1 출력됨
+                                    log.info("publisher2 contextView name: {}, tx: {}", name, Thread.currentThread().getName());
+
+                                    fluxSink.next(name);
+                                    fluxSink.complete();
+                                }
+                        )
+                )
                 .subscribe(
+                        // value 는 downstream 으로 잘 전달될 것 이므로.. publisher2 에서 전달한 starryeye1 이다.
                         value -> log.info("subscribe value: {}, tx: {}", value, Thread.currentThread().getName()),
                         null,
                         null,
