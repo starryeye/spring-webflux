@@ -23,8 +23,8 @@ public class NettyEchoServer {
     @SneakyThrows
     public static void main(String[] args) {
 
-        EventLoopGroup parentGroup = new NioEventLoopGroup(); // ServerSocketChannel 의 accept event 를 처리하기 위함
-        EventLoopGroup childGroup = new NioEventLoopGroup(4); // SocketChannel 의 read event 를 처리하기 위함
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); // ServerSocketChannel 의 accept event 를 처리하기 위함
+        EventLoopGroup workerGroup = new NioEventLoopGroup(4); // SocketChannel 의 read event 를 처리하기 위함
 
         EventExecutorGroup eventExecutorGroup = new DefaultEventExecutorGroup(4);
 
@@ -33,8 +33,8 @@ public class NettyEchoServer {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
 
             serverBootstrap
-                    .group(parentGroup, childGroup) // EventLoopGroup 넣어준다.
-                    .channel(NioServerSocketChannel.class) // parentGroup 은 nioServerSocketChannel 에 대한 accept 이벤트를 받는다고 설정, 내부에서 생성하고 regist 한다.
+                    .group(bossGroup, workerGroup) // EventLoopGroup 넣어준다.
+                    .channel(NioServerSocketChannel.class) // bossGroup 은 nioServerSocketChannel 에 대한 accept 이벤트를 받는다고 설정, 내부에서 생성하고 regist 한다.
                     .childHandler(new ChannelInitializer<Channel>() { // accept 이벤트가 완료되었을 때의 수행할 작업을 설정(ChannelInitializer), ChannelInitializer 의 결과는 Channel 이다.
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
@@ -70,8 +70,8 @@ public class NettyEchoServer {
                     }).channel().closeFuture().sync(); // 채널이 닫힐때 까지 대기하지만(blocking).. 채널이 닫기지 않는다. 즉, 지속적인 실행을 위함
 
         }finally {
-            parentGroup.shutdownGracefully();
-            childGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
             eventExecutorGroup.shutdownGracefully();
         }
     }
