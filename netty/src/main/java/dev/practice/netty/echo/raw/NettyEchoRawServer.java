@@ -23,15 +23,15 @@ public class NettyEchoRawServer {
      */
 
     public static void main(String[] args) {
-        EventLoopGroup parentGroup = new NioEventLoopGroup();
-        EventLoopGroup childGroup = new NioEventLoopGroup(4);
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(4);
 
         NioServerSocketChannel serverSocketChannel = new NioServerSocketChannel(); // NioServerSocketChannel 을 직접 생성한다.
-        parentGroup.register(serverSocketChannel); // 생성한 채널을 EventLoopGroup 에 등록한다. -> parentGroup 은 accept 이벤트를 처리하게 됨
+        bossGroup.register(serverSocketChannel); // 생성한 채널을 EventLoopGroup 에 등록한다. -> bossGroup 은 accept 이벤트를 처리하게 됨
 
         serverSocketChannel.pipeline().addLast(
                 // serverSocketChannel(채널)이 갖는 ChannelPipeline 에 ServerAcceptHandler (채널 핸들러) 를 등록한다. 즉, accept 이벤트가 발생하면 acceptor 가 수행된다.
-                new ServerAcceptHandler(childGroup) // accept 결과로 SocketChannel 이 결과로 받아지고 해당 채널의 read 완료 이벤트를 childGroup (EventLoopGroup) 이 담당하도록 할 것이므로 파라미터로 같이 넘겨줌
+                new ServerAcceptHandler(workerGroup) // accept 결과로 SocketChannel 이 결과로 받아지고 해당 채널의 read 완료 이벤트를 workerGroup (EventLoopGroup) 이 담당하도록 할 것이므로 파라미터로 같이 넘겨줌
         );
 
         // NioServerSocketChannel 을 바인드 시킴, 바인드에 성공하면 특정 로그를 찍는다.
