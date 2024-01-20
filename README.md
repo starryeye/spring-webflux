@@ -31,6 +31,8 @@ Study Spring Webflux
   - Annotated Controller
   - WebClient
   - Spring security reactive
+- webclient
+  - spring webflux WebClient 알아보기
 - practice/notification
   - Http streaming 기법을 구현
   - ServerSentEvent, Sinks 활용 (sse)
@@ -62,8 +64,6 @@ Study Spring Webflux
     - spring cloud gateway (reactive)
     - spring cloud circuit breaker (reactive)
     - spring cloud stream (with kafka)
-- webclient
-  - spring webflux WebClient 알아보기
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
