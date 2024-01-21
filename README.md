@@ -76,7 +76,8 @@ Study Spring Webflux
 - [Java AIO](https://starryeye.tistory.com/205)
 - [Reactor pattern](https://starryeye.tistory.com/206)
 - [Proactor pattern](https://starryeye.tistory.com/207)
-- [Netty 1](https://starryeye.tistory.com/212)
+- [Netty 1, core](https://starryeye.tistory.com/212)
+- [Netty 2, ChannelHandler](https://starryeye.tistory.com/213)
 
 ## todo
 - reactor kafka (Project Reactor)
