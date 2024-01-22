@@ -19,6 +19,7 @@ public class ServerRequestHandler extends ChannelInboundHandlerAdapter { // inbo
 
         // LoggingHandler 를 통해서 SocketChannel 에서 발생되는 모든 이벤트가 로깅되는 걸 봤다... 그런데 여기에 로그를 찍어도 모든 이벤트가 여기까지 도달 하지 않는 것을 확인했다.. 도달 해야할 것 같은데.. 모르겠네..
         //  -> channelRead 는 Netty Channel(여기선 netty SocketChannel) 에서 데이터 읽을 준비되었을 때 호출되는 메서드이다.
+        //  -> netty SocketChannel 이므로 msg 로 ByteBuf 가 전달된다.
         log.info("test");
 
         if (msg instanceof ByteBuf) { // 이전 핸들러로 부터 전달된 msg 는 ByteBuf 이다.
