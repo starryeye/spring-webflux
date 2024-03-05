@@ -79,9 +79,11 @@ class UserR2dbcRepositoryTest {
                 .assertNext(
                         savedUser -> {
                             assertNotNull(savedUser.getId()); // db 에 의해 id 가 채워져야한다.
+                            assertNotNull(savedUser.getCreatedAt());
+
                             assertEquals(name, savedUser.getName());
 
-                            assertEquals(user.hashCode(), savedUser.hashCode()); // todo..? 동일한 객체가 반환됨
+                            assertNotEquals(savedUser, user); // id property 가 immutable 이라 동일하지 않은 엔티티가 반환됨
                         }
                 )
                 .verifyComplete();

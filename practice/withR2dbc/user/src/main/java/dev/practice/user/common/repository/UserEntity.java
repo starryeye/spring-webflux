@@ -1,6 +1,7 @@
 package dev.practice.user.common.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -16,9 +17,7 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     @Id
-    private Long id; // id 는 mutable 로 해야한다..
-    // reason.. 생성자로 값을 채울 수 없을 경우(생성자에서 값을 채우지 않음)엔 property population 방법으로 값을 채워준다..
-    // property 가 immutable 할 경우엔 채울 수 없음 (by reflection)
+    private final Long id; // immutable 이므로 saved 객체는 새로운 객체로 리턴된다. (mutable 하면, save 전과 후가 동일할 수 도 있음)
 
     private final String name;
     private final Integer age;
@@ -26,24 +25,46 @@ public class UserEntity {
     private final String password;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private final LocalDateTime updatedAt;
 
-    // 생성자는 현재 하나이므로 @PersistenceCreator 를 사용하지 않아도 되긴함.
-    //Object mapping 에서 사용할 생성자, property population 을 최소화 한다.
-    @PersistenceCreator // property population 을 최소화 하기 위해 여기다가함.. 이러면 AllArgsConstructor 는 필요없는듯?
-    public UserEntity(Long id, String name, Integer age, String profileImageId, String password) {
+    // 유일한 생성자 + AllArgsConstructor
+    // 해당 생성자로 Object mapping (Object create + property population) 을 진행한다.
+    @Builder
+    private UserEntity(Long id, String name, Integer age, String profileImageId, String password, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.profileImageId = profileImageId;
         this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    // for R2dbc
     public static UserEntity create(String name, Integer age, String profileImageId, String password) {
-        return new UserEntity(null, name, age, profileImageId, password);
+        return UserEntity.builder()
+                .id(null)
+                .name(name)
+                .age(age)
+                .profileImageId(profileImageId)
+                .password(password)
+                .createdAt(null)
+                .updatedAt(null)
+                .build();
+    }
+
+    // for test
+    public static UserEntity createWithId(Long id, String name, Integer age, String profileImageId, String password) {
+        return UserEntity.builder()
+                .id(id)
+                .name(name)
+                .age(age)
+                .profileImageId(profileImageId)
+                .password(password)
+                .createdAt(null)
+                .updatedAt(null)
+                .build();
     }
 }

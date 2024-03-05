@@ -76,7 +76,7 @@ class UserServiceTest {
 
             @BeforeEach
             void setup() {
-                givenUser = new UserEntity(userId, "test", 20, "1", "2");
+                givenUser = UserEntity.createWithId(userId, "test", 20, "1", "2");
 
                 // stubbing
                 when(mockUserR2dbcRepository.findById(eq(userId)))
