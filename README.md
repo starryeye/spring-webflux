@@ -79,6 +79,7 @@ Study Spring Webflux
 - [Netty 1, core](https://starryeye.tistory.com/212)
 - [Netty 2, ChannelHandler](https://starryeye.tistory.com/213)
 - [Netty 3, serverBootStrap]()
+- [WebHandler 와 Netty 의 관계](https://starryeye.tistory.com/219)
 
 ## todo
 - reactor kafka (Project Reactor)
