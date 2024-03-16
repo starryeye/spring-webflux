@@ -2,7 +2,7 @@
 Study Spring Webflux
 
 - Spring Webflux -> Reactor Netty (Project Reactor)
-- Reactor Netty (Project Reactor) -> Reactor(Project Reactor) -> Reactive Streams
+- Reactor Netty (Project Reactor) -> Reactor (Project Reactor) -> Reactive Streams
 - Reactor Netty (Project Reactor) -> Netty -> Java NIO + Reactor Pattern
 
 ## Before projects
