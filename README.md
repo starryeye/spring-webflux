@@ -64,6 +64,9 @@ Study Spring Webflux
     - spring cloud gateway (reactive)
     - spring cloud circuit breaker (reactive)
     - spring cloud stream (with kafka)
+- 다른 리포지토리
+  - [hellogram](https://github.com/starryeye/hellogram)
+    - 모의 sns
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
