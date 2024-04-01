@@ -87,7 +87,7 @@ Study Spring Webflux
 - [Proactor pattern](https://starryeye.tistory.com/207)
 - [Netty 1, core](https://starryeye.tistory.com/212)
 - [Netty 2, ChannelHandler](https://starryeye.tistory.com/213)
-- [Netty 3, serverBootStrap]()
+- [Netty 3, serverBootStrap(todo)]()
 - [WebHandler 와 Netty 의 관계](https://starryeye.tistory.com/219)
 - [WebHandler 와 Spring](https://starryeye.tistory.com/220)
 - [HttpHandler 생성과 동작](https://starryeye.tistory.com/221)
