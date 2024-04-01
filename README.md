@@ -4,20 +4,18 @@ Study Spring Webflux
 - Spring Webflux -> Reactor Netty (Project Reactor)
 - Reactor Netty (Project Reactor) -> Reactor (Project Reactor) -> Reactive Streams
 - Reactor Netty (Project Reactor) -> Netty -> Java NIO + Reactor Pattern
-
+  
 ## Before projects
 - JavaIO
   - [JavaIO, NIO, AIO, Reactor Pattern, Proactor Pattern Project](https://github.com/starryeye/java/tree/main/server/javaio)
 - Reactive Streams
   - [Reactive Streams, Cold/Hot publisher Project](https://github.com/starryeye/java/tree/main/reactivestreams/practice/coldandhot)
-
+  
 ## projects
 이론 베이스  
 - netty
   - netty 로 server, client 구현
 - reactor
-  - practice/user
-    - [CompletableFuture 버전](https://github.com/starryeye/java/tree/main/completablefuture/practice/user) 에서 Reactor lib 사용하여 개선
   - monoflux
     - Reactor 의 Mono, Flux (Reactive Streams Publisher/Subscriber/Subscription 구현체)
     - 연산자 및 기본 동작 원리 알아보기
@@ -26,20 +24,31 @@ Study Spring Webflux
 - functionalendpoints
   - Spring reactive stack 에서 제공하는 Functional Endpoints 로 서버 만들기
   - RouterFunction, HandlerFunction
+- webclient
+  - spring webflux WebClient 알아보기
+- websocket
+  - WebSocket 통신 프로토콜을 사용하는 간단한 서버 구현
+  - SimpleUrlHandlerMapping, WebSocketHandler 활용
+- spring-cloud
+  - reactive stack + spring cloud
+    - spring cloud gateway (reactive)
+    - spring cloud circuit breaker (reactive)
+    - spring cloud stream (with kafka)
+  
+## sub projects
+실습 베이스(practice 하위에 존재하는 프로젝트)     
+- reactor
+  - practice/user
+    - [CompletableFuture 버전](https://github.com/starryeye/java/tree/main/completablefuture/practice/user) 에서 Reactor lib 사용하여 개선
 - practice/user, image
   - Spring Webflux 를 사용하여 reactor/practice/user 를 개선
   - Functional Endpoints
   - Annotated Controller
   - WebClient
   - Spring security reactive
-- webclient
-  - spring webflux WebClient 알아보기
 - practice/notification
   - Http streaming 기법을 구현
   - ServerSentEvent, Sinks 활용 (sse)
-- websocket
-  - WebSocket 통신 프로토콜을 사용하는 간단한 서버 구현
-  - SimpleUrlHandlerMapping, WebSocketHandler 활용
 - practice/chat
   - WebSocketHandler 를 이용한 채팅 서버 구현
   - SimpleUrlHandlerMapping, WebSocketHandler, WebSocketService, Sinks 활용
@@ -59,20 +68,12 @@ Study Spring Webflux
   - spring data redis reactive 를 사용하여 연동
 - practice/withRedis/notice
   - practice/notice 에서 Redis 를 추가
-  - spring data redis reactive 를 사용하여 연동
-- spring-cloud
-  - reactive stack + spring cloud
-    - spring cloud gateway (reactive)
-    - spring cloud circuit breaker (reactive)
-    - spring cloud stream (with kafka)
-- 다른 리포지토리
+  - spring data redis reactive 를 사용하여 연동 
+  
+- 외부 리포지토리
   - [hellogram](https://github.com/starryeye/hellogram)
     - full reactive stack, 모의 sns
-
-## sub projects
-실습 베이스(practice 하위에 존재하는 프로젝트)     
-
-
+  
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
 - [Reactive Programming](https://starryeye.tistory.com/196)
