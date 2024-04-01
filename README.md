@@ -12,6 +12,7 @@ Study Spring Webflux
   - [Reactive Streams, Cold/Hot publisher Project](https://github.com/starryeye/java/tree/main/reactivestreams/practice/coldandhot)
 
 ## projects
+이론 베이스  
 - netty
   - netty 로 server, client 구현
 - reactor
@@ -66,7 +67,11 @@ Study Spring Webflux
     - spring cloud stream (with kafka)
 - 다른 리포지토리
   - [hellogram](https://github.com/starryeye/hellogram)
-    - 모의 sns
+    - full reactive stack, 모의 sns
+
+## sub projects
+실습 베이스(practice 하위에 존재하는 프로젝트)     
+
 
 ## Posting
 - [Reactive Manifesto](https://starryeye.tistory.com/195)
