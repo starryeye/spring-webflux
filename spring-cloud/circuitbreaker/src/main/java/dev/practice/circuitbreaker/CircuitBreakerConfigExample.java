@@ -96,6 +96,9 @@ public class CircuitBreakerConfigExample {
                 .timeoutDuration(Duration.ofSeconds(3)) // publisher(요청) 를 수행 후 몇 초 기다리면 timeout 으로 볼 것인가.. (기본 값 1)
                 .build();
 
+        // 참고..
+        // WebClient 와 Resilience4J 의 서킷브레이커를 사용할 때, TimeLimiter 의 timeoutDuration 은 connection, read time 을 모두 포함한 시간으로 볼 수 있다.
+
         // "example" 이라는 circuitBreaker id 를 가진 서킷 브레이커에 해당 설정들을 적용 할 예정이다.
         // 서킷 브레이커가 생성되는 것은 아님, 서킷 브레이커는 ReactiveCircuitBreakerFactory::create 로 직접 생성해줘야한다. (GreeterService 참조)
         String[] targetCircuitBreakerIds = new String[]{"example"};
