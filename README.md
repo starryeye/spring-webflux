@@ -33,6 +33,7 @@ Study Spring Webflux
   - reactive stack + spring cloud
     - spring cloud gateway (reactive)
       - RoutePredicate, GatewayFilter
+      - GlobalFilter, dynamic determine route uri (todo)
     - spring cloud circuit breaker (reactive)
     - spring cloud stream (with kafka)
   
