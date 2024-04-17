@@ -15,7 +15,7 @@ import java.net.URI;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 @Slf4j
-@Component
+//@Component
 public class MyCustomGlobalFilter implements GlobalFilter, Ordered {
 
     /**
