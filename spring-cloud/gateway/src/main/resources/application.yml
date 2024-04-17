@@ -2,5 +2,16 @@
 
 logging:
   level:
-    org.springframework.cloud.gateway: debug
-    reactor.netty.http.client: debug
+    org:
+      springframework:
+        cloud:
+          gateway: debug
+#        http:
+#          server:
+#            reactive: debug
+#        web:
+#          reactive: debug
+    reactor:
+      netty:
+        http:
+          client: debug
