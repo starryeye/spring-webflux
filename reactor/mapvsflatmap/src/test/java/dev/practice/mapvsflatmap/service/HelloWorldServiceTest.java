@@ -43,6 +43,7 @@ class HelloWorldServiceTest {
     void test() {
 
         // given
+        // stubbing
         mockHelloWebServer.enqueue(
                 new MockResponse()
                         .setResponseCode(200)
