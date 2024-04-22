@@ -143,11 +143,19 @@ public class MapAndFlatMapTest {
     void map2() {
 
         /**
-         * 아래 예시는 map 을 사용하지만, helloClient.get 의 리턴 값인 Mono<String> 를 그대로 리턴하고 평탄화(flatMap) 시켜서
-         * 동기적인 로직이 아니게 되었다.
-         * -> 즉, map 내부에서 io 작업을 동기적으로 완료시키고 해당 바디 값을 downstream 으로 전달하지 않는 것이다.
+         * 아래 예시는 map 을 사용하지만, helloClient.get 의 리턴 값인 Mono<String> 를(publisher) 그대로 리턴하고
+         * flatMap 에 의해 해당 publisher 가 subscribe 된 케이스이다. 동기적인 로직이 아니게 되었다.(map 연산이 끝나는 시점에 결과에 관심 없음, 비동기)
+         * -> 즉, map 내부에서 io 작업을 동기적으로 완료시키지 않았고 flatMap 까지 와서 해당 바디 값을 downstream 으로 전달한 것이다.
          *
-         * map 이 무조건 적인 동기라 생각하면 오해가 될 수 있는 것이다. 개발하기 나름인 것
+         * 결론..
+         * map 은 단순히 하나의 값을 다른 값으로 변환하는 메서드이다.
+         * 따라서, 호출 스레드가 반환까지 책임진다. (아래 코드도 사실 map 만 보면, item 을 받아서 Mono<String> 으로 변환하였고 이는 모두 같은 스레드로 진행되었다.)
+         * 그러므로 동기 방식이다. (결과에 관심이 있네..)
+         *
+         * flatMap 은 반환하는 publisher 에 따라 달라진다.
+         * 비동기일 수 도 있고 동기일 수 도 있다.
+         * 스레드가 변경되도록 되어있으면 (주로 IO 작업이나 명시적으로 스레드 전환) 비동기 일 것이고
+         * 그냥 단순히 Mono.just 와 같은 호출 스레드를 그대로 이어서 진행하도록 되어있으면 동기 일 것이다.
          */
 
         mockHelloWebServer.enqueue(new MockResponse().setResponseCode(200).setBody("Hello"));
