@@ -105,6 +105,12 @@ public class MapAndFlatMapTest {
          * doOnNext 에서 찍히는 스레드가 callback 된 스레드로 찍히지만..
          * 여기서는 doOnNext 에 찍히는 스레드는 test worker 로 Mono.just 를 수행한 스레드가 찍힌다.
          *
+         *
+         * 참고 - block 을 사용한 이유
+         * test 코드에서 명시적으로 blocking 임을 강조하고 싶었음..
+         * hellClient, worldClient 의 get 메서드 return 타입이 Mono<String> 인데
+         * 이를 String 으로 바꾸면 get 메서드 내부에서 block 처리해야함..
+         *
          */
 
         mockHelloWebServer.enqueue(new MockResponse().setResponseCode(200).setBody("Hello"));
