@@ -52,7 +52,7 @@ public class MapAndFlatMapTest {
          *
          * flatMap 의 파라미터는 Function<? super T, ? extends Mono<? extends R>> transformer 이다.
          * -> 즉, return 으로 publisher 가 들어간다.
-         * flatMap 은 단순히 윗 스트림에서 아이템이 내려오면 가지고 있던 publisher 를 진행해오던 스레드로 subscribe 한다. (마블 다이어그램 참고)
+         * flatMap 은 단순히 윗 스트림에서 아이템이 내려오면 가지고 있던 publisher 를 진행할 스레드로 subscribe 한다. (즉, 스레드가 변경될 수 있다, 마블 다이어그램 참고)
          * 이후, 해당 publisher 에서 발생한 아이템을 downstream 으로 전달한다.
          * 해당 publisher 에서 IO 에 의하던간에 다른 스레드로 교체될 수 있다.
          */
