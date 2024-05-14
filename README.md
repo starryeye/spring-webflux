@@ -19,6 +19,7 @@ Study Spring Webflux
   - monoflux
     - Reactor 의 Mono, Flux (Reactive Streams Publisher/Subscriber/Subscription 구현체)
     - 연산자 및 기본 동작 원리 알아보기
+    - 추가 연습해보기 [practical-reactor](https://github.com/starryeye/practical-reactor/tree/practices)
 - webhandler
   - DispatcherHandler 를 사용하지 않고, WebHandler, WebFilter, WebExceptionHandler 등을 사용하여 서버 만들기
 - functionalendpoints
