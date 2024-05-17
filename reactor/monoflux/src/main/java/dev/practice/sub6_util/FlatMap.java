@@ -24,6 +24,16 @@ public class FlatMap {
      *
      * 특이점
      * - TODO, 가끔! publishOn 에 의해 doOnNext 는 전부 parallel 로 동작하는데.. 마지막 (5,1), (5,2) 는 main 으로 동작한다.... 이유는?
+     *
+     * 참고
+     * Mono 의 flatMap 은..
+     * public final <R> Mono<R> flatMap(Function<? super T, ? extends Mono<? extends R>> transformer)
+     * 로.. Flux 의 flatMap 과 다르게 리턴 publisher 가 Mono 로 한정적이다..
+     *
+     * 참고
+     * Mono 에서 Flux 로 변환이 필요하다면..
+     * thenMany (Mono 의 값은 사용불가능)
+     * flatMapMany, expand, concatMap 을 사용할 수 있다.
      */
 
     @SneakyThrows
