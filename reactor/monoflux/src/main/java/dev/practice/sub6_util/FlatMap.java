@@ -15,6 +15,7 @@ public class FlatMap {
      * public final <R> Flux<R> flatMap(Function<? super T, ? extends Publisher<? extends R>> mapper)
      *
      * - onNext 이벤트를 받아서 publisher 를 반환한다.
+     * publisher 를 반환하기 때문에 비동기적(호출 스레드와 응답 스레드가 다름)으로 수행될 수 있으며, 멀티스레드 환경이면 순서보장도 안될 수 있다.
      * - value -> [flatMap -> publisher] -> value & event
      * - 중첩 for loop 비슷한 결과가 나타난다.
      * - onErrorResume 과 구조가 비슷하다. (Throwable 을 받아 publisher 반환)
