@@ -22,5 +22,9 @@ public class App {
      * - onNext 가 호출되면 곧바로 onComplete 이벤트가 전달된다.
      * - Mono<Void> 를 통해서 특정 사건의 완료를 전달하는 것으로 응용할 수 있다.
      * - Optional 과 성격이 비슷하다.
+     *
+     *
+     * 연습문제 풀어보기
+     * https://github.com/starryeye/practical-reactor
      */
 }
