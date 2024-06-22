@@ -16,7 +16,7 @@ public class App {
      * - List 와 성격이 비슷하다.
      *
      * Mono
-     * - 0 or 1 rodml item 을 subscriber 에게 전달
+     * - 0 or 1 개의 item 을 subscriber 에게 전달
      * - subscriber 에게 onComplete, onError 이벤트를 전달하면 연결이 종료된다.
      * - onComplete 포함, 모든 이벤트가 optional 하기 때문에 다양한 Mono 를 정의할 수 있다.
      * - onNext 가 호출되면 곧바로 onComplete 이벤트가 전달된다.
