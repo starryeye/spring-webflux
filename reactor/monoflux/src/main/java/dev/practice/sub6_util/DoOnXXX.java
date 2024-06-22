@@ -31,6 +31,9 @@ public class DoOnXXX {
      * doOn* 연산자들은..
      * - 각각의 이벤트를 흐름에 영향을 주지 않고.. 위에서 내려오는 이벤트에 대해 추가 작업이 가능하다.
      * - 즉, subscribe 인것 처럼 파이프라인 도중에 해당 이벤트가 내려오면 매칭되는 연산자의 함수가 동작한다.
+     *
+     * todo, doOnEach 연산자는 Signal 을 consume 하면서.. 여러 이벤트를 한꺼번에 다룰수 있다..
+     *  그렇다면.. downstream 방향으로 연산자 순서에 영향을 받나?
      */
 
     public static void main(String[] args) {
