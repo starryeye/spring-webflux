@@ -36,8 +36,9 @@ public class FluxCreate {
          * - - in/out 에 해당하는 값(상태)은 타입 파라미터에 존재하지 않는다.
          * - - 결과 값에 관심이 없는 것이므로 비동기라고 볼 수 있다.
          *
-         * TODO, sink 는 main, subscribe 는 ForkJoinPool 에서 수행...
+         * sink 는 main, subscribe 는 ForkJoinPool 에서 수행...
          * publishOn, subscribeOn 을 사용하지 않았는데.. subscriber 와 publisher 가 서로다른 스레드에서 수행될 수 있나..
+         * -> CompletableFuture 의 runAsync 는 기본으로 ForkJoinPool 에서 수행한다..
          */
 
         Flux.create(
