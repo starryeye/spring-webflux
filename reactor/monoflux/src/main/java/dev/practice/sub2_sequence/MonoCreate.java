@@ -41,14 +41,14 @@ public class MonoCreate {
 
         log.info("start main tx: {}", Thread.currentThread().getName());
 
-        Mono<Flux<Integer>> fluxMono = Mono.create(monoSink -> {
+        Mono<Flux<Integer>> monoWithFluxInside = Mono.create(monoSink -> {
 
             Flux<Integer> integerFlux = Flux.range(0, 10);
 
             monoSink.success(integerFlux);
         });
 
-        fluxMono.flatMapMany(Function.identity()) // Mono<Flux<Integer>> 에서 Flux<Integer> 를 수행하면서 나오는 아이템과 이벤트를 방출한다.
+        monoWithFluxInside.flatMapMany(Function.identity()) // Mono<Flux<Integer>> 에서 Flux<Integer> 를 수행하면서 나오는 아이템과 이벤트를 방출한다.
                 .doOnNext(item -> log.info("item: {}", item))
                 .subscribe();
 
