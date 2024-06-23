@@ -2,6 +2,7 @@ package dev.practice.sub6_util;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.SignalType;
 
 @Slf4j
 public class DoOnXXX {
@@ -32,8 +33,10 @@ public class DoOnXXX {
      * - 각각의 이벤트를 흐름에 영향을 주지 않고.. 위에서 내려오는 이벤트에 대해 추가 작업이 가능하다.
      * - 즉, subscribe 인것 처럼 파이프라인 도중에 해당 이벤트가 내려오면 매칭되는 연산자의 함수가 동작한다.
      *
-     * todo, doOnEach 연산자는 Signal 을 consume 하면서.. 여러 이벤트를 한꺼번에 다룰수 있다..
-     *  그렇다면.. downstream 방향으로 연산자 순서에 영향을 받나?
+     * doOnEach 연산자는 Signal 을 consume 하면서.. 여러 이벤트를 한꺼번에 다룰수 있다..
+     * 그렇다면.. downstream 방향으로 연산자 순서에 영향을 받나?
+     * -> onNext 이벤트 기준으로는 그러함..
+     * -> todo, doOnNext 에서 onSubscribe 가 동작하지 않음.. 이유는? 그리고 onRequest 이벤트가 안보임
      */
 
     public static void main(String[] args) {
@@ -41,12 +44,28 @@ public class DoOnXXX {
         log.info("start main, tx: {}", Thread.currentThread().getName());
 
         Flux.range(1, 5)
+                .doOnEach(signal -> {
+                    log.info("doOnEach signal: {}", signal);
+                    if(signal.getType() == SignalType.ON_NEXT) {
+                        log.info("doOnEach onNext item: {}", signal.get());
+                    } else if (signal.getType() == SignalType.ON_SUBSCRIBE) {
+                        log.info("doOnEach onSubscribe subscription: {}", signal.getSubscription());
+                    } else if (signal.getType() == SignalType.ON_COMPLETE) {
+                        log.info("doOnEach onComplete");
+                    }
+                })
                 .map(
                         value -> value * 2
                 )
+                .doOnEach(signal -> {
+                    if(signal.isOnNext()) log.info("doOnEach2 onNext item: {}", signal.get());
+                })
                 .doOnNext( // onNext 이벤트가 파이프라인에 도착하면 해당 함수를 실행한다.
                         value -> log.info("doOnNext value: {}, tx: {}", value, Thread.currentThread().getName())
                 )
+                .doOnEach(signal -> {
+                    if(signal.isOnNext()) log.info("doOnEach3 onNext item: {}", signal.get());
+                })
                 .doOnComplete( // onComplete 이벤트가 파이프라인에 도착하면 해당 함수를 실행한다.
                         () -> log.info("doOnComplete tx: {}", Thread.currentThread().getName())
                 )
