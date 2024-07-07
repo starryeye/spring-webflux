@@ -40,6 +40,9 @@ Study Spring Webflux
       - GlobalFilter, dynamic determine route uri (todo)
     - spring cloud circuit breaker (reactive)
     - spring cloud stream (with kafka)
+- data/r2dbc
+  - initialization
+    - spring data r2dbc 알아보기
   
 ## sub projects
 실습 베이스(practice 하위에 존재하는 프로젝트)     
