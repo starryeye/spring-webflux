@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @RestController
@@ -23,6 +24,12 @@ public class ArticleController {
 
         log.info("created article.. article(json) = {}", objectMapper.writeValueAsString(articleResponse));
 
-        return Mono.just(ResponseEntity.ok(articleResponse));
+        return Mono.just(1)
+                .publishOn(Schedulers.parallel()) // thread 변경
+                .flatMap(value -> {
+                    log.info("response article..");
+                    return Mono.just(ResponseEntity.ok(articleResponse));
+                });
+
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+
+        <!-- https://github.com/logfellow/logstash-logback-encoder -->
+        <!-- https://lovia98.github.io/blog/logback-json/ -->
+        <!-- https://lelecoder.com/153 -->
+        <!-- https://twowinsh87.github.io/etc/2019/05/30/etc-springboot-logbackAndLogstash/ -->
+
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+
+            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSZ</timestampPattern>
+            <timeZone>UTC</timeZone>
+
+            <includeMdcKeyName>requestId</includeMdcKeyName>
+            <includeMdcKeyName>loggingType</includeMdcKeyName>
+
+            <!--            <customFields>-->
+            <!--                {-->
+            <!--                "appname" : "${app.name}",-->
+            <!--                "port":"${server.port:-8080}"-->
+            <!--                }-->
+            <!--            </customFields>-->
+
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>5</maxDepthPerThrowable>
+            </throwableConverter>
+
+            <fieldNames>
+                <logger>logger</logger> <!-- default : logger_name -->
+                <version>[ignore]</version>
+                <levelValue>[ignore]</levelValue>
+            </fieldNames>
+
+        </encoder>
+
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>

@@ -1,2 +1,2 @@
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-json.xml
