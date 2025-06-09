@@ -14,8 +14,8 @@
             <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSSZ</timestampPattern>
             <timeZone>UTC</timeZone>
 
-            <includeMdcKeyName>requestId</includeMdcKeyName>
-            <includeMdcKeyName>loggingType</includeMdcKeyName>
+            <includeMdcKeyName>request_id</includeMdcKeyName>
+            <includeMdcKeyName>logging_type</includeMdcKeyName>
 
             <!--            <customFields>-->
             <!--                {-->

@@ -2,7 +2,7 @@ package dev.starryeye.logging.common.filter;
 
 import dev.starryeye.logging.common.ContextMdc;
 import dev.starryeye.logging.common.ContextMdcKey;
-import dev.starryeye.logging.common.ContextMdcValue;
+import dev.starryeye.logging.common.LoggingType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -23,7 +23,7 @@ public class SetBusinessMdcFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return Mono.fromRunnable(() ->
-                        contextMdc.put(ContextMdcKey.LOGGING_TYPE, ContextMdcValue.LOGGING_TYPE_BUSINESS.getValue()))
+                        contextMdc.put(ContextMdcKey.LOGGING_TYPE, LoggingType.BUSINESS.name()))
                 .onErrorResume(throwable -> {
                     log.error("Failed to put context MDC", throwable);
                     return Mono.empty();

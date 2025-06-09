@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ContextMdcKey {
 
-    LOGGING_TYPE("loggingType"),
-    REQUEST_ID("requestId"),
+    LOGGING_TYPE("logging_type"),
+    REQUEST_ID("request_id"),
 
     ;
 

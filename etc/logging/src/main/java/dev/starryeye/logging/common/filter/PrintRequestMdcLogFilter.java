@@ -1,7 +1,7 @@
 package dev.starryeye.logging.common.filter;
 
 import dev.starryeye.logging.common.ContextMdcKey;
-import dev.starryeye.logging.common.ContextMdcValue;
+import dev.starryeye.logging.common.LoggingType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.RequestPath;
@@ -29,7 +29,7 @@ public class PrintRequestMdcLogFilter implements WebFilter {
         return Mono.just(path)
                 .filter(p -> PATH_PREFIXES.stream()
                         .anyMatch(prefix -> p.pathWithinApplication().value().startsWith(prefix)))
-                .doOnNext(p -> log.info(append(ContextMdcKey.LOGGING_TYPE.getKey(), ContextMdcValue.LOGGING_TYPE_REQUEST.getValue()), "http request arrived."))
+                .doOnNext(p -> log.info(append(ContextMdcKey.LOGGING_TYPE.getKey(), LoggingType.REQUEST.name()), "http request arrived."))
                 .then(chain.filter(exchange));
     }
 }
