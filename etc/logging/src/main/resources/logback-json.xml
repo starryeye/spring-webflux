@@ -15,8 +15,14 @@
             <timeZone>UTC</timeZone>
 
             <includeMdcKeyName>request_id</includeMdcKeyName>
+            <includeMdcKeyName>request_path</includeMdcKeyName>
             <includeMdcKeyName>logging_type</includeMdcKeyName>
             <includeMdcKeyName>status_code</includeMdcKeyName>
+            <includeMdcKeyName>total_elapsed_time</includeMdcKeyName>
+            <includeMdcKeyName>external_api_elapsed_time</includeMdcKeyName>
+            <includeMdcKeyName>external_api_url</includeMdcKeyName>
+            <includeMdcKeyName>external_api_status_code</includeMdcKeyName>
+            <includeMdcKeyName>external_database_elapsed_time</includeMdcKeyName>
 
             <!--            <customFields>-->
             <!--                {-->

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import reactor.util.context.Context;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ContextMdc {
@@ -29,9 +30,23 @@ public class ContextMdc {
         return Context.of(CONTEXT_MDC_KEY, Map.of(key.getKey(), value));
     }
 
+    public Context createContext(Map<ContextMdcKey, String> keyValues) {
+        Map<String, String> collected = keyValues.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().getKey(), Map.Entry::getValue
+                ));
+        return Context.of(CONTEXT_MDC_KEY, collected);
+    }
+
     public void put(ContextMdcKey key, String value) {
         Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
         copyOfContextMap.put(key.getKey(), value);
         MDC.setContextMap(copyOfContextMap);
+    }
+
+    public String get(ContextMdcKey key) {
+        Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
+
+        return copyOfContextMap.get(key.getKey());
     }
 }

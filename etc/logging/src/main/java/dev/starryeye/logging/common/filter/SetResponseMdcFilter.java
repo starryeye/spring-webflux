@@ -1,19 +1,37 @@
 package dev.starryeye.logging.common.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import dev.starryeye.logging.common.ContextMdc;
+import dev.starryeye.logging.common.ContextMdcKey;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-@Slf4j
+import java.util.Collections;
+
 @Order(4)
 @Component
+@RequiredArgsConstructor
 public class SetResponseMdcFilter implements WebFilter {
+
+    private final ContextMdc contextMdc;
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
+        String requestId = contextMdc.get(ContextMdcKey.REQUEST_ID);
+
+        ServerHttpResponse response = exchange.getResponse();
+
+        response.beforeCommit(() -> {
+            response.getHeaders().put("X-Request-ID", Collections.singletonList(requestId));
+            return Mono.empty();
+        });
+
         return chain.filter(exchange);
     }
 }

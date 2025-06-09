@@ -14,8 +14,8 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Order(Ordered.LOWEST_PRECEDENCE)
-@Component
+//@Order(Ordered.LOWEST_PRECEDENCE)
+//@Component
 @RequiredArgsConstructor
 public class SetBusinessMdcFilter implements WebFilter {
 
