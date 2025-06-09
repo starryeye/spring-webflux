@@ -5,6 +5,7 @@ import dev.starryeye.logging.common.ContextMdcKey;
 import dev.starryeye.logging.common.LoggingType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -13,7 +14,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Order(3)
+@Order(Ordered.LOWEST_PRECEDENCE)
 @Component
 @RequiredArgsConstructor
 public class SetBusinessMdcFilter implements WebFilter {

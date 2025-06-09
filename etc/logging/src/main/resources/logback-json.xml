@@ -16,6 +16,7 @@
 
             <includeMdcKeyName>request_id</includeMdcKeyName>
             <includeMdcKeyName>logging_type</includeMdcKeyName>
+            <includeMdcKeyName>status_code</includeMdcKeyName>
 
             <!--            <customFields>-->
             <!--                {-->
