@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
@@ -18,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,12 +31,14 @@ import static net.logstash.logback.marker.Markers.appendEntries;
 @Component
 public class PrintResponseMdcLogFilter implements WebFilter {
 
-    private static final String RESPONSE_LOG_FORMAT = """
-        \n[HTTP Response]
-        %s
-        %s
-        Elapsed-Time: %d ms
-        """;
+    private static final String HTTP_RESPONSE_LOG_FORMAT = """
+            \n[HTTP Response]
+            %s
+            %s
+            Elapsed-Time: %d ms
+            \n
+            %s
+            """;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -46,41 +51,50 @@ public class PrintResponseMdcLogFilter implements WebFilter {
 
     private ServerHttpResponseDecorator decorateResponse(ServerWebExchange exchange, StopWatch stopWatch) {
         ServerHttpResponse original = exchange.getResponse();
+        DataBufferFactory bufferFactory = original.bufferFactory();
 
         return new ServerHttpResponseDecorator(original) {
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                return super.writeWith(Flux.from(body)
-                        .doOnComplete(() -> {
-                            stopWatch.stop();
-                            printResponse(getStatusCodeValue(), stopWatch.getTotalTimeMillis(), getHeaders());
-                        })
-                        .doOnError(ex -> {
-                            stopWatch.stop();
-                            printError(getStatusCodeValue(), stopWatch.getTotalTimeMillis(), getHeaders(), ex);
-                        })
-                );
+                return super.writeWith(Flux.from(body).flatMap(dataBuffer -> {
+                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                    dataBuffer.read(bytes);
+                    DataBufferUtils.release(dataBuffer);
+
+                    String bodyString = new String(bytes, StandardCharsets.UTF_8);
+
+                    stopWatch.stop();
+                    int statusCode = getStatusCodeValue();
+                    long elapsed = stopWatch.getTotalTimeMillis();
+
+                    log.info(
+                            appendEntries(getLoggingEntries(statusCode, elapsed)),
+                            HTTP_RESPONSE_LOG_FORMAT.formatted(
+                                    statusCode,
+                                    formatHeaders(getHeaders()),
+                                    elapsed,
+                                    bodyString
+                            )
+                    );
+
+                    return Mono.just(bufferFactory.wrap(bytes));
+                }));
+            }
+
+            @Override
+            public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
+                return super.writeAndFlushWith(Flux.from(body).map(inner -> Flux.from(inner).flatMap(dataBuffer -> {
+                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                    dataBuffer.read(bytes);
+                    DataBufferUtils.release(dataBuffer);
+                    return Mono.just(bufferFactory.wrap(bytes));
+                })));
             }
 
             private int getStatusCodeValue() {
                 return getStatusCode() != null ? getStatusCode().value() : 200;
             }
         };
-    }
-
-    private void printResponse(int statusCode, long elapsed, HttpHeaders headers) {
-        log.info(
-                appendEntries(getLoggingEntries(statusCode, elapsed)),
-                RESPONSE_LOG_FORMAT.formatted(statusCode, formatHeaders(headers), elapsed)
-        );
-    }
-
-    private void printError(int statusCode, long elapsed, HttpHeaders headers, Throwable ex) {
-        log.error(
-                appendEntries(getLoggingEntries(statusCode, elapsed)),
-                RESPONSE_LOG_FORMAT.formatted(statusCode, formatHeaders(headers), elapsed),
-                ex
-        );
     }
 
     private Map<String, ? extends Serializable> getLoggingEntries(int statusCode, Long elapsed) {
