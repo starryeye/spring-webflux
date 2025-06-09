@@ -3,3 +3,4 @@ GET http://localhost:8080/articles
 
 ### 에러 응답
 GET http://localhost:8080/articles/error
+X-Request-ID: aaa

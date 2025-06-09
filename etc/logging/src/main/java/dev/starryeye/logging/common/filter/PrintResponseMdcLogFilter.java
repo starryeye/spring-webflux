@@ -71,7 +71,7 @@ public class PrintResponseMdcLogFilter implements WebFilter {
                             appendEntries(getLoggingEntries(statusCode, elapsed)),
                             HTTP_RESPONSE_LOG_FORMAT.formatted(
                                     statusCode,
-                                    formatHeaders(getHeaders()),
+                                    formatHeaders(exchange.getRequest().getHeaders()),
                                     elapsed,
                                     bodyString
                             )
