@@ -39,6 +39,7 @@ public class ArticleController {
 
     @GetMapping("/error")
     public Mono<ResponseEntity<ArticleResponse>> getErrors() {
-        throw new BusinessException(ErrorCode.BUSINESS_ERROR_CODE_1, "this is error");
+        log.error("error occurred..");
+        throw new BusinessException(ErrorCode.BUSINESS_ERROR_CODE_1, "this is business error 1");
     }
 }
