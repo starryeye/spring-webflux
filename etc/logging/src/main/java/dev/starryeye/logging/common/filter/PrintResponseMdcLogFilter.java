@@ -31,14 +31,7 @@ import static net.logstash.logback.marker.Markers.appendEntries;
 @Component
 public class PrintResponseMdcLogFilter implements WebFilter {
 
-    private static final String HTTP_RESPONSE_LOG_FORMAT = """
-            \n[HTTP Response]
-            %s
-            %s
-            Elapsed-Time: %d ms
-            \n
-            %s
-            """;
+    private static final String HTTP_RESPONSE_LOG_FORMAT = "[FINAL RESPONSE] status: %d, headers: %s, elapsed: %d, body: %s";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -55,7 +48,7 @@ public class PrintResponseMdcLogFilter implements WebFilter {
 
         return new ServerHttpResponseDecorator(original) {
             @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) { // 참고, SSE 의 경우엔 writeAndFlushWith 를 오버라이딩할 것.
                 return super.writeWith(Flux.from(body).flatMap(dataBuffer -> {
                     byte[] bytes = new byte[dataBuffer.readableByteCount()];
                     dataBuffer.read(bytes);
@@ -71,7 +64,7 @@ public class PrintResponseMdcLogFilter implements WebFilter {
                             appendEntries(getLoggingEntries(statusCode, elapsed)),
                             HTTP_RESPONSE_LOG_FORMAT.formatted(
                                     statusCode,
-                                    formatHeaders(exchange.getRequest().getHeaders()),
+                                    exchange.getRequest().getHeaders(),
                                     elapsed,
                                     bodyString
                             )
@@ -79,16 +72,6 @@ public class PrintResponseMdcLogFilter implements WebFilter {
 
                     return Mono.just(bufferFactory.wrap(bytes));
                 }));
-            }
-
-            @Override
-            public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends DataBuffer>> body) {
-                return super.writeAndFlushWith(Flux.from(body).map(inner -> Flux.from(inner).flatMap(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    return Mono.just(bufferFactory.wrap(bytes));
-                })));
             }
 
             private int getStatusCodeValue() {
@@ -103,11 +86,5 @@ public class PrintResponseMdcLogFilter implements WebFilter {
                 ContextMdcKey.STATUS_CODE.getKey(), statusCode,
                 ContextMdcKey.TOTAL_ELAPSED_TIME.getKey(), elapsed
         );
-    }
-
-    private String formatHeaders(HttpHeaders headers) {
-        return headers.entrySet().stream()
-                .map(entry -> entry.getKey() + ": " + String.join(", ", entry.getValue()))
-                .collect(Collectors.joining("\n"));
     }
 }

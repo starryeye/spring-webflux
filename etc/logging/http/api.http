@@ -4,3 +4,23 @@ GET http://localhost:8080/articles
 ### 에러 응답
 GET http://localhost:8080/articles/error
 X-Request-ID: aaa
+
+
+### post application/json
+POST http://localhost:8080/articles/new-1
+Content-Type: application/json
+
+{
+  "title": "good",
+  "content": "content"
+}
+
+### post application/x-www-form-urlencoded
+POST http://localhost:8080/articles/new-2
+Content-Type: application/x-www-form-urlencoded
+
+title=title
+    &content=content
+
+### get query parameter
+GET http://localhost:8080/articles/new-3?title=title&content=content
