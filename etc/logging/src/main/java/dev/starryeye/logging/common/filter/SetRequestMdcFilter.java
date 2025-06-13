@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.RequestPath;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
-@Order(1)
+@Order(0)
 @Component
 @RequiredArgsConstructor
 public class SetRequestMdcFilter implements WebFilter {

@@ -7,7 +7,6 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.io.Serializable;
 import java.util.Map;

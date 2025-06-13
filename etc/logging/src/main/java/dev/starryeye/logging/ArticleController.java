@@ -6,6 +6,7 @@ import dev.starryeye.logging.common.exception.BusinessException;
 import dev.starryeye.logging.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -41,18 +42,18 @@ public class ArticleController {
         throw new BusinessException(ErrorCode.BUSINESS_ERROR_CODE_1, "this is business error 1");
     }
 
-    @PostMapping("/new-1")
+    @PostMapping(value = "/new-1", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ArticleResponse>> create1(@RequestBody ArticleRequest request) {
 
-        log.info("created new1 article.. request = {}", request);
+        log.info("new1 request = {}", request);
 
         return Mono.just(ResponseEntity.ok(new ArticleResponse(request.title(), request.content())));
     }
 
-    @PostMapping("/new-2")
+    @PostMapping(value = "/new-2", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Mono<ResponseEntity<ArticleResponse>> create2(@ModelAttribute ArticleRequest request) {
 
-        log.info("created new2 article.. request = {}", request);
+        log.info("new2 request = {}", request);
 
         return Mono.just(ResponseEntity.ok(new ArticleResponse(request.title(), request.content())));
     }
@@ -60,8 +61,16 @@ public class ArticleController {
     @GetMapping("/new-3")
     public Mono<ResponseEntity<ArticleResponse>> create3(@ModelAttribute ArticleRequest request) {
 
-        log.info("created new3 article.. request = {}", request);
+        log.info("new3 request = {}", request);
 
         return Mono.just(ResponseEntity.ok(new ArticleResponse(request.title(), request.content())));
+    }
+
+    @GetMapping("/no-body")
+    public Mono<ResponseEntity<Void>> noBody(@ModelAttribute ArticleRequest request) {
+
+        log.info("request = {}", request);
+
+        return Mono.just(ResponseEntity.ok().<Void>build());
     }
 }

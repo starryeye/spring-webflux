@@ -9,6 +9,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,6 @@ import reactor.core.publisher.Mono;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static net.logstash.logback.marker.Markers.appendEntries;
 
@@ -35,11 +35,27 @@ public class PrintResponseMdcLogFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+
+        if (PrintRequestMdcLogFilter.isPathNotMatch(exchange.getRequest().getPath())) {
+            return chain.filter(exchange);
+        }
+
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
         ServerHttpResponseDecorator decorated = decorateResponse(exchange, stopWatch);
-        return chain.filter(exchange.mutate().response(decorated).build());
+        return chain.filter(exchange.mutate().response(decorated).build())
+                .doAfterTerminate(() -> {
+                    /**
+                     * 응답 데이터에 body 가 없으면 ServerHttpResponseDecorator::writeWith 가 호출되지 않아서 따로 처리해줘야한다.
+                     * 마침 body 가 없으므로 dataBuffer 문제가 없으므로 그냥 출력하면 된다.
+                     */
+                    if (decorated.getDelegate().getHeaders().getContentLength() == 0) {
+                        stopWatch.stop();
+                        long elapsed = stopWatch.getTotalTimeMillis();
+                        printResponse(decorated.getDelegate(), elapsed, "<no body>");
+                    }
+                });
     }
 
     private ServerHttpResponseDecorator decorateResponse(ServerWebExchange exchange, StopWatch stopWatch) {
@@ -57,27 +73,31 @@ public class PrintResponseMdcLogFilter implements WebFilter {
                     String bodyString = new String(bytes, StandardCharsets.UTF_8);
 
                     stopWatch.stop();
-                    int statusCode = getStatusCodeValue();
                     long elapsed = stopWatch.getTotalTimeMillis();
 
-                    log.info(
-                            appendEntries(getLoggingEntries(statusCode, elapsed)),
-                            HTTP_RESPONSE_LOG_FORMAT.formatted(
-                                    statusCode,
-                                    exchange.getRequest().getHeaders(),
-                                    elapsed,
-                                    bodyString
-                            )
-                    );
+                    printResponse(getDelegate(), elapsed, bodyString);
 
                     return Mono.just(bufferFactory.wrap(bytes));
                 }));
             }
-
-            private int getStatusCodeValue() {
-                return getStatusCode() != null ? getStatusCode().value() : 200;
-            }
         };
+    }
+
+    private void printResponse(ServerHttpResponse response, long elapsed, String bodyString) {
+
+        HttpStatusCode statusCode = response.getStatusCode();
+        int statusCodeValue = statusCode == null ? 0 : statusCode.value();
+        HttpHeaders headers = response.getHeaders();
+
+        log.info(
+                appendEntries(getLoggingEntries(statusCodeValue, elapsed)),
+                HTTP_RESPONSE_LOG_FORMAT.formatted(
+                        statusCodeValue,
+                        headers,
+                        elapsed,
+                        bodyString
+                )
+        );
     }
 
     private Map<String, ? extends Serializable> getLoggingEntries(int statusCode, Long elapsed) {

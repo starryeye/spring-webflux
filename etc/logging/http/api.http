@@ -24,3 +24,7 @@ title=title
 
 ### get query parameter
 GET http://localhost:8080/articles/new-3?title=title&content=content
+
+
+### no body response
+GET http://localhost:8080/articles/no-body?title=title&content=content

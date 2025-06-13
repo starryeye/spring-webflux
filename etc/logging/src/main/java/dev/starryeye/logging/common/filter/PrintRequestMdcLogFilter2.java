@@ -44,9 +44,9 @@ public class PrintRequestMdcLogFilter2 implements WebFilter {
         String contentType = exchange.getRequest().getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
         if (isFormUrlEncoded(contentType)) {
             return handleFormUrlEncodedRequest(exchange, chain);
-        } else {
-            return handleJsonOrOtherRequest(exchange, chain);
         }
+
+        return handleJsonOrOtherRequest(exchange, chain);
     }
 
     public static boolean isPathNotMatch(RequestPath path) {
