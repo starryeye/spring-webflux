@@ -23,13 +23,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SetRequestMdcFilter implements WebFilter {
 
-    private final ContextMdc contextMdc;
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         return chain.filter(exchange)
-                .contextWrite(contextMdc.createContext(getContextKeyValueMap(exchange)));
+                .contextWrite(ContextMdc.createContext(getContextKeyValueMap(exchange)));
     }
 
     private Map<ContextMdcKey, String> getContextKeyValueMap(ServerWebExchange exchange) {

@@ -19,12 +19,10 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SetBusinessMdcFilter implements WebFilter {
 
-    private final ContextMdc contextMdc;
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return Mono.fromRunnable(() ->
-                        contextMdc.put(ContextMdcKey.LOGGING_TYPE, LoggingType.BUSINESS.name()))
+                        ContextMdc.put(ContextMdcKey.LOGGING_TYPE, LoggingType.BUSINESS.name()))
                 .onErrorResume(throwable -> {
                     log.error("Failed to put context MDC", throwable);
                     return Mono.empty();

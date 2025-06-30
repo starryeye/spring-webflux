@@ -12,6 +12,7 @@ public enum ContextMdcKey {
     REQUEST_PATH("request_path"),
     STATUS_CODE("status_code"),
     TOTAL_ELAPSED_TIME("total_elapsed_time"),
+    ERROR_BIZ_CODE("error_biz_code"),
 
 
     EXTERNAL_API_ELAPSED_TIME("external_api_elapsed_time"),

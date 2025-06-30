@@ -19,6 +19,7 @@
             <includeMdcKeyName>logging_type</includeMdcKeyName>
             <includeMdcKeyName>status_code</includeMdcKeyName>
             <includeMdcKeyName>total_elapsed_time</includeMdcKeyName>
+            <includeMdcKeyName>error_biz_code</includeMdcKeyName>
             <includeMdcKeyName>external_api_elapsed_time</includeMdcKeyName>
             <includeMdcKeyName>external_api_url</includeMdcKeyName>
             <includeMdcKeyName>external_api_status_code</includeMdcKeyName>

@@ -20,8 +20,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SetClientRequestMdcFilter {
 
-    private final ContextMdc contextMdc;
-
     public ExchangeFilterFunction getFilter() {
 
         return ExchangeFilterFunction.ofRequestProcessor(clientRequest -> {
@@ -38,7 +36,7 @@ public class SetClientRequestMdcFilter {
 
     private Map<String, List<String>> getMdcHeaders() {
 
-        String requestId = contextMdc.get(ContextMdcKey.REQUEST_ID);
+        String requestId = ContextMdc.get(ContextMdcKey.REQUEST_ID);
 
         Map<String, List<String>> puttedHeaders = new HashMap<>();
 

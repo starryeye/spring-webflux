@@ -18,12 +18,10 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SetResponseMdcFilter implements WebFilter {
 
-    private final ContextMdc contextMdc;
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        String requestId = contextMdc.get(ContextMdcKey.REQUEST_ID);
+        String requestId = ContextMdc.get(ContextMdcKey.REQUEST_ID);
 
         ServerHttpResponse response = exchange.getResponse();
 

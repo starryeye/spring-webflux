@@ -26,11 +26,11 @@ public class ContextMdc {
                 MDC::clear);
     }
 
-    public Context createContext(ContextMdcKey key, String value) {
+    public static Context createContext(ContextMdcKey key, String value) {
         return Context.of(CONTEXT_MDC_KEY, Map.of(key.getKey(), value));
     }
 
-    public Context createContext(Map<ContextMdcKey, String> keyValues) {
+    public static Context createContext(Map<ContextMdcKey, String> keyValues) {
         Map<String, String> collected = keyValues.entrySet().stream()
                 .collect(Collectors.toMap(
                         entry -> entry.getKey().getKey(), Map.Entry::getValue
@@ -38,13 +38,13 @@ public class ContextMdc {
         return Context.of(CONTEXT_MDC_KEY, collected);
     }
 
-    public void put(ContextMdcKey key, String value) {
+    public static void put(ContextMdcKey key, String value) {
         Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
         copyOfContextMap.put(key.getKey(), value);
         MDC.setContextMap(copyOfContextMap);
     }
 
-    public String get(ContextMdcKey key) {
+    public static String get(ContextMdcKey key) {
         Map<String, String> copyOfContextMap = MDC.getCopyOfContextMap();
 
         return copyOfContextMap.get(key.getKey());
