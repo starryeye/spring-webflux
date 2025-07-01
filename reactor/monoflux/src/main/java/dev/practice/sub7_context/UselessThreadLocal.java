@@ -27,7 +27,10 @@ public class UselessThreadLocal {
      * -> 아래 실행결과를 참고 해봐도 되지만.. 기본적으로 전파되지 않는다.
      *      (Hooks.enableAutomaticContextPropagation 등을 쓰면 가능)
      *
-     * -> 그래서 나온게 "context" 이다.
+     * 기존 Thread-per-Request 모델에서는 하나의 요청이 같은 워커 스레드에서 끝까지 처리되므로 ThreadLocal 값을 안전하게 참조할 수 있었다.
+     * Event loop 모델에서는 중간에 스레드가 변경되고, 변경되면 ThreadLocal 이 기본적으로는 전파되지 않는다.
+     * -> 요청 단위의 부가 정보를 안전하게 ‘흐름’으로 따라가게 하려면 Reactor Context(또는 Micrometer context-propagation 등)를 사용해야 한다.
+     *      이는 ‘여러 스레드 간 동시 공유’라기보다는 체인 전반에 걸쳐 값을 전파(propagation) 하는 메커니즘에 가깝다.
      */
 
     @SneakyThrows
