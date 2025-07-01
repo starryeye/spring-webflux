@@ -12,15 +12,20 @@ public class UselessThreadLocal {
      * [1]
      *
      * ThreadLocal
-     * - 여러개의 스레드가 존재할 때, 해당 스레드만 접근할 수 있는 특별한 저장소
-     * - ThreadLocal 클래스는 오직 한 스레드에 의해 읽고 쓸 수 있는 변수를 생성한다.
-     * - 멀티 스레드 환경에서 공유 자원의 동시성 문제를 해결
+     * - 여러개의 스레드가 존재할 때, 해당 스레드만 접근할 수 있는 특별한 저장소 (개념)
+     * - 동일한 ThreadLocal 인스턴스를 여러 스레드에서 사용하더라도 각 스레드는 자신만의 값을 가질수있다.
+     *      Thread -> ThreadLocalMap -> value 로 슬롯이 분리됨.
+     *      값은 ThreadLocal 내부가 아닌 각 스레드의 ThreadLocalMap 에 저장된다.
      *
+     * ThreadLocalMap
+     * - Thread 마다 ThreadLocalMap 객체를 하나씩 보유한다.(내부 threadLocals 라는 필드명)
+     * - ThreadLocal.set(v) 호출하면, 현재 실행 중인 스레드가 가진 ThreadLocalMap 에, 생성한 ThreadLocal 인스턴스를 키로 v 를 값으로 저장한다.
+     * - Thread 가 죽으면 ThreadLocalMap 도 GC 대상
      *
      * publishOn, subscribeOn 으로 실행 스레드가 달라질 경우..
      * ThreadLocal 을 쓸 수 있을까?
-     * -> 아래 실행결과를 참고 해봐도 되지만.. 스레드로컬 사용할 수 없다.
-     * -> 코드상 동일한 코드 블럭 내에 있어서 같은 변수(스택 영역)를 사용하지만, 스레드가 달라서 스택영역이 공유되지 않아 참조하여도 null 이다.
+     * -> 아래 실행결과를 참고 해봐도 되지만.. 기본적으로 전파되지 않는다.
+     *      (Hooks.enableAutomaticContextPropagation 등을 쓰면 가능)
      *
      * -> 그래서 나온게 "context" 이다.
      */
@@ -40,6 +45,9 @@ public class UselessThreadLocal {
                 sink -> {
                     // SingleScheduler 로 실행
                     log.info("threadLocalInMain: {}, tx: {}", threadLocalInMain.get(), Thread.currentThread().getName());
+                    // 람다에서 threadLocalInMain 지역 변수를 캡쳐하여, 동일한 인스턴스니까 뭔가 잘 접근될 것 같지만..
+                    //      스레드가 달라졌기 때문에, 애초에 서로 다른 ThreadLocalMap 에서 찾으므로.. 값이 없다.. (null 리턴이다.)
+                    //          -> 키(ThreadLocal 인스턴스)는 동일하지만 다른 공간(ThreadLocalMap) 이므로 없는 것.
                     sink.next(1);
                 }
         ).publishOn(
