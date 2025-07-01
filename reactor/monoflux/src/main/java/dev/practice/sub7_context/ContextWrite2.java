@@ -6,16 +6,20 @@ import reactor.util.context.Context;
 import reactor.util.context.ContextView;
 
 @Slf4j
-public class ContextWrite {
+public class ContextWrite2 {
 
     /**
-     * [3]
+     * [3-add]
      *
      * 파이프라인 중간에 context 에 값을 쓰는 방법에 대해 알아본다.
      *
      * 특이점
      * - contextWrite 는 "위" 로 영향을 준다...
      * -> 그래서, publisher 에서 contextWrite 통해 수정한 값이 읽힌다.
+     *
+     * -> 아래방향으로.. 변경된 값을 적용하고 싶다면?
+     * context 의 value 에 해당하는 객체를 변경하지 말고.. 얕은 복사를 이용해서 value 객체(Item) 의 내부 값만 변경하면
+     * Context 를 이용하면서 비슷한 효과를 거둘 수 있다.
      */
 
     public static void main(String[] args) {
@@ -23,31 +27,31 @@ public class ContextWrite {
         log.info("start main, tx: {}", Thread.currentThread().getName());
 
         // Context 생성
-        Context initialContext = Context.of("name", "starryeye1");
+        Context initialContext = Context.of("item", new Item("candy1"));
 
         Flux.create(
                         fluxSink -> {
                             ContextView contextView = fluxSink.contextView(); // context 에 접근
-                            String name = contextView.get("name");
-                            // starryeye2 출력됨
-                            log.info("publisher contextView name: {}, tx: {}", name, Thread.currentThread().getName());
+                            Item item = contextView.get("item");
+                            // candy1 출력됨
+                            log.info("publisher contextView name: {}, tx: {}", item.getName(), Thread.currentThread().getName());
 
-                            fluxSink.next(name);
+                            // candy2 로 변경
+                            item.setName("candy2");
+
+                            fluxSink.next(item.getName());
                             fluxSink.complete();
                         }
-                )
-                .contextWrite(
-                        context -> context.put("name", "starryeye2") // context 수정한다.
                 )
                 .flatMap(
                         value -> Flux.create(
                                 fluxSink -> {
                                     ContextView contextView = fluxSink.contextView(); // context 에 접근
-                                    String name = contextView.get("name");
-                                    // starryeye1 출력됨
-                                    log.info("publisher2 contextView name: {}, tx: {}", name, Thread.currentThread().getName());
+                                    Item item = contextView.get("item");
+                                    // candy2 출력됨
+                                    log.info("publisher2 contextView name: {}, tx: {}", item.getName(), Thread.currentThread().getName());
 
-                                    fluxSink.next(name);
+                                    fluxSink.next(item.getName());
                                     fluxSink.complete();
                                 }
                         )
@@ -57,9 +61,26 @@ public class ContextWrite {
                         value -> log.info("subscribe value: {}, tx: {}", value, Thread.currentThread().getName()),
                         null,
                         null,
-                        initialContext // 미리 생성했던 context 를 적용한다.
+                        initialContext
                 );
 
         log.info("end main, tx: {}", Thread.currentThread().getName());
+    }
+
+    private static class Item {
+
+        private String name;
+
+        public Item(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }
