@@ -25,6 +25,8 @@
             <includeMdcKeyName>external_api_status_code</includeMdcKeyName>
             <includeMdcKeyName>external_database_elapsed_time</includeMdcKeyName>
 
+            <includeMdcKeyName>test</includeMdcKeyName>
+
             <!--            <customFields>-->
             <!--                {-->
             <!--                "appname" : "${app.name}",-->

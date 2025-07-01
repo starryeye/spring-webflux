@@ -20,6 +20,8 @@ public enum ContextMdcKey {
     EXTERNAL_API_STATUS_CODE("external_api_status_code"),
 
     EXTERNAL_DATABASE_ELAPSED_TIME("external_database_elapsed_time"),
+
+    TEST("test"), // 출력 테스트용
     ;
 
     private final String key;

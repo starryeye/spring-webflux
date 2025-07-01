@@ -1,5 +1,8 @@
-### 정상 응답
-GET http://localhost:8080/articles
+### 정상 응답 1
+GET http://localhost:8080/articles/get-1
+
+### 정상 응답 2
+GET http://localhost:8080/articles/get-2
 
 ### 에러 응답 1
 GET http://localhost:8080/articles/error-1

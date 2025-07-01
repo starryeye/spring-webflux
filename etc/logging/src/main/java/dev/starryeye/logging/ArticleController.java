@@ -2,6 +2,8 @@ package dev.starryeye.logging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.starryeye.logging.common.ContextMdc;
+import dev.starryeye.logging.common.ContextMdcKey;
 import dev.starryeye.logging.common.exception.BusinessException;
 import dev.starryeye.logging.common.exception.ErrorCode;
 import dev.starryeye.logging.common.exception.ExceptionResponse;
@@ -21,17 +23,36 @@ public class ArticleController {
 
     private final ObjectMapper objectMapper;
 
-    @GetMapping
-    public Mono<ResponseEntity<ArticleResponse>> get() throws JsonProcessingException {
+    @GetMapping("/get-1")
+    public Mono<ResponseEntity<ArticleResponse>> get1() throws JsonProcessingException {
 
         ArticleResponse articleResponse = new ArticleResponse("title", "content");
 
-        log.info("get articles.. article(json) = {}", objectMapper.writeValueAsString(articleResponse));
+        log.info("get1 articles.. article(json) = {}", objectMapper.writeValueAsString(articleResponse));
+
+        ContextMdc.put(ContextMdcKey.TEST, "test-1");
 
         return Mono.just(1)
                 .publishOn(Schedulers.parallel()) // thread 변경
                 .flatMap(value -> {
-                    log.info("response article..");
+                    log.info("response article.. 1");
+                    return Mono.just(ResponseEntity.ok(articleResponse));
+                });
+
+    }
+
+    @GetMapping("/get-2")
+    public Mono<ResponseEntity<ArticleResponse>> get2() throws JsonProcessingException {
+
+        ArticleResponse articleResponse = new ArticleResponse("title", "content");
+
+        log.info("get2 articles.. article(json) = {}", objectMapper.writeValueAsString(articleResponse));
+
+        return Mono.just(1)
+                .publishOn(Schedulers.parallel()) // thread 변경
+                .flatMap(value -> {
+                    log.info("response article.. 2");
+                    ContextMdc.put(ContextMdcKey.TEST, "test-2");
                     return Mono.just(ResponseEntity.ok(articleResponse));
                 });
 
