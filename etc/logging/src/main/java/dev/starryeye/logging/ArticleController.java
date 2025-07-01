@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.starryeye.logging.common.exception.BusinessException;
 import dev.starryeye.logging.common.exception.ErrorCode;
+import dev.starryeye.logging.common.exception.ExceptionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -36,10 +37,16 @@ public class ArticleController {
 
     }
 
-    @GetMapping("/error")
-    public Mono<ResponseEntity<ArticleResponse>> getErrors() {
-        log.error("error occurred..");
+    @GetMapping("/error-1")
+    public Mono<ResponseEntity<ArticleResponse>> getErrors1() {
+        log.error("error1 occurred..");
         throw new BusinessException(ErrorCode.BUSINESS_ERROR_CODE_1, "this is business error 1");
+    }
+
+    @GetMapping("/error-2")
+    public Mono<ResponseEntity<ExceptionResponse>> getErrors2() {
+        log.error("error2 occurred..");
+        return Mono.just(ResponseEntity.badRequest().body(new ExceptionResponse(ErrorCode.BUSINESS_ERROR_CODE_2.name(), ErrorCode.BUSINESS_ERROR_CODE_2.getDescription())));
     }
 
     @PostMapping(value = "/new-1", consumes = MediaType.APPLICATION_JSON_VALUE)

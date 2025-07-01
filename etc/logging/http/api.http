@@ -1,10 +1,13 @@
 ### 정상 응답
 GET http://localhost:8080/articles
 
-### 에러 응답
-GET http://localhost:8080/articles/error
+### 에러 응답 1
+GET http://localhost:8080/articles/error-1
 X-Request-ID: aaa
 
+### 에러 응답 2
+GET http://localhost:8080/articles/error-2
+X-Request-ID: bbb
 
 ### post application/json
 POST http://localhost:8080/articles/new-1
