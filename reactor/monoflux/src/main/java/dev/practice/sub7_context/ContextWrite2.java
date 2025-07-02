@@ -1,7 +1,9 @@
 package dev.practice.sub7_context;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.context.Context;
 import reactor.util.context.ContextView;
 
@@ -22,6 +24,7 @@ public class ContextWrite2 {
      * Context 를 이용하면서 비슷한 효과를 거둘 수 있다.
      */
 
+    @SneakyThrows
     public static void main(String[] args) {
 
         log.info("start main, tx: {}", Thread.currentThread().getName());
@@ -37,13 +40,14 @@ public class ContextWrite2 {
                             log.info("publisher contextView name: {}, tx: {}", item.getName(), Thread.currentThread().getName());
 
                             // candy2 로 변경
-                            item.setName("candy2");
+                            item.setName("candy2"); // contextView.set() 이 없어서 객체(Item) 내부 참조 변수(name)를 이용해 우회한다.
 
                             fluxSink.next(item.getName());
                             fluxSink.complete();
                         }
-                )
-                .flatMap(
+                ).publishOn(
+                        Schedulers.parallel() // 스레드 변경되더라도 context 는 전파되므로, ThreadLocal 처럼 전파되지 않는 문제 X
+                ).flatMap(
                         value -> Flux.create(
                                 fluxSink -> {
                                     ContextView contextView = fluxSink.contextView(); // context 에 접근
@@ -65,6 +69,8 @@ public class ContextWrite2 {
                 );
 
         log.info("end main, tx: {}", Thread.currentThread().getName());
+
+        Thread.sleep(1000); // 캐시 스케줄러는 데몬 스레드
     }
 
     private static class Item {
