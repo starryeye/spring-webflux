@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -100,5 +102,17 @@ public class ArticleController {
         log.info("request = {}", request);
 
         return Mono.just(ResponseEntity.ok().<Void>build());
+    }
+
+    @GetMapping("/sleep-and-disconnect")
+    public Mono<ResponseEntity<ArticleResponse>> sleepAndDisconnect() throws InterruptedException {
+
+        ArticleResponse articleResponse = new ArticleResponse("title", "content");
+
+        return Mono.delay(Duration.ofSeconds(10)) // 이건 체인 안에서 지연
+                .map(tick -> {
+                    log.info("response article..");
+                    return ResponseEntity.ok(articleResponse);
+                });
     }
 }
