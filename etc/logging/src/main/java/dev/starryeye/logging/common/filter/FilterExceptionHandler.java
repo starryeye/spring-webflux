@@ -17,10 +17,12 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.SignalType;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
 import static net.logstash.logback.marker.Markers.appendEntries;
 
@@ -59,7 +61,16 @@ public class FilterExceptionHandler implements WebFilter {
 
                     DataBuffer dataBuffer = exchange.getResponse().bufferFactory().wrap(responseBody.getBytes(StandardCharsets.UTF_8));
                     return exchange.getResponse().writeWith(Mono.just(dataBuffer));
-                });
+                })
+                .doFinally(signal -> {
+                    if (Objects.requireNonNull(signal) == SignalType.CANCEL) {
+                        String path = exchange.getRequest().getPath().value();
+                        String method = exchange.getRequest().getMethod().name();
+                        HttpHeaders headers = exchange.getRequest().getHeaders();
+                        log.info("[Client cancelled request] [{} {}] - {}", method, path, headers);
+                    }
+                })
+                ;
     }
 
     private void printResponse(ServerHttpResponse response, String body) {

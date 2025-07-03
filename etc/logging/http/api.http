@@ -36,5 +36,9 @@ GET http://localhost:8080/articles/new-3?title=title&content=content
 GET http://localhost:8080/articles/no-body?title=title&content=content
 
 ### server sleep, client disconnect (여기서 안되고.. 아래 curl 명령어로 요청보내고 (ctrl+C)로 끊어버려야함)
-### curl http://localhost:8080/articles/sleep-and-disconnect
-GET http://localhost:8080/articles/sleep-and-disconnect
+### curl http://localhost:8080/articles/sleep-and-disconnect-1
+GET http://localhost:8080/articles/sleep-and-disconnect-1
+
+### server sleep, client disconnect (여기서 안되고.. 아래 curl 명령어로 요청보내고 (ctrl+C)로 끊어버려야함)
+### curl http://localhost:8080/articles/sleep-and-disconnect-2
+GET http://localhost:8080/articles/sleep-and-disconnect-2

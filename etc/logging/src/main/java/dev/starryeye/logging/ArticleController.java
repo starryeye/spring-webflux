@@ -104,15 +104,27 @@ public class ArticleController {
         return Mono.just(ResponseEntity.ok().<Void>build());
     }
 
-    @GetMapping("/sleep-and-disconnect")
-    public Mono<ResponseEntity<ArticleResponse>> sleepAndDisconnect() throws InterruptedException {
+    @GetMapping("/sleep-and-disconnect-1")
+    public Mono<ResponseEntity<ArticleResponse>> sleepAndDisconnect1() throws InterruptedException {
 
         ArticleResponse articleResponse = new ArticleResponse("title", "content");
 
-        return Mono.delay(Duration.ofSeconds(10)) // 이건 체인 안에서 지연
+        return Mono.delay(Duration.ofSeconds(10)) // 체인 안에서 지연중 connection cancel 시(cancel 시그널 전달), 그 즉시 중단되고 map 이하 연산 수행되지 않음.
                 .map(tick -> {
                     log.info("response article..");
                     return ResponseEntity.ok(articleResponse);
                 });
+    }
+
+    @GetMapping("/sleep-and-disconnect-2")
+    public Mono<ResponseEntity<ArticleResponse>> sleepAndDisconnect2() throws InterruptedException {
+
+        Thread.sleep(Duration.ofSeconds(10).toMillis());
+        // 체인이 생성 및 반환(return Mono.just)되기 전 connection cancel 시, 체인이 없으므로 cancel 무시됨.
+        // Netty 에서는 채널을 closed로 표시. 그래도 생성된 체인에 대해서는 subscribe 를 수행한다.
+
+        ArticleResponse articleResponse = new ArticleResponse("title", "content");
+
+        return Mono.just(ResponseEntity.ok(articleResponse));
     }
 }

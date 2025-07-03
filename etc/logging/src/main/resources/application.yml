@@ -2,6 +2,11 @@ server:
   shutdown: graceful
 
 logging:
-  config: classpath:logback-json.xml
+  config: classpath:logback.xml
   level:
-    reactor.netty.http.server: DEBUG
+    reactor.netty:
+      http.server: DEBUG
+      transport: DEBUG
+    io.netty:
+      channel: DEBUG
+      handler: DEBUG
