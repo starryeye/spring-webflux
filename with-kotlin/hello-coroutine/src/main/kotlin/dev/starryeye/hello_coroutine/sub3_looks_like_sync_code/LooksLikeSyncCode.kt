@@ -1,2 +1,0 @@
-package dev.starryeye.hello_coroutine.sub3_looks_like_sync_code
-

@@ -29,8 +29,11 @@ dependencies {
 	// Coroutine ↔ Reactor (Mono/Flux) 상호 변환 브릿지
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
 
-	// [Project Reactor] Mono<T>: 0~1개 / Flux<T>: 0~N개 비동기 데이터 스트림
+	// [Project Reactor] Mono<T> / Flux<T>, 비동기 데이터 스트림
 	implementation("io.projectreactor:reactor-core:3.8.4")
+
+	// kotlin-logging
+	implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
 
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -42,6 +45,10 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
 	}
+}
+
+tasks.withType<JavaExec> {
+	jvmArgs("-Dkotlinx.coroutines.debug")
 }
 
 tasks.withType<Test> {
