@@ -46,14 +46,14 @@ private val log = KotlinLogging.logger {}
 
 class FsmCalculatorUpgrade1 {
 
-    data class Shared( // 이전 연산 결과 + 현재 상태(label) 를 담는다. (기존 FsmCalculator 와 동일)
+    data class State( // 이전 연산 결과 + 현재 상태(label) 를 담는다. (기존 FsmCalculator 와 동일)
         var result: Any? = null,
         var label: Int = 0,
     )
 
-    fun calculate(initialValue: Int, shared: Shared? = null) {
+    fun calculate(initialValue: Int, state: State? = null) {
 
-        val current = shared ?: Shared()
+        val current = state ?: State()
 
         // 각 연산 함수가 결과를 전달해줄 continuation 를 익명 클래스로 구현
         val cont = object : Continuation<Int> {
