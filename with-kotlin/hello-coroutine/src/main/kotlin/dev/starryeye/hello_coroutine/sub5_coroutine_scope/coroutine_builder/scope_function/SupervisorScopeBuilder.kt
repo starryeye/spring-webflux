@@ -1,4 +1,4 @@
-줘package dev.starryeye.hello_coroutine.sub5_coroutine_scope.coroutine_builder.scope_function
+package dev.starryeye.hello_coroutine.sub5_coroutine_scope.coroutine_builder.scope_function
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.async
