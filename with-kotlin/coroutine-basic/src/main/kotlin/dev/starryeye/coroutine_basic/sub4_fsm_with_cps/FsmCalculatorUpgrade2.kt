@@ -71,7 +71,7 @@ class FsmCalculatorUpgrade2 {
             that.calculate(0, this)
         }
 
-        // 최종 결과를 main 이 넘긴 completion 으로 넘겨서 전체 흐름을 종료시킨다.
+        // main 이 넘긴 completion 을 실행한다.(최종 결과를 파라미터로 전달) 전체 흐름을 종료시킨다.
         fun complete(value: Int) {
             completion.resume(value)
         }
