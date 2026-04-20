@@ -7,6 +7,7 @@ import dev.starryeye.coroutine_basic.sub5_sync_async_coroutine.p1_sync.service.O
 import dev.starryeye.coroutine_basic.sub5_sync_async_coroutine.p1_sync.service.ProductBlockingService
 import dev.starryeye.coroutine_basic.sub5_sync_async_coroutine.p1_sync.service.StoreBlockingService
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.system.measureTimeMillis
 
 /**
  * 주문 생성 - 동기(Blocking) 코드
@@ -65,6 +66,12 @@ fun main() {
         orderService = OrderBlockingService(),
     )
 
-    val order = example.execute(1L, listOf(1L, 2L, 3L))
-    log.info { "order: $order" }
+    // 네 패키지(p1~p4) 모두 "같은 시나리오" 를 각자의 스타일로 표현한 것이라, elapsed 는 모두 ~2900ms 로 비슷하다.
+    //      여기서의 관심사는 성능이 아니라 코드의 모양(style) 비교이다.
+    //      대기 시간을 겹쳐서 줄이는 병렬화(Reactor subscribeOn / Coroutine async{}) 는 별도 주제로 다룬다.
+    val elapsed = measureTimeMillis {
+        val order = example.execute(1L, listOf(1L, 2L, 3L))
+        log.info { "order: $order" }
+    }
+    log.info { "elapsed: ${elapsed}ms" }
 }
