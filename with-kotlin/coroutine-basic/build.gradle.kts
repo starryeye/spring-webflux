@@ -31,6 +31,16 @@ dependencies {
 	// [Project Reactor] Mono<T> / Flux<T>, 비동기 데이터 스트림
 	implementation("io.projectreactor:reactor-core:3.8.4")
 
+	// [RxJava3] Flowable/Observable 등 비동기 스트림
+	implementation("io.reactivex.rxjava3:rxjava:3.1.8")
+	// Coroutine ↔ RxJava3 브릿지 (Flowable.await() 등)
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx3:1.10.2")
+
+	// [Mutiny] Uni/Multi 비동기 스트림
+	implementation("io.smallrye.reactive:mutiny:2.6.0")
+	// Coroutine ↔ Mutiny 브릿지 (awaitSuspending() 등)
+	implementation("io.smallrye.reactive:mutiny-kotlin:2.6.0")
+
 	// kotlin-logging
 	implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
 
