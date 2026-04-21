@@ -14,7 +14,7 @@ class OrderBlockingService {
         deliveryAddress: DeliveryAddress,
         stores: List<Store>,
     ): Order {
-        Thread.sleep(1000)
+        Thread.sleep(500)
         return Order(
             customer = customer,
             products = products,
