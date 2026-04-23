@@ -1,0 +1,56 @@
+package dev.starryeye.coroutine_basic.sub7_suspend_extensions
+
+/**
+ * sub7 - suspend 확장 함수 정리
+ *
+ * 이 sub 의 포지션
+ *      sub5.p4 에서는 여러 비동기 타입 뒤에 .await() / .awaitSuspending() / .awaitFirst() / .awaitSingle() 를 붙여
+ *          코드를 선형으로 만들었다.
+ *      sub6 에서는 그 동작이 내부적으로 FSM + CPS + Continuation 으로 어떻게 굴러가는지 손으로 만들어봤다.
+ *      sub7 은 그 둘을 연결한다.
+ *          "어떤 타입에 어떤 suspend 확장함수를 붙이는지" 를 파일별로 짧게 정리한다.
+ *
+ * suspend 확장 함수가 하는 일 (공통)
+ *      1. 비동기 타입을 값처럼 받는다.
+ *      2. 호출 스레드는 block 하지 않고, 현재 코루틴만 suspend 한다.
+ *      3. 내부 원리는 "비동기 콜백 -> cont.resume" 이다.
+ *          즉 sub6 에서 손으로 만든 구조를 라이브러리가 대신 감싸준 것이다.
+ *
+ * 파일 구성
+ *
+ *      [1] CompletableFutureAwait.kt
+ *          CompletionStage / CompletableFuture -> await()
+ *
+ *      [2] Rxjava3Await.kt
+ *          Single / Maybe / Completable / Flowable -> await*, awaitFirst, awaitLast
+ *
+ *      [3] MutinyAwaitSuspending.kt
+ *          Uni -> awaitSuspending(), Multi -> collect().asList().awaitSuspending()
+ *
+ *      [4] ReactivePublisherAwait.kt
+ *          Publisher -> awaitFirst(), awaitSingle()
+ *
+ *      [5] ReactorMonoAwait.kt
+ *          Mono -> awaitSingle(), awaitSingleOrNull()
+ *
+ * suffix 규칙
+ *
+ *      await            : 값이 하나 나오는 타입에 주로 사용
+ *      awaitFirst       : 0..N 개 중 첫 값 하나
+ *      awaitLast        : 끝까지 소비한 뒤 마지막 값
+ *      awaitSingle      : 정확히 1개여야 할 때
+ *      awaitSingleOrNull: 0 또는 1개를 허용할 때
+ *      awaitSuspending  : Mutiny 쪽 이름만 조금 다를 뿐 의미는 await 와 같다
+ *
+ * 각 파일 읽는 순서
+ *      1. CompletableFutureAwait.kt
+ *      2. Rxjava3Await.kt
+ *      3. MutinyAwaitSuspending.kt
+ *      4. ReactivePublisherAwait.kt
+ *      5. ReactorMonoAwait.kt
+ *
+ * 주의 - 각 예제의 Thread.sleep
+ *      학습 편의를 위해 "비동기 소스" 를 흉내낼 때 Thread.sleep 을 썼다.
+ *      실제 운영 코드에서는 그 자리에 non-blocking IO 가 온다.
+ *      이 sub 의 관심사는 성능 비교보다 "어떤 await* 를 붙여야 하는가" 이다.
+ */
