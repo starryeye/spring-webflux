@@ -32,6 +32,12 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *
  *      [5] ReactorMonoAwait.kt
  *          Mono -> awaitSingle(), awaitSingleOrNull()
+ *          + Mono.error 처리, 스레드 실행 모델 (subscribeOn 과 Dispatcher 의 분업) 분석
+ *
+ *      [6] ReactorFluxAwait.kt
+ *          Flux 는 Publisher 라 [4] 의 await* 가 그대로 적용된다.
+ *          실무 패턴 3가지 (awaitFirst / collectList().awaitSingle / asFlow) 와
+ *          asFlow + collect 의 스레드 실행 모델, 취소 전파를 분석.
  *
  * suffix 규칙
  *
@@ -51,6 +57,7 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *      3. MutinyAwaitSuspending.kt
  *      4. ReactivePublisherAwait.kt
  *      5. ReactorMonoAwait.kt
+ *      6. ReactorFluxAwait.kt
  *
  * 주의 - 각 예제의 Thread.sleep
  *      학습 편의를 위해 "비동기 소스" 를 흉내낼 때 Thread.sleep 을 썼다.
