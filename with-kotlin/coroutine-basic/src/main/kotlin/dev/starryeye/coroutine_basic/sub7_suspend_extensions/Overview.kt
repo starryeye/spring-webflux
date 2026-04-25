@@ -28,19 +28,22 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *          Uni -> awaitSuspending(), Multi -> collect().asList().awaitSuspending()
  *
  *      [4] ReactivePublisherAwait.kt
- *          Publisher -> awaitFirst(), awaitSingle()
+ *          Publisher -> awaitFirst / awaitFirstOrNull / awaitFirstOrDefault / awaitFirstOrElse / awaitLast / awaitSingle
  *
  *      [5] ReactorMonoAwait.kt
  *          Mono -> awaitSingle(), awaitSingleOrNull()
  *
  * suffix 규칙
  *
- *      await            : 값이 하나 나오는 타입에 주로 사용
- *      awaitFirst       : 0..N 개 중 첫 값 하나
- *      awaitLast        : 끝까지 소비한 뒤 마지막 값
- *      awaitSingle      : 정확히 1개여야 할 때
- *      awaitSingleOrNull: 0 또는 1개를 허용할 때
- *      awaitSuspending  : Mutiny 쪽 이름만 조금 다를 뿐 의미는 await 와 같다
+ *      await              : 값이 하나 나오는 타입에 주로 사용 (CompletableFuture, Single, Completable 등)
+ *      awaitFirst         : 0..N 개 중 첫 값 (비어있으면 예외)
+ *      awaitFirstOrNull   : 첫 값 또는 null
+ *      awaitFirstOrDefault: 첫 값 또는 default
+ *      awaitFirstOrElse   : 첫 값 또는 lazy default
+ *      awaitLast          : 끝까지 소비한 뒤 마지막 값
+ *      awaitSingle        : 정확히 1개여야 할 때
+ *      awaitSingleOrNull  : 0 또는 1개를 허용할 때
+ *      awaitSuspending    : Mutiny 쪽 이름만 조금 다를 뿐 의미는 await 와 같다
  *
  * 각 파일 읽는 순서
  *      1. CompletableFutureAwait.kt
