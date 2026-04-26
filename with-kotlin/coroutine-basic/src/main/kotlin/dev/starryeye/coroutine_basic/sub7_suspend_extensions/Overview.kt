@@ -18,24 +18,24 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *
  * 파일 구성
  *
- *      [1] CompletableFutureAwait.kt
+ *      CompletableFutureAwait.kt
  *          CompletionStage / CompletableFuture -> await()
  *
- *      [2] Rxjava3Await.kt
+ *      Rxjava3Await.kt
  *          Single / Maybe / Completable / Flowable -> await*, awaitFirst, awaitLast
  *
- *      [3] MutinyAwaitSuspending.kt
+ *      MutinyAwaitSuspending.kt
  *          Uni -> awaitSuspending(), Multi -> collect().asList().awaitSuspending()
  *
- *      [4] ReactivePublisherAwait.kt
+ *      ReactivePublisherAwait.kt
  *          Publisher -> awaitFirst / awaitFirstOrNull / awaitFirstOrDefault / awaitFirstOrElse / awaitLast / awaitSingle
  *
- *      [5] ReactorMonoAwait.kt
+ *      ReactorMonoAwait.kt
  *          Mono -> awaitSingle(), awaitSingleOrNull()
  *          + Mono.error 처리, 스레드 실행 모델 (subscribeOn 과 Dispatcher 의 분업) 분석
  *
- *      [6] ReactorFluxAwait.kt
- *          Flux 는 Publisher 라 [4] 의 await* 가 그대로 적용된다.
+ *      ReactorFluxAwait.kt
+ *          Flux 는 Publisher 라 etc/ReactivePublisherAwait 의 await* 가 그대로 적용된다.
  *          실무 패턴 3가지 (awaitFirst / collectList().awaitSingle / asFlow) 와
  *          asFlow + collect 의 스레드 실행 모델, 취소 전파를 분석.
  *
@@ -51,13 +51,6 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *      awaitSingleOrNull  : 0 또는 1개를 허용할 때
  *      awaitSuspending    : Mutiny 쪽 이름만 조금 다를 뿐 의미는 await 와 같다
  *
- * 각 파일 읽는 순서
- *      1. CompletableFutureAwait.kt
- *      2. Rxjava3Await.kt
- *      3. MutinyAwaitSuspending.kt
- *      4. ReactivePublisherAwait.kt
- *      5. ReactorMonoAwait.kt
- *      6. ReactorFluxAwait.kt
  *
  * 주의 - 각 예제의 Thread.sleep
  *      학습 편의를 위해 "비동기 소스" 를 흉내낼 때 Thread.sleep 을 썼다.

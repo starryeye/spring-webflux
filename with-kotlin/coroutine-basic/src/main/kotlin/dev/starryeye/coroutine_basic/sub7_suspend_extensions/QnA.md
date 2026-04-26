@@ -198,3 +198,78 @@ Reactor 그림에 한 줄만 더하면 된다.
 WebFlux event loop 친화적인 특성도 그대로다.
 바뀐 건 코드 모양 (operator chaining -> 위에서 아래로 선형) 과,
 "emit 스레드가 다음 코드를 직접 돌리느냐 / Dispatcher 가 한 번 더 옮기느냐" 의 선택지 한 줄뿐이다.
+
+### 실무 케이스: WebFlux + WebClient
+
+가장 흔한 구조는 이거다.
+
+```kotlin
+@RestController
+class OrderController(private val webClient: WebClient) {
+
+    @GetMapping("/order/{id}")
+    suspend fun getOrder(@PathVariable id: Long): OrderResponse {
+        val user = webClient.get().uri("/users/$id")
+            .retrieve().bodyToMono<User>()
+            .awaitSingle()
+
+        val items = webClient.get().uri("/orders/$id/items")
+            .retrieve().bodyToMono<List<Item>>()
+            .awaitSingle()
+
+        return OrderResponse(user, items)
+    }
+}
+```
+
+위 핸들러 한 번을 처리하면서 스레드가 어떻게 흘러가는지 따라가 보자.
+
+1. inbound 요청이 Netty 의 event loop 에 도착.
+   `reactor-http-nio-1` (예시 이름) 위에서 컨트롤러 호출이 시작된다.
+2. Spring WebFlux 가 suspend 함수를 `mono { ... }` 로 감싸 코루틴을 띄운다.
+   별도 Dispatcher 가 깔리지 않는다. 호출 스레드 위에서 코루틴 본체가 그대로 시작된다.
+   -> 즉 `reactor-http-nio-1` 위에서 코루틴이 출발.
+3. `webClient.get()...bodyToMono<User>()` 까지는 Mono 빌드 단계라 IO 가 일어나지 않는다.
+4. `.awaitSingle()` 시점에 subscribe → WebClient 가 outbound HTTP 를 Netty channel 로 발사.
+   `reactor-http-nio-1` 은 요청만 던지고 빠져나간다. 다른 inbound 요청을 처리하러 자유.
+5. 응답이 도착하면 `reactor-http-nio-N` (같은 worker 일 수도, 다른 worker 일 수도) 가 onNext 호출.
+   Dispatcher 가 따로 없으므로 `reactor-http-nio-N` 가 그 자리에서 `cont::resume` 을 호출하고
+   `val user = ...` 줄부터 이어서 실행한다.
+6. 두 번째 `awaitSingle()` 도 4~5 와 동일한 사이클.
+   응답이 도착한 worker 가 그대로 다음 줄까지 실행한다.
+7. 마지막 `return OrderResponse(...)` 가 `mono { }` 의 emit 값이 되어 Spring 이 응답 완료.
+
+핵심은 이렇다.
+
+- 모든 코드가 `reactor-http-nio-N` (Netty event loop 풀) 안에서만 돈다.
+  worker 사이를 hop 할 수는 있어도 풀 바깥으로 나가지 않는다.
+- "다음 줄을 어느 worker 가 실행하느냐" 는 응답이 도착한 worker 가 결정한다.
+  특정 worker 에 고정해주는 메커니즘은 따로 없다.
+- 어떤 시점에도 스레드가 응답을 기다리며 멈춰있지 않다.
+  → WebFlux 본연의 event loop 친화 모델 (=적은 수의 스레드로 많은 요청 처리) 이 그대로 유지된다.
+- Reactor 체인 (`.flatMap { ... }.map { ... }`) 으로 짠 것과 실행 모델은 완전히 동일하다.
+  바뀐 건 코드 모양뿐이다.
+
+#### 중간에 blocking 호출이 끼어든다면
+
+```kotlin
+val csv = withContext(Dispatchers.IO) {
+    legacyService.readCsvBlocking(filePath)  // JDBC, 파일 IO 등 동기 호출
+}
+```
+
+- `reactor-http-nio-N` 에서 IO worker 로 jump.
+- IO worker 가 blocking 호출에 묶여 있어도 nio worker 는 자유라서 다른 요청을 계속 받는다.
+  → nio 풀이 보호된다 (이게 가장 중요한 이유).
+- 끝나면 IO worker 에서 `cont::resume` → `withContext` 블록 안의 다음 줄이 IO worker 에서 실행된다.
+- `withContext` 블록을 빠져나오면 자동으로 원래 context (= Spring 이 깐 코루틴 context) 로 돌아온다.
+  단, "원래 context" 가 별도 Dispatcher 를 가지고 있지 않으므로 실제로는 IO worker 에서 그대로 다음 코드까지 이어질 가능성이 높다.
+  엄격히 nio 로 다시 돌아오고 싶다면 별도 디스패치가 필요하지만,
+  실무에선 보통 그대로 두고 다음 await 시점까지 흘러보낸다.
+
+요약하면 WebFlux + WebClient + coroutine 의 실무 모델은
+
+- 기본적으로 모든 흐름이 Netty event loop 위에서 hop 만 하며 전개되고
+- blocking 경계에서만 의도적으로 `Dispatchers.IO` 로 떠난다
+
+는 두 줄로 정리된다. Reactor 만 쓸 때와 동일한 thread 정책에, 코드 모양만 선형으로 바뀐 셈이다.
