@@ -17,24 +17,27 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *          즉 sub6 에서 손으로 만든 구조를 라이브러리가 대신 감싸준 것이다.
  *
  * 파일 구성
+ *      future/  : JDK 표준 비동기 (CompletableFuture)
+ *      etc/     : 외부 비동기 라이브러리 (RxJava3, Mutiny) + reactive-streams Publisher 추상
+ *      reactor/ : Reactor 전용 타입 (Mono, Flux). 스레드 실행 모델까지 자세히 분석.
  *
- *      CompletableFutureAwait.kt
+ *      future/CompletableFutureAwait.kt
  *          CompletionStage / CompletableFuture -> await()
  *
- *      Rxjava3Await.kt
+ *      etc/Rxjava3Await.kt
  *          Single / Maybe / Completable / Flowable -> await*, awaitFirst, awaitLast
  *
- *      MutinyAwaitSuspending.kt
+ *      etc/MutinyAwaitSuspending.kt
  *          Uni -> awaitSuspending(), Multi -> collect().asList().awaitSuspending()
  *
- *      ReactivePublisherAwait.kt
+ *      etc/ReactivePublisherAwait.kt
  *          Publisher -> awaitFirst / awaitFirstOrNull / awaitFirstOrDefault / awaitFirstOrElse / awaitLast / awaitSingle
  *
- *      ReactorMonoAwait.kt
+ *      reactor/ReactorMonoAwait.kt
  *          Mono -> awaitSingle(), awaitSingleOrNull()
  *          + Mono.error 처리, 스레드 실행 모델 (subscribeOn 과 Dispatcher 의 분업) 분석
  *
- *      ReactorFluxAwait.kt
+ *      reactor/ReactorFluxAwait.kt
  *          Flux 는 Publisher 라 etc/ReactivePublisherAwait 의 await* 가 그대로 적용된다.
  *          실무 패턴 3가지 (awaitFirst / collectList().awaitSingle / asFlow) 와
  *          asFlow + collect 의 스레드 실행 모델, 취소 전파를 분석.
