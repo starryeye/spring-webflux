@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: webflux-and-coroutine
