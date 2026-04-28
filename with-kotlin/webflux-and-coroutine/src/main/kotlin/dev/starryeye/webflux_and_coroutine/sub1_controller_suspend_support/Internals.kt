@@ -194,4 +194,25 @@ package dev.starryeye.webflux_and_coroutine.sub1_controller_suspend_support
  *      이 구조 덕분에 컨트롤러를 suspend 로 선언하기만 하면
  *      별도의 빌더(mono { }, runBlocking 등) 없이 자연스럽게
  *      Reactor 파이프라인 위에서 코루틴이 실행된다.
+ *
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * section 7. 결론
+ * ─────────────────────────────────────────────────────────────────────────────
+ *      한 문장으로 줄이면
+ *          "WebFlux 는 Reactor 파이프라인 안에서 코루틴을 만들어 그 위에서 컨트롤러의 suspend 메서드를 호출하고,
+ *           그 결과를 다시 Mono 로 감싸서 파이프라인에 흘려보낸다."
+ *
+ *      대응되는 지점
+ *          - "Reactor 파이프라인 안에서 코루틴 생성"
+ *              = section 5 의 mono(Dispatchers.Unconfined) { method.callSuspend(...) } 가 그 역할.
+ *                CoroutinesUtils 가 이 빌더를 대신 호출하기 때문에
+ *                사용자는 컨트롤러를 suspend 로 선언만 하면 된다.
+ *          - "결과를 다시 Mono 로 변환"
+ *              = mono { } 빌더가 코루틴의 결과값을 자동으로 Mono<T> 로 노출시킨다.
+ *                그게 InvocableHandlerMethod.invoke 의 반환 타입(Mono<HandlerResult>) 에 자연스럽게 합류한다.
+ *          - 컨트롤러가 Flow<T> 를 반환하면 Mono -> flatMapMany(asFlux) 로 Flux 가 된다 (서버 스트리밍 / SSE).
+ *
+ *      "사용자가 직접 mono { } 를 부르는 시나리오 (sub2)" 와의 비교는
+ *      상위 패키지의 CoroutineUsageGuide 를 참고.
  */
