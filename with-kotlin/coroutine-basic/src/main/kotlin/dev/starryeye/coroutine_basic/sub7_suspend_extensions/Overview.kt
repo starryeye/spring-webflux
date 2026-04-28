@@ -15,6 +15,7 @@ package dev.starryeye.coroutine_basic.sub7_suspend_extensions
  *      2. 호출 스레드는 block 하지 않고, 현재 코루틴만 suspend 한다.
  *      3. 내부 원리는 "비동기 콜백 -> cont.resume" 이다.
  *          즉 sub6 에서 손으로 만든 구조를 라이브러리가 대신 감싸준 것이다.
+ *      좀더 자세한 설명 및 과정은 sub7.QnA 나 sub8 에 존재한다.
  *
  * 파일 구성
  *      future/  : JDK 표준 비동기 (CompletableFuture)
