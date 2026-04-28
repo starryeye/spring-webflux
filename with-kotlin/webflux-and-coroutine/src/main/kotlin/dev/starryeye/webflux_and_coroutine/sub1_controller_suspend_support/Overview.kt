@@ -1,4 +1,4 @@
-package dev.starryeye.webflux_and_coroutine.sub1
+package dev.starryeye.webflux_and_coroutine.sub1_controller_suspend_support
 
 /**
  * sub1 - Coroutine 사용하기 (사용법 편)
