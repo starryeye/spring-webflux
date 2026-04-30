@@ -10,6 +10,12 @@ package dev.starryeye.webflux_and_coroutine.sub2_mono_builder
  *      이 파일(Overview.kt) 에서는 "어떻게 쓰는가" 를 알 수 있다.
  *      "왜 그렇게 동작하는가" 의 내부 구현은 같은 패키지의 [Internals] 에서 다룬다.
  *
+ *      Flux 반환 케이스
+ *          mono { } 와 똑같은 패턴이라 sub2 에서는 다루지 않는다.
+ *          짝꿍 빌더는 flux { } (kotlinx.coroutines.reactor.FluxKt#flux) 이고,
+ *          람다 안에서 send(value) 를 여러 번 호출한다는 것만 다르다.
+ *          실제 사용 예제는 sub5_real_world_examples 의 FluxStreamExample 참고.
+ *
  *      구성
  *          Overview.kt              - 0. 용어, 1. 문제, 2. 해결, 3. 보너스(Reactor Context 자동 전달)
  *          Internals.kt             - 4 ~ 6. mono { } 의 내부 동작, 7. 한 흐름으로 다시 보기
