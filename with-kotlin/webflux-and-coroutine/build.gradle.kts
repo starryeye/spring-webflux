@@ -23,6 +23,10 @@ dependencies {
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j")          // sub10 - MDC 전파
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc") // sub11 - R2DBC + 코루틴
+	runtimeOnly("io.r2dbc:r2dbc-h2")                                          // sub11 - H2 R2DBC 드라이버
+	implementation("org.springframework.boot:spring-boot-starter-security")   // sub13 - Spring Security
 	implementation("tools.jackson.module:jackson-module-kotlin")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

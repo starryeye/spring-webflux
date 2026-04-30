@@ -174,4 +174,26 @@ package dev.starryeye.webflux_and_coroutine.sub2_mono_builder
  *      이 구조 덕분에 사용자는 "Mono.fromCallable 이 안 된다" 는 제약을 신경 쓸 필요 없이
  *      mono { } 한 줄로 suspend 함수를 Mono 로 노출시키고
  *      Reactor 쪽 Context 까지 자연스럽게 받아 쓸 수 있다.
+ *
+ *
+ * ─────────────────────────────────────────────────────────────────────────────
+ * section 8. 결론
+ * ─────────────────────────────────────────────────────────────────────────────
+ *      한 문장으로 줄이면
+ *          "mono { } 빌더는 Mono.create 위에서 코루틴을 시작하고,
+ *           그 코루틴의 결과 / 예외 / 취소를 sink 로 Mono 에 흘려보낸다.
+ *           덤으로 Reactor Context 가 자동으로 코루틴 컨텍스트에 합쳐진다."
+ *
+ *      대응되는 지점
+ *          - "Mono.create 위에서 코루틴 시작"
+ *              = monoInternal 의 Mono.create { sink -> ... } 안에서 MonoCoroutine.start 가 호출된다. (section 5)
+ *          - "결과 / 예외 / 취소를 sink 로 흘려보냄"
+ *              = MonoCoroutine.onCompleted -> sink.success / onCancelled -> sink.error. (section 6)
+ *                구독 취소 시에는 sink.onDispose 등록을 통해 코루틴도 같이 취소된다.
+ *          - "Reactor Context 자동 합류"
+ *              = sink.currentContext() 로 꺼낸 Reactor Context 를 ReactorContext 어댑터로 감싸
+ *                코루틴 컨텍스트에 합친다. (section 5 (2)(3))
+ *
+ *      "같은 메커니즘이 sub1 컨트롤러 케이스에도 들어있다" 와
+ *      "future { } / launch { } 등 다른 빌더와의 비교" 는 상위 패키지의 CoroutineUsageGuide 를 참고.
  */
