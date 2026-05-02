@@ -17,7 +17,7 @@ import kotlin.coroutines.resume
  *      kotlin.coroutines 패키지의 Continuation interface 는 다음과 같이 생겼다.
  *
  *          public interface Continuation<in T> {
- *              public val context: CoroutineContext             // <- 핵심
+ *              public val context: CoroutineContext             // <- 핵심, Continuation 내부에는 CoroutineContext 를 포함한다.
  *              public fun resumeWith(result: Result<T>)
  *          }
  *
