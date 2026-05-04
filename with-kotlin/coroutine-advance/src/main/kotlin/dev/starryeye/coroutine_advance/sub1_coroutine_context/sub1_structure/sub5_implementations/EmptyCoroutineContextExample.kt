@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub5_implementations
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub5_implementations
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineName

@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub8_with_context
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub2_propagation.sub2_with_context
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineName
@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
  *          UndispatchedCoroutine 라는 새 Job 이 들어가 있는 것이 보인다.
  *      - withContext 가 끝나면 다시 원래 runBlocking 의 context 로 돌아온 것을 한 번 더 찍어 확인한다.
  *
- * 출력 예시 (한 줄로 풀어 쓴 형태)
+ * 출력
  *      [main @coroutine#1]   - context in runBlocking:
  *          [CoroutineId(1), "coroutine#1":BlockingCoroutine{Active}@..., BlockingEventLoop@...]
  *      [main @withContext#1] - context in withContext:

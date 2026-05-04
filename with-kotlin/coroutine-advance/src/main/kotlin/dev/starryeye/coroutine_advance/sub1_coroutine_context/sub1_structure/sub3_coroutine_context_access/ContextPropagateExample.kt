@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub3_coroutine_context_access
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub3_coroutine_context_access
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.runBlocking

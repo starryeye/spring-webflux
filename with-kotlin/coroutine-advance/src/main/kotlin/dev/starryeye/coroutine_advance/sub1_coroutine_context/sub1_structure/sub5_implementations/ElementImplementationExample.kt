@@ -1,6 +1,7 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub5_implementations
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub5_implementations
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
@@ -90,7 +91,7 @@ fun main() {
         val ctx = coroutineContext
         log.info { "Job          = ${ctx[Job]}" }
         log.info { "CoroutineName= ${ctx[CoroutineName]}" }
-        log.info { "Dispatcher   = ${ctx[kotlinx.coroutines.CoroutineDispatcher]}" }
+        log.info { "Dispatcher   = ${ctx[CoroutineDispatcher]}" }
         log.info { "ExceptionHdr = ${ctx[CoroutineExceptionHandler]}" } // 등록 안 했으니 null
     }
 }

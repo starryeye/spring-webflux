@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub6_operators
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub6_operators
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineName
@@ -22,7 +22,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  *      이 규칙 덕분에 "기본 context 위에 부분만 바꿔서" 새 context 를 쉽게 만들 수 있다.
  *          예) val ctx = baseContext + CoroutineName("temp")
  *
- * 이 파일이 보여주는 것 (PDF 121p 의 ContextPlusExample.kt 와 같은 흐름)
+ * 이 파일이 보여주는 것
  *      step1: EmptyCoroutineContext             -> EmptyCoroutineContext 그 자체
  *      step2: empty + CoroutineName("custom")    -> Element (CoroutineName)
  *      step3: + CoroutineName("custom2")         -> 같은 Key 라 override -> 여전히 Element (CoroutineName)

@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_coroutine_and_thread_local
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub1_coroutine_and_thread_local
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers

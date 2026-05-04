@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub7_propagation
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub2_propagation.sub1_propagation
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineName
@@ -31,7 +31,7 @@ import kotlin.coroutines.coroutineContext
  *          호출 체인의 어디에서 찍어도 동일한 값이 나온다.
  *
  *
- * 출력 예시
+ * 출력
  *      [main @coroutine#1] - context in outer:
  *          [CoroutineId(1), "coroutine#1":BlockingCoroutine{Active}@..., BlockingEventLoop@...]
  *      [main @coroutine#1] - context in nested:

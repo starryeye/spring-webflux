@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub6_operators
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub6_operators
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,7 +18,7 @@ import kotlinx.coroutines.Job
  *      Element         - Element = EmptyCoroutineContext  (자기 자신을 제거하면 비어버림)
  *      minus 하려는 Key 가 없다면 -> 무시 (현재 context 그대로)
  *
- * 이 파일이 보여주는 것 (PDF 122p 의 ContextMinusExample.kt 와 같은 흐름)
+ * 이 파일이 보여주는 것
  *      context1 = CoroutineName + Dispatchers.IO + Job   (CombinedContext, 3개)
  *      context2 = context1 - Job                          -> 2개 -> CombinedContext
  *      context3 = context2 - Job                          -> 없는 Key -> 그대로 (무시)

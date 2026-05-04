@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub6_operators
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub6_operators
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,7 +20,7 @@ import kotlinx.coroutines.Job
  *      - Key 에 해당하는 Element 가 없다면 null 을 반환한다. (그래서 반환 타입이 E?)
  *      - CombinedContext 라면 element 부터 보고 없으면 left 쪽으로 재귀적으로 내려가며 찾는다.
  *
- * 이 파일이 보여주는 것 (PDF 123p 의 ContextGetExample.kt 와 같은 흐름)
+ * 이 파일이 보여주는 것
  *      context = CoroutineName + Dispatchers.IO        (Job 은 일부러 넣지 않음)
  *      element1 = context[CoroutineName]                -> CoroutineName(custom name)
  *      element2 = context.get(CoroutineDispatcher)      -> Dispatchers.IO   (Dispatcher 의 Key 는 CoroutineDispatcher)

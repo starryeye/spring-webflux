@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub5_implementations
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub1_structure.sub5_implementations
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineName
@@ -21,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
  *      - internal class 라서 사용자가 직접 new 로 생성할 수는 없다.
  *          + 연산자가 합쳐주거나, 코루틴 빌더 (runBlocking / launch / async ...) 가 만들어 준다.
  *
- * 트리 구조 (PDF 120p)
+ * 트리 구조
  *      a + b + c + d + e 가 만들어 내는 모양
  *
  *           CombinedContext1 (left=CombinedContext2, element=Element1)
