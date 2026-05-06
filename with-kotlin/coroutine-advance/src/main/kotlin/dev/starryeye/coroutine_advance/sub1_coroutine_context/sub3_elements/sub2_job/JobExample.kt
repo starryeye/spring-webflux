@@ -19,8 +19,9 @@ import kotlinx.coroutines.runBlocking
  *      - "Coroutine 의 생명주기를 표현/관리" 하는 CoroutineContext.Element 이다.
  *      - 모든 coroutine 은 자기 context 안에 정확히 하나의 Job 을 들고 있고,
  *          이 Job 이 곧 그 coroutine 의 "상태 / 시작 / 취소 / 부모-자식 관계" 의 핸들이 된다.
- *      - launch / async 같은 coroutine builder 는 "새 Job 을 만들어서 부모 Job 의 자식으로 매다는" 동작을 한다.
+ *      - launch / async 같은 coroutine builder 를 통해 자식 Job 을 생성 가능하다.
  *          -> structured concurrency 의 뼈대가 결국 이 Job 트리.
+ *      - parent, children 필드를 통해 부모-자식 관계의 Coroutine 의 생명주기도 관리 가능하다.
  *
  * 인터페이스 시그니처
  *      public interface Job : CoroutineContext.Element {
