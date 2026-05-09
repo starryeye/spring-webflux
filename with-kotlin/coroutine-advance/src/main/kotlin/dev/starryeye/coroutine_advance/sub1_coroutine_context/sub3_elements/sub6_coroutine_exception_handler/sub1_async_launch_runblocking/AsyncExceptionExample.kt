@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub3_elements.sub6_coroutine_exception_handler.sub1_async_and_launch
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub3_elements.sub6_coroutine_exception_handler.sub1_async_launch_runblocking
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -17,7 +17,7 @@ import kotlinx.coroutines.runBlocking
  *      "async 는 exception 이 발생한 경우 user 에게 그 exception 을 노출" (await 시점에)
  *
  *
- * 출력 예시
+ * 출력
  *      [main @coroutine#1] - exception caught
  */
 private val log = KotlinLogging.logger {}
