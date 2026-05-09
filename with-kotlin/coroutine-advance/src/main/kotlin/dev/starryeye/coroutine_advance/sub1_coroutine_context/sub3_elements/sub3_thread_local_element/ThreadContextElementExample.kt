@@ -39,13 +39,15 @@ import kotlinx.coroutines.runBlocking
  *          - 자식 coroutine 에도 그대로 전파된다 (CoroutineContext 의 일부니까).
  *
  *
- * 이 예제가 보여주는 것
+ * 예제
  *      runBlocking 안에서 ThreadLocal greeting 에 "hello" 를 set 한 뒤
  *          1) launch(Dispatchers.IO)                                      -> null   (전파 안 됨)
  *          2) Dispatchers.IO + greeting.asContextElement()                -> "hello" (현재 값 전파)
  *          3) Dispatchers.Default + greeting.asContextElement("hoi")      -> "hoi"   (다른 값으로 override)
  *          4) 그 안에서 또 launch { }                                       -> "hoi"   (자식 coroutine 에도 전파)
  *
+ * 결론
+ *      ThreadLocal 을 CoroutineContext 에 넘겨서 다른 스레드에서 동작하더라도 그대로 ThreadLocal 이 살아있도록 해줌.
  */
 private val log = KotlinLogging.logger {}
 
