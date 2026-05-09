@@ -25,6 +25,9 @@ dependencies {
 	// [Kotlin Coroutines] suspend 함수, Flow, Channel 등 Kotlin 네이티브 비동기 모델
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
 
+	// [Kotlin Coroutines x Reactor] mono { }, ReactorContext, awaitSingle 등 Reactor 와의 상호운용
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
+
 	// kotlin-logging
 	implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
 
