@@ -22,7 +22,7 @@ import kotlinx.coroutines.runBlocking
  *          3) root coroutine 에서 자기 context 의 handler 를 꺼내 handleException(...) 호출
  *      -> 결과적으로 handler 의 람다가 실행되어 "exception caught" 가 찍힌다.
  *
- * 출력 예시
+ * 출력
  *      [DefaultDispatcher-worker-3 @coroutine#4] - exception caught
  */
 private val log = KotlinLogging.logger {}

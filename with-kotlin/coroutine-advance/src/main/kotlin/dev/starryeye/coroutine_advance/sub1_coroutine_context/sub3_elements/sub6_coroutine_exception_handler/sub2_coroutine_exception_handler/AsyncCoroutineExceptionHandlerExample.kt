@@ -25,11 +25,11 @@ import kotlinx.coroutines.runBlocking
  *      - async 의 exception 은 Deferred 안에 "보관" 된다.
  *      - 그 보관된 exception 은 await() 시점에 caller 로 다시 던져진다.
  *      - 즉 exception 의 책임이 "Deferred 의 소비자(=await 호출자)" 에게 있다는 모델이라
- *          handler 가 가로챌 여지가 없다 (가로채면 무한히 사라지는 exception 이 됨).
+ *          handler 가 가로챌 여지가 없다
  *      - 따라서 async 트리에서는 handler 대신 await 를 try-catch 로 감싸 처리해야 한다.
  *
  *
- * 출력 예시
+ * 출력
  *      [main @coroutine#1] - exception caught in catch
  *      (note: "exception caught in handler" 는 안 찍힘)
  */
