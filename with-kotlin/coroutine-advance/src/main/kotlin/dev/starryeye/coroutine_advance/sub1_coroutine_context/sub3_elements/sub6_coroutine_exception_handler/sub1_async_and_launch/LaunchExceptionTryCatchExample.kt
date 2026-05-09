@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub5_coroutine_exception_handler.sub1_async_and_launch
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub3_elements.sub6_coroutine_exception_handler.sub1_async_and_launch
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +42,7 @@ import kotlinx.coroutines.runBlocking
  *      - 또는 supervisorScope / SupervisorJob 으로 cancellation 전파 구조 자체를 바꿀 수도 있다 (별개 주제).
  *
  *
- * 출력 예시
+ * 출력
  *      Exception in thread "DefaultDispatcher-worker-2 @coroutine#4" java.lang.IllegalStateException: exception in launch
  *          at ...
  *

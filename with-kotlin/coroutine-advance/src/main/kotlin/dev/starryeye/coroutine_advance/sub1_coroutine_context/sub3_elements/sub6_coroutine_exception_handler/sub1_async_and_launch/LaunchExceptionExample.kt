@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub5_coroutine_exception_handler.sub1_async_and_launch
+package dev.starryeye.coroutine_advance.sub1_coroutine_context.sub3_elements.sub6_coroutine_exception_handler.sub1_async_and_launch
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 /**
  * Error handling (2) - launch 의 exception handling
  *
- * 핵심 (async 와의 차이)
+ * async 와의 차이
  *      - async 는 exception 을 Deferred 안에 보관 -> await() 에서 다시 던진다 -> try-catch 가능.
  *      - launch 는 보관해두지 않는다. 발생한 exception 은
  *          1) 자기 Job 을 fail 시키고
