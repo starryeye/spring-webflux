@@ -21,6 +21,7 @@ import kotlinx.coroutines.runBlocking
  *             그 늘어난 worker 들은 Default 작업도 받아 처리할 수 있다.
  *      - 즉 thread 자체는 IO 가 키우는 만큼 늘어나며, "Default 와 IO 가 의미상 분리된 풀처럼 보일 뿐"
  *          물리적으로는 한 풀이라는 사실을 눈으로 확인.
+ *      - 따라서, 해당 thread pool 의 최대 thread 수 = core 수 + 64 이다.
  *
  * 참고
  *      dispatcher 를 출력하면, Dispatchers.IO, Dispatchers.Default 로 분리되어 보이지만
