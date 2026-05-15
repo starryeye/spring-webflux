@@ -33,6 +33,7 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub2_coroutine_buil
  *              -> 새 Coroutine 의 부모 = scope 의 Job
  *              -> 우리가 흔히 말하는 structured concurrency:
  *                  scope.cancel() 하면 자식들이 함께 cancel 되고, 자식이 다 끝나야 scope 도 완료.
+ *              -> builder 에 의해 생성된 새로운 자식 코루틴은 새 coroutine용 Job 을 생성한다.
  *
  *          (b) builder arg 에 Job 을 넘긴 경우 (예: launch(SupervisorJob()), withContext(NonCancellable))
  *              -> merge 시 acc.minusKey(Job) 으로 scope 의 Job 이 빠지고 arg 의 Job 이 그 자리를 차지한다.
