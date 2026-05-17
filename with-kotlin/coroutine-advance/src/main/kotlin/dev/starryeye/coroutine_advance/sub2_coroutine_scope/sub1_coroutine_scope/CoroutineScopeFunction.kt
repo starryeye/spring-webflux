@@ -38,6 +38,12 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub1_coroutine_scop
  *          - 호출 위치  (CoroutineScope(ctx))                                -> 함수로 해석
  *      개념적으로는 짝꿍 — 함수는 인터페이스의 인스턴스 (ContextScope) 를 만들어 돌려주는 게 유일한 목적.
  *
+ *      추가.. 비슷한 이름의 "coroutineScope { } 함수" 와는 또 다르다.
+ *          coroutineScope {} 는 suspend scoping 함수로, block 동안 새 ScopeCoroutine 을 만들고
+ *          자식이 다 끝날 때까지 suspend 하는 완전히 다른 녀석.
+ *          여기서 다루는 PascalCase 팩토리 함수 (= scope 만 만들고 끝) 와 헷갈리지 말 것.
+ *          상세 비교표는 sub4_scoping_function/coroutine_scope/CoroutineScope.kt 의 "이름이 비슷한 3가지" 섹션 참고.
+ *
  *
  * 참고. 함수인데 왜 대문자로 시작하는가
  *      Kotlin 공식 코딩 컨벤션의 예외 규칙
