@@ -102,6 +102,12 @@ fun main() {
 
         log.info { "step1" }
         job.join()
+        /**
+         * main thread 는 join 을 만나는 순간 blocking 되지 않고..
+         * suspend 가 되어 다른 곳에 할당될 수 있다.
+         *
+         * launch 실행이 Dispatchers.Default 의 스레드에 의해 완료되면 main thread 가 resume 된다.
+         */
         log.info { "step2" }
     }
 }

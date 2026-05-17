@@ -52,6 +52,21 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub2_coroutine_buil
  *      - Coroutine builder 로 만든 Coroutine 은 기본적으로 비동기하게 동작한다.
  *          - launch / async 는 호출 즉시 결과를 기다리지 않고 새 실행 흐름을 띄운다.
  *          - 호출 스레드는 builder 가 반환한 Job / Deferred 만 받고 그대로 다음 줄로 진행한다.
+ *
+ *      왜 비동기인가
+ *          - builder 는 본문(block) 을 caller thread 에서 끝까지 동기 실행하지 않는다.
+ *          - 본문을 Coroutine 객체로 감싸 dispatcher 에 "예약 (schedule)" 만 시키고 곧장 Job / Deferred 만 반환한다.
+ *          - 그래서 caller 는 막힘없이 다음 줄로 진행하고, 본문은 caller 입장에서 보면 "떨어져 나간 작업" 이 된다. 이게 곧 비동기.
+ *
+ *      어떻게 비동기로 동작하나 (간단 메커니즘)
+ *          1) Dispatcher 가 본문 실행을 자기 thread pool 또는 event loop 의 task 로 schedule 한다.
+ *              - caller thread 는 그 task 가 도는 동안 차단되지 않는다.
+ *          2) 본문 안에서 suspend 함수 (delay / await / IO suspend 함수 등) 를 만나면
+ *              - 컴파일러가 본문을 state machine 으로 변환해 둔 덕에, 현재 진행 상태를 Continuation 객체에 저장할 수 있다.
+ *              - 그 suspend 함수가 "지금은 결과 없음 (COROUTINE_SUSPENDED)" 을 반환하면 코루틴은 thread 를 놓아준다.
+ *              - 결과가 준비되면 dispatcher 가 Continuation 을 다시 schedule → state machine 의 다음 상태부터 재개.
+ *          - 핵심: "기다리는 동안 thread 를 잡지 않는다" → 적은 thread 로 많은 작업을 동시에 다룰 수 있다.
+ *
  *      - 예외: runBlocking 은 caller thread 를 block 한 채 자식들이 끝나기를 기다린다 (이름 그대로).
  *          test / main 진입점에서 coroutine 세계로 들어가는 다리 역할이지, 일반 비즈니스 코드에서 쓰는 도구는 아니다.
  *
