@@ -15,8 +15,11 @@ import kotlin.coroutines.EmptyCoroutineContext
  *
  * 포인트
  *      1) cs.launch { ... } 로 coroutine1 이 만들어진다.
- *          - 본문 안의 this 가 곧 coroutine1 인스턴스. (Coroutine = CoroutineScope 이기 때문에)
- *          - this.coroutineContext[Job] 출력은 coroutine1 자기 자신. (Coroutine = Job 이기 때문에)
+ *          - 본문 안의 this 가 곧 coroutine1 인스턴스.
+ *          - Coroutine 은 CoroutineScope 을 구현한다.
+ *                  그래서, this 는 CoroutineScope 이다.
+ *          - this.coroutineContext[Job] 출력은 coroutine1 자기 자신. (Coroutine 은 Job 구현하기 때문)
+ *                  this == this.coroutineContext[Job]
  *
  *      2) coroutine1 본문 안에서 this.launch { ... } 로 coroutine2 를 생성할 수 있다.
  *          - 이것이 가능한 이유는 정확히 "coroutine1 이 CoroutineScope 이라서".
@@ -58,8 +61,7 @@ fun main() {
         val job = cs.launch {
             // coroutine1 생성됨
             delay(timeMillis = 100)
-            log.info { "this: [$this] == job1: [${this.coroutineContext[Job]}]" }
-            log.info { "job1: ${this.coroutineContext[Job]}" }
+            log.info { "job1: ${this.coroutineContext[Job]} (== this: [$this])" }
             log.info { "parent of job1: ${this.coroutineContext[Job]?.parent}" }
 
             val job2 = this.launch { // 코루틴으로 launch 를 이용할 수 있는 이유가 Coroutine 자체가 CoroutineScope 라서 그렇다.
