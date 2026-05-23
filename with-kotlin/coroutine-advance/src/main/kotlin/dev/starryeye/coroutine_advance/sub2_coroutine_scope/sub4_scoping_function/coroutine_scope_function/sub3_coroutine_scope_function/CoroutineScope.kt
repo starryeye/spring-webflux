@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub4_scoping_function.coroutine_scope.sub3_coroutine_scope_function
+package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub4_scoping_function.coroutine_scope_function.sub3_coroutine_scope_function
 
 /**
  * Scoping 함수 - coroutineScope
