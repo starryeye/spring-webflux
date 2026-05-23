@@ -34,14 +34,14 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub3_coroutine
  *          - 부모 Job / 자식 Job 트리에 매달려 structured concurrency 의 뼈대가 된다.
  *
  *      2) 코루틴은 Continuation<T> 이다.
- *          - "어떻게 재개할지" 를 들고 있는 콜백 표현체.
+ *          - "어떻게 resume 할지" 를 들고 있는 콜백 표현체.
  *          - 컴파일러가 본문 (suspend lambda) 을 state machine 으로 변환한 뒤,
  *              매 suspend 지점마다 진행 상태를 Continuation 객체에 저장한다.
  *          - suspend 가 풀려 결과가 도착하면 Continuation.resumeWith(...) 으로 다음 상태부터 재개.
  *          - 즉 Coroutine = "실행 중인 비동기 흐름 자체" 라고 봐도 무방.
  *
  *      3) 코루틴은 CoroutineScope 이다.
- *          - 본문 안에서 builder (launch / async / ...) 를 호출할 수 있게 해 주는 receiver 역할.
+ *          - 본문 안에서 builder (launch / async / ...) 를 통해 또다른 코루틴을 생성할 수 있게 한다.
  *          - Coroutine 본문 안에서 새 자식 coroutine 을 띄울 수 있고,
  *              그 자식들의 부모 Job 이 이 Coroutine 자신이 된다.
  *          - sub2_coroutine_builder/launch/Launch.kt 의 "parentContext + this" 트릭이 작동하는 토대.
