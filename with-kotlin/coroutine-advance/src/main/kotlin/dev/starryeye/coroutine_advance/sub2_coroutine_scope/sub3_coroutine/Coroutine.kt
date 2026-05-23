@@ -28,19 +28,19 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub3_coroutine
  *
  *
  * 세 가지 정체성
- *      1) Job
+ *      1) 코루틴은 Job 이다.
  *          - "작업의 단위" 이자 lifecycle 상태 머신.
  *          - start / cancel 로 상태를 바꿀 수 있고, join 으로 완료 시점을 기다릴 수 있다.
  *          - 부모 Job / 자식 Job 트리에 매달려 structured concurrency 의 뼈대가 된다.
  *
- *      2) Continuation<T>
+ *      2) 코루틴은 Continuation<T> 이다.
  *          - "어떻게 재개할지" 를 들고 있는 콜백 표현체.
  *          - 컴파일러가 본문 (suspend lambda) 을 state machine 으로 변환한 뒤,
  *              매 suspend 지점마다 진행 상태를 Continuation 객체에 저장한다.
  *          - suspend 가 풀려 결과가 도착하면 Continuation.resumeWith(...) 으로 다음 상태부터 재개.
  *          - 즉 Coroutine = "실행 중인 비동기 흐름 자체" 라고 봐도 무방.
  *
- *      3) CoroutineScope
+ *      3) 코루틴은 CoroutineScope 이다.
  *          - 본문 안에서 builder (launch / async / ...) 를 호출할 수 있게 해 주는 receiver 역할.
  *          - Coroutine 본문 안에서 새 자식 coroutine 을 띄울 수 있고,
  *              그 자식들의 부모 Job 이 이 Coroutine 자신이 된다.
