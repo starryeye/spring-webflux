@@ -24,6 +24,6 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub4_scoping_functi
  *      sub4_scoping_function/
  *          coroutine_scope_function/        — coroutineScope 함수
  *          with_context/           — withContext 함수
- *          (필요 시 supervisor_scope/ 추가 예정)
+ *          supervisor_scope/       — supervisorScope 함수 (자식 실패가 형제로 전파되지 않는 변형)
  */
 private object ScopingFunctionDescription
