@@ -18,6 +18,7 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub4_scoping_functi
  *      - coroutineScope { ... }      — 일반적인 묶음 scope
  *      - supervisorScope { ... }     — 자식 하나가 실패해도 형제들이 살아남도록 SupervisorJob 을 쓰는 변형.
  *      - withContext(context) { ... } — context 를 잠깐 바꿔서 그 위에서 실행하는 변형 (가장 자주 보임).
+ *      - withTimeout(ms) { ... }     — 묶음 scope 에 제한시간을 걸어, 초과 시 cancel 하는 변형 (withTimeoutOrNull 포함).
  *
  *
  * 이 패키지 구조
@@ -25,5 +26,6 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub4_scoping_functi
  *          coroutine_scope_function/        — coroutineScope 함수
  *          with_context/           — withContext 함수
  *          supervisor_scope/       — supervisorScope 함수 (자식 실패가 형제로 전파되지 않는 변형)
+ *          with_timeout/           — withTimeout / withTimeoutOrNull 함수 (제한시간 변형)
  */
 private object ScopingFunctionDescription
