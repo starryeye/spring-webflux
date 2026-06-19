@@ -34,6 +34,7 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellati
  *              sub2_cancel_coroutine_scope/  — CoroutineScope.cancel() → 트리 따라 전파 (p.188)
  *              sub3_cancel_root_coroutine/   — root coroutine cancel → 자식들로 전파, cancelAndJoin 으로 확인 (p.189)
  *              sub4_cancel_leaf_coroutine/   — leaf 하나만 cancel → 형제·부모는 안전 (p.190)
+ *              sub5_with_timeout_in_tree/    — withTimeout 의 TimeoutCancellationException 도 cancel 성질 → 형제·부모 안전 (p.197)
  *          exception/   — 일반 예외로 인한 "실패" (위로 전파 후 아래로)
  *              sub1_exception_leaf_coroutine/— leaf 의 예외 → 위로 전파되어 부모·scope 까지 cancel (p.191, 전파 4단계 p.192~195)
  *              sub2_supervisor_job/          — launch(SupervisorJob()) 으로 위로 전파를 차단 (p.196)
@@ -42,8 +43,8 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellati
  * 관련 (이미 다른 곳에서 다룬 주제)
  *      - exception 전파 / CoroutineExceptionHandler  → sub1_coroutine_context/.../sub6_coroutine_exception_handler
  *      - supervisorScope (자식 실패가 형제로 전파되지 않는 변형) → sub4_scoping_function/supervisor_scope
- *      - withTimeout / withTimeoutOrNull (p.197) → sub4_scoping_function/with_timeout
+ *      - withTimeout / withTimeoutOrNull 자체 사용법(throw / orNull) → sub4_scoping_function/with_timeout
  *          · TimeoutCancellationException 은 CancellationException → 위 표의 "cancel" 성질(아래로만, 형제·부모 안전).
- *          · 트리 안에서의 동작은 with_timeout/WithTimeoutInTreeExample 참고.
+ *          · 트리 안에서의 전파 동작(p.197)은 cancel/sub5_with_timeout_in_tree 에 둠.
  */
 private object JobCancellationDescription

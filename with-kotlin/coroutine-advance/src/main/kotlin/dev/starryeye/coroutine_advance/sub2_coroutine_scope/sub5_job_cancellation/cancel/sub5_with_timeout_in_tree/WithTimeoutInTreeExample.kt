@@ -17,13 +17,6 @@ import kotlinx.coroutines.withTimeout
  *              "정상 취소" 로 취급된다 → 위로 전파되지 않아 형제·부모·scope 가 모두 안전하다.
  *
  *
- * 왜 안전한가 (이 챕터의 핵심과 연결)
- *      - 일반 예외였다면 위로 전파되어 트리 전체가 무너진다 (→ sub5_job_cancellation/exception).
- *      - 하지만 TimeoutCancellationException 은 CancellationException → "실패" 가 아니라 "정상 취소" 로 분류.
- *          → withTimeout 으로 감싼 그 영역(job2)만 cancel 되고 끝. 형제·부모는 영향 없음.
- *      - 즉 withTimeout 은 cancel 그룹과 같은 성질(아래로만)을 가진다. (→ sub5_job_cancellation/JobCancellation.kt 의 표)
- *
- *
  * 출력
  *      [...@coroutine#3] - job2: I'm cancelled
  *      [...@coroutine#3] - e2: Timed out waiting for 500 ms
