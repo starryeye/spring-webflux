@@ -41,6 +41,7 @@ private val log = KotlinLogging.logger {}
 fun main() {
     runBlocking {
         val job = CoroutineScope(context = EmptyCoroutineContext).launch {
+
             log.info { "step1" }
             coroutineScope {
                 launch {
