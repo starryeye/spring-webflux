@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellation.sub4_cancel_leaf_coroutine
+package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellation.cancel.sub4_cancel_leaf_coroutine
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -10,8 +10,6 @@ import kotlinx.coroutines.runBlocking
 /**
  * cancel - Leaf Coroutine
  *
- *
- * 무엇을 보나
  *      - 트리 맨 아래의 leaf coroutine 하나(job2)만 cancel 하면 어떻게 되는지 본다.
  *      - 결론: 취소는 "아래 방향" 으로만 흐르므로, 형제(job3)와 부모(root)는 멀쩡하다.
  *

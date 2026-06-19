@@ -1,4 +1,4 @@
-package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellation.sub2_cancel_coroutine_scope
+package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellation.cancel.sub2_cancel_coroutine_scope
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope

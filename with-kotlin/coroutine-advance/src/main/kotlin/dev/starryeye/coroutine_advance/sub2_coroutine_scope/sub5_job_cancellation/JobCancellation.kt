@@ -10,19 +10,32 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellati
  *      - "누가 누구의 부모인가(Job 트리)" 를 먼저 보고, "취소가 그 트리를 따라 어떻게 흐르는가" 로 이어진다.
  *
  *
- * 핵심 두 가지
- *      1) Job 트리
- *          - CoroutineScope 에 coroutine 이 추가되면, 그 coroutine 의 부모는 CoroutineScope 의 Job.
- *          - coroutine 안에서 또 launch 하면, 그 coroutine 자신이 부모가 되어 부모-자식 구조가 쌓인다.
- *      2) 취소 전파
- *          - 부모(또는 scope)가 cancel 되면 그 아래 자식들로 취소가 전파된다 (아래 방향).
- *          - 자식의 delay 같은 suspend 지점에서 CancellationException 이 throw 되며 협조적으로 끊긴다.
+ * 먼저 알아둘 것 — "cancel 도 결국 exception 이다"
+ *      - coroutine 의 취소는 별도 메커니즘이 아니라, suspend 지점에서 CancellationException 을 throw 하는 방식으로 동작한다.
+ *          → 예제 출력의 e2: "StandaloneCoroutine was cancelled" 가 곧 catch (e: Exception) 에 잡힌 그 예외다.
+ *      - 그래서 진짜 구분선은 "예외냐 아니냐" 가 아니라 "어떤 예외냐" 이다.
+ *
+ *          ┌─────────────────────────┬──────────────────────┬───────────┬──────────────┐
+ *          │ 던져진 예외               │ 프레임워크의 취급        │ 전파 방향   │ 부모를 죽이나? │
+ *          ├─────────────────────────┼──────────────────────┼───────────┼──────────────┤
+ *          │ CancellationException    │ "정상 취소" (cancel)    │ 아래로만    │ X (부모가 삼킴) │
+ *          │ 그 외 일반 예외           │ "실패" (failure)        │ 위로       │ O (부모를 fail) │
+ *          └─────────────────────────┴──────────────────────┴───────────┴──────────────┘
+ *
+ *      - 둘은 별개가 아니라 "한 메커니즘의 두 단계" 다:
+ *          실패(일반 예외) → 위로 전파해 부모를 cancel → 부모는 형제들에게 CancellationException 을 아래로 내려보냄.
+ *          즉 "예외의 내려가는 다리" 가 곧 cancellation. (p.191 의 job3 사유가 "Parent job is Cancelling" 인 이유)
  *
  *
- * 이 패키지 구조
+ * 그래서 이 패키지는 두 그룹으로 나눈다
  *      sub5_job_cancellation/
- *          sub1_job_tree/                — Job 트리: CoroutineScope-coroutine, coroutine-coroutine 부모/자식 관계 (p.187)
- *          sub2_cancel_coroutine_scope/  — CoroutineScope.cancel() 시 취소가 트리를 따라 전파되는 모습 (p.188)
+ *          cancel/      — CancellationException 으로 동작하는 "정상 취소" (아래로만 전파)
+ *              sub1_job_tree/                — Job 트리: 부모-자식 관계의 기초 (p.187)
+ *              sub2_cancel_coroutine_scope/  — CoroutineScope.cancel() → 트리 따라 전파 (p.188)
+ *              sub3_cancel_root_coroutine/   — root coroutine cancel → 자식들로 전파, cancelAndJoin 으로 확인 (p.189)
+ *              sub4_cancel_leaf_coroutine/   — leaf 하나만 cancel → 형제·부모는 안전 (p.190)
+ *          exception/   — 일반 예외로 인한 "실패" (위로 전파 후 아래로)
+ *              sub1_exception_leaf_coroutine/— leaf 의 예외 → 위로 전파되어 부모·scope 까지 cancel (p.191)
  *
  *
  * 관련 (이미 다른 곳에서 다룬 주제)
