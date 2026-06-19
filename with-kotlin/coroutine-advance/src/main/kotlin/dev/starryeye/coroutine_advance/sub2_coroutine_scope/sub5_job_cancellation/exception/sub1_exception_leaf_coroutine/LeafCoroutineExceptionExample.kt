@@ -25,6 +25,20 @@ import kotlinx.coroutines.runBlocking
  *      - 결국 root(job) 도, CoroutineScope 의 Job(csJob) 도 모두 cancelled.
  *
  *
+ * 위 흐름을 단계로 쪼개면
+ *
+ *      트리:   CoroutineScope(Job) ─ job1(root) ─┬─ job2 (예외 발생)
+ *                                               └─ job3
+ *
+ *      (1) job2(Coroutine2) 에서 exception 발생 → job2 는 자기 부모(job1)에게 cancel 요청 (위로).
+ *      (2) job1(root) 은 "자식이 모두 끝나야" 자기도 정리되므로, 먼저 남은 자식 job3 를 cancel (아래로).
+ *      (3) job3 까지 cancel 되면 job1(root) 도 cancelled 상태로. 그 뒤 job1 은 자기 부모(scope 의 Job)에게 cancel 요청 (위로).
+ *      (4) scope 의 Job 은 자식이 job1 뿐이므로, 곧바로 scope 의 Job 도 cancel.
+ *
+ *      → 정리하면 "예외는 위로 한 칸 → 그 부모는 형제들을 아래로 cancel → 다시 위로 한 칸" 을 꼭대기(scope)까지 반복.
+ *        그래서 leaf 하나의 예외가 결국 트리 전체를 무너뜨린다.
+ *
+ *
  * 핵심 (cancel 그룹과의 결정적 차이)
  *      - cancel  : 던지는 게 CancellationException → "정상 취소" 로 취급, 아래 방향으로만 전파.
  *                  → leaf 하나 취소해도 형제·부모 안전 (cancel/sub4_cancel_leaf_coroutine).
