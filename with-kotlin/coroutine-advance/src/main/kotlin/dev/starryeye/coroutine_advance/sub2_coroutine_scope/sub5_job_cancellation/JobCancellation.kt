@@ -46,5 +46,11 @@ package dev.starryeye.coroutine_advance.sub2_coroutine_scope.sub5_job_cancellati
  *      - withTimeout / withTimeoutOrNull 자체 사용법(throw / orNull) → sub4_scoping_function/with_timeout
  *          · TimeoutCancellationException 은 CancellationException → 위 표의 "cancel" 성질(아래로만, 형제·부모 안전).
  *          · 트리 안에서의 전파 동작(p.197)은 cancel/sub5_with_timeout_in_tree 에 둠.
+ *
+ *
+ * 참고
+ * — Spring 트랜잭션 rollback 전파와 "모양" 이 닮았다 (직접 관련은 없음) 
+ *      - "exception 은 위로 전파, cancel 은 아래로" 라는 규칙이 Spring @Transactional 의 rollback 전파 모델과 큰 그림에서 비슷.
+ *      - 단 둘은 독립 라이브러리이고, 코루틴 exception/cancel 이 Spring 트랜잭션에 실제로 쓰이는 건 아니다. 학습용 비유로만.
  */
 private object JobCancellationDescription
